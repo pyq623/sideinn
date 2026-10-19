@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 398" role="img" aria-labelledby="title desc">
+  <title id="title">从数据到参数更新：PPO、GRPO与DPO</title>
+  <desc id="desc">PPO与GRPO都采样回答并评分。PPO由Critic和GAE估计优势，GRPO由同题回答的相对奖励估计优势，两者再用新旧比率与裁剪更新策略。DPO对固定偏好对计算当前及参考log概率差，直接更新语言模型。</desc>
+  <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8" fill="none" stroke="#286b57" stroke-width="1.5"/></marker></defs>
+  <rect width="1080" height="398" rx="16" fill="#f7f6f0"/>
+  <g font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" fill="#21332e">
+    <text x="30" y="39" font-size="23" font-weight="700">先看数据，再看优势与loss</text>
+    <g fill="#fff" stroke="#bccfc5" stroke-width="1.5">
+      <rect x="30" y="66" width="325" height="292" rx="12"/>
+      <rect x="378" y="66" width="325" height="292" rx="12"/>
+      <rect x="726" y="66" width="325" height="292" rx="12"/>
+    </g>
+    <g font-size="23" font-weight="700" fill="#286b57"><text x="54" y="103">PPO</text><text x="402" y="103">GRPO</text><text x="750" y="103">DPO</text></g>
+    <g font-size="19">
+      <text x="54" y="144">采样回答 → 评分</text><text x="54" y="211">Critic价值 → GAE优势</text><text x="54" y="278">token新旧比率 → clip</text><text x="54" y="333" font-weight="600">更新Actor与Critic</text>
+      <text x="402" y="144">同题多回答 → 分别评分</text><text x="402" y="211">组内相对奖励 → 优势</text><text x="402" y="278">token新旧比率 → clip</text><text x="402" y="333" font-weight="600">更新Actor，无Critic</text>
+      <text x="750" y="144">固定prompt／偏好回答对</text><text x="750" y="211">current与reference logp</text><text x="750" y="278">成对差距 → logistic loss</text><text x="750" y="333" font-weight="600">直接更新语言模型</text>
+    </g>
+    <g stroke="#286b57" stroke-width="2" marker-end="url(#arrow)"><path d="M190 155v29 M190 222v29 M190 289v21"/><path d="M538 155v29 M538 222v29 M538 289v21"/><path d="M886 155v29 M886 222v29 M886 289v21"/></g>
+    <text x="30" y="383" font-size="15" fill="#65766e">示意采用本单元的基础版本；DAPO与GSPO进一步改变采样、聚合或比率粒度。</text>
+  </g>
+</svg>

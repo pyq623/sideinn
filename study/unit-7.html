@@ -1,0 +1,217 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="AI基础与工程笔记、面试笔记：268道练习、图解、手算与口述复习。"><title>计算机系统基础 · 支线客栈</title><link rel="stylesheet" href="assets/katex/katex.min.css"><link rel="stylesheet" href="assets/course.css"></head><body class="area-study"><a class="skip-link" href="#main-content">跳到正文</a><div class="wrap"><header class="site-header"><a class="brand" href="../">支线客栈</a><p class="meta">AI学习 · 笔试练习 · 面试复习</p><nav class="site-nav" aria-label="全站导航"><a href="../">← 支线首页</a><a href="index.html">总览</a><a href="study.html" aria-current="page">基础与工程笔记</a><a href="interview.html">面试笔记</a><a href="https://github.com/pyq623/ai-study-notes">GitHub ↗</a></nav><nav class="site-nav chapter-nav" aria-label="笔记章节"><a href="unit-1.html">单元1</a><a href="unit-2.html">单元2</a><a href="unit-3.html">单元3</a><a href="unit-4.html">单元4</a><a href="unit-5.html">单元5</a><a href="unit-6.html">单元6</a><a href="unit-7.html" aria-current="page">单元7</a><a href="unit-8.html">单元8</a><a href="engineering.html">工程专题</a></nav></header><div class="page-tools"><a href="#practice">直接做本章练习</a><a href="https://github.com/pyq623/ai-study-notes/blob/main/content/unit-7.md">查看Markdown源码</a><button type="button" onclick="window.print()">打印／存为PDF</button></div><div class="course-layout"><aside class="course-toc"><details open><summary>本章目录</summary><a href="#lesson-1">1. 进程、线程、锁与死锁</a><a href="#lesson-2">2. TCP：可靠字节流与连接管理</a><details class="topic-subnav"><summary>展开分步讲解</summary><a href="#lesson-2-step-1">① TCP：字节流、确认号与两个窗口</a><a href="#lesson-2-step-2">② 三次握手、四次挥手：为什么要来回确认</a></details><a href="#lesson-3">3. HTTP：请求语义、缓存与版本</a><details class="topic-subnav"><summary>展开分步讲解</summary><a href="#lesson-3-step-1">① HTTP：方法、状态码与缓存验证</a><a href="#lesson-3-step-2">② HTTP/1.1、HTTP/2、HTTP/3：多路复用解决了哪一层</a></details><a href="#lesson-4">4. 数据库索引：回表、覆盖与复合索引</a><a href="#lesson-5">5. 缓存：穿透、击穿与雪崩</a><a href="#lesson-6">6. 事务、幂等与消息重投</a><a class="practice-link" href="#practice">配套练习 · 8题</a></details></aside><main id="main-content" class="course-article"><h1>单元⑦ · 计算机系统基础</h1>
+<p><strong>本单元目标</strong>：把线程与同步、网络传输、数据库、缓存和消息重试连成完整的系统基础。B-tree／B+树的结构与图示见<a href="unit-6.html#lesson-5">单元6</a>，这里侧重索引如何用于查询。题号沿用原单元5的编号，已有答题记录会继续显示。</p>
+<h2 id="lesson-1">1. 进程、线程、锁与死锁</h2>
+<p><strong>进程</strong>通常有独立地址空间；同进程的线程共享许多进程资源，但各有自己的栈和执行上下文。线程共享数据方便，也需要同步；“线程有自己的栈”不代表线程间完全没有共享内存。</p>
+<p><strong>互斥锁</strong>让某段共享资源操作同一时刻只被一个持锁者执行。<strong>信号量</strong>可表示资源数量，P／wait申请，V／signal释放。资源计数与互斥是不同需求。</p>
+<p><strong>死锁</strong>是多个执行者相互等待，无法推进。例：线程甲持锁A等锁B，乙持锁B等锁A。统一加锁顺序可破坏这种循环等待；不能声称一把锁或一个超时解决所有并发问题。</p>
+<p>生产者消费者中，生产者先等空位，再取互斥锁；消费者先等产品，再取互斥锁。若先持互斥锁再等待空位／产品，可能把能满足条件的对方挡住。</p>
+<p class="callout no-print"><strong>读完这个知识点，接着练：</strong> <a href="#q-5-17">第5-17题</a></p><aside class="related"><strong>把知识连起来</strong><p><a href="engineering.html#lesson-2-shared-config">共享配置与互斥 →</a><a href="engineering.html#lesson-8">并发与取消 →</a></p></aside><h2 id="lesson-2">2. TCP：可靠字节流与连接管理</h2>
+<h3 id="lesson-2-step-1">① TCP：字节流、确认号与两个窗口</h3>
+<p>先分层：<strong>HTTP规定请求、响应的含义，是应用层协议；TCP负责把字节可靠、有序地送到对端，是传输层协议。</strong> TCP面向连接、全双工；UDP按数据报传输，保留报文边界，本身不提供TCP式的可靠重传与按序交付。</p>
+<p><strong>“字节流”是什么意思？</strong> 发送方先send <code>ABC</code>，再send <code>DE</code>，接收方可能分两次读到 <code>AB</code>、<code>CDE</code>，也可能一次读到 <code>ABCDE</code>。字节顺序保持，但应用的两条消息边界不由TCP保存。因此需要长度前缀、分隔符或明确的协议格式分帧；不能靠“一次recv就是一条消息”。</p>
+<p><strong>序号seq按字节编号，确认号ack表示“下一个期望收到的字节”。</strong> 收到连续的1000～1099号字节，ack应为1100。若中间缺了一段，即使后面的字节已到达，累计确认号也不能越过缺口。TCP借助确认、重传、校验和与接收端排序等机制实现可靠传输；收到TCP ACK不等于对方应用已经完成下单或写库。</p>
+<table>
+<thead>
+<tr>
+<th>机制</th>
+<th>保护谁／解决什么</th>
+<th>做题抓手</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>流量控制，接收窗口rwnd</td>
+<td>接收方来不及接收，避免缓冲区被撑满</td>
+<td>看接收方还能容纳多少字节</td>
+</tr>
+<tr>
+<td>拥塞控制，拥塞窗口cwnd</td>
+<td>网络承载不了，避免持续向拥塞网络猛发</td>
+<td>看网络反馈；经典算法含慢启动、拥塞避免等</td>
+</tr>
+</tbody>
+</table>
+<p>简化题中，可在途的未确认数据上限是 <code>min(rwnd, cwnd)</code>；<strong>还能新增发送的量，要再减去已经在途的量</strong>。两种窗口不是相加。经典慢启动在理想连续确认下约每RTT翻倍，拥塞避免约每RTT增加一个MSS；具体题目若给定算法／ACK规则，按题设计算，别把所有实现都套成同一条增长曲线。</p>
+<p><strong>例题：</strong> A发出seq=1000、载荷长度200字节的数据段，B完整且按序收到，之前无缺口，则ack=1200。若rwnd=8000字节、cwnd=5000字节，已有3000字节在途，最多再发 <code>min(8000,5000)−3000=2000</code> 字节。</p>
+<p>依据：<a href="https://www.rfc-editor.org/rfc/rfc9293.html">TCP标准RFC 9293</a>、<a href="https://www.rfc-editor.org/rfc/rfc5681.html">经典拥塞控制RFC 5681</a>。</p>
+<p class="callout no-print"><strong>读完这个知识点，接着练：</strong> <a href="#q-5-45">第5-45题</a></p><h3 id="lesson-2-step-2">② 三次握手、四次挥手：为什么要来回确认</h3>
+<p><strong>握手要交换并确认双方的初始序号。</strong> 下表假设不携带应用数据，客户端初始序号100，服务端初始序号500：</p>
+<table>
+<thead>
+<tr>
+<th>次数</th>
+<th>方向与报文</th>
+<th>意义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>客户端 → 服务端：SYN，seq=100</td>
+<td>客户端申请连接，告诉对方自己的起始序号</td>
+</tr>
+<tr>
+<td>2</td>
+<td>服务端 → 客户端：SYN+ACK，seq=500，ack=101</td>
+<td>确认客户端的SYN，同时发送自己的起始序号</td>
+</tr>
+<tr>
+<td>3</td>
+<td>客户端 → 服务端：ACK，seq=101，ack=501</td>
+<td>确认服务端的SYN；服务端收到后完成正常握手</td>
+</tr>
+</tbody>
+</table>
+<p><strong>SYN和FIN各消耗一个序号；没有载荷的纯ACK不消耗序号。</strong> 第二次不能作为最后一步，因为服务端还没收到对方对自己SYN的确认。这里的“可靠”也不等于三次握手能解决所有网络故障。</p>
+<p><strong>关闭连接要分别关闭两个发送方向。</strong> 常见过程是：A发FIN表示“我不再发”；B先ACK确认，但可能还有数据要发；B发完后再发自己的FIN；A最后ACK。B的ACK与FIN可以合并，所以并非每次关闭都恰好四个包。A发FIN后仍可继续接收B的数据，这就是半关闭。</p>
+<p>正常主动关闭的一方通常进入<strong>TIME_WAIT</strong>，典型等待2MSL（两倍最大报文生存时间）：既能在对方重发FIN时再次确认，也给旧连接的迟到报文留出消失时间。<strong>CLOSE_WAIT</strong>表示已收到对方FIN，正在等本地应用关闭；大量CLOSE_WAIT要关注本地连接是否及时关闭，别与TIME_WAIT混淆。</p>
+<p><strong>例题：</strong> A发出seq=3000、不带数据的FIN，B确认号应为3001，而不是3000。若题设MSL=30秒，则2MSL=60秒；不能把某个系统的实际配置当成通用常数。</p>
+<p class="callout no-print"><strong>读完这个知识点，接着练：</strong> <a href="#q-5-46">第5-46题</a></p><h2 id="lesson-3">3. HTTP：请求语义、缓存与版本</h2>
+<h3 id="lesson-3-step-1">① HTTP：方法、状态码与缓存验证</h3>
+<p>HTTP请求通常表达“用什么方法访问哪个资源”，响应包含状态码、字段和可能存在的内容。<strong>无状态</strong>指协议本身不要求每次请求自动继承上次业务会话；网站仍可借助Cookie、会话或令牌维持登录。它也不表示每次请求都要新建连接。</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>常见语义</th>
+<th>安全／幂等（按标准语义）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET／HEAD</td>
+<td>获取资源表示；HEAD不返回响应内容</td>
+<td>安全、幂等</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>把内容交给目标资源处理，如创建订单</td>
+<td>不保证安全或幂等</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td>用请求内容创建／替换指定资源的状态</td>
+<td>不安全、幂等</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td>删除目标资源的关联</td>
+<td>不安全、幂等</td>
+</tr>
+</tbody>
+</table>
+<p>这里的“安全”指没有请求修改资源状态的语义，<strong>不代表数据经过加密</strong>；“幂等”看重复请求的预期效果，不要求每次状态码相同。第一次DELETE返回成功、第二次返回404，仍可以幂等。POST也能通过业务幂等键实现重复扣款防护，但不是方法本身自动保证。</p>
+<table>
+<thead>
+<tr>
+<th>状态码</th>
+<th>题目中怎样理解</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>200／201／204</td>
+<td>成功／创建成功／成功但无响应内容</td>
+</tr>
+<tr>
+<td>301／302；307／308</td>
+<td>永久／临时重定向；307／308明确保留原请求方法，301／302可能把POST转GET</td>
+</tr>
+<tr>
+<td>304</td>
+<td>条件请求确认缓存表示未修改，可复用已有内容；不是“返回完整新页面”</td>
+</tr>
+<tr>
+<td>400／401／403／404</td>
+<td>请求有误／缺少有效认证凭证／拒绝访问／未找到资源</td>
+</tr>
+<tr>
+<td>500／502／503</td>
+<td>服务器内部错误／网关收到无效上游响应／服务暂不可用</td>
+</tr>
+</tbody>
+</table>
+<p>方法和状态码依据：<a href="https://www.rfc-editor.org/rfc/rfc9110.html">HTTP语义RFC 9110</a>。</p>
+<p><strong>缓存题按“能否直接用 → 是否需要验证”判断。</strong> 响应允许缓存且仍新鲜时，可直接复用；过期后可带 <code>If-None-Match</code>（对应ETag）或 <code>If-Modified-Since</code>（对应Last-Modified）发条件请求。未变化通常返回304；变化则返回200和新内容。</p>
+<ul>
+<li><code>max-age=60</code>：按缓存年龄判断60秒的新鲜期，不是永久有效。</li>
+<li><code>no-cache</code>：可保存，但再次使用前必须成功验证。</li>
+<li><code>no-store</code>：要求不要存储，和no-cache不是一回事。</li>
+</ul>
+<p><strong>例题：</strong> 简化假设刚收到响应时缓存年龄为0，响应有 <code>max-age=60</code>、ETag=<code>&quot;v1&quot;</code>。20秒后可直接复用；70秒后带 <code>If-None-Match: &quot;v1&quot;</code> 验证，资源未变则用304配合本地旧内容。这里304省掉完整内容传输，仍有一次网络验证。</p>
+<p>缓存依据：<a href="https://www.rfc-editor.org/rfc/rfc9111.html">RFC 9111</a>。</p>
+<p class="callout no-print"><strong>读完这个知识点，接着练：</strong> <a href="#q-5-47">第5-47题</a></p><h3 id="lesson-3-step-2">② HTTP/1.1、HTTP/2、HTTP/3：多路复用解决了哪一层</h3>
+<table>
+<thead>
+<tr>
+<th>版本</th>
+<th>连接与传输</th>
+<th>重点区别</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>HTTP/1.1</td>
+<td>TCP；默认持久连接，可复用连接发多次请求</td>
+<td>管线化请求的响应必须按请求顺序返回，前一个慢响应会挡住后面的响应</td>
+</tr>
+<tr>
+<td>HTTP/2</td>
+<td>TCP；将消息拆成二进制帧，以流编号区分请求</td>
+<td>同一连接可交错传输多个流；HPACK压缩头字段；仍受TCP按序交付约束</td>
+</tr>
+<tr>
+<td>HTTP/3</td>
+<td>QUIC（基于UDP）</td>
+<td>QUIC提供可靠流与加密；独立流不必因其他流缺失的数据而等待同一条TCP字节流补齐；头字段使用QPACK</td>
+</tr>
+</tbody>
+</table>
+<p><strong>先区分“复用连接”和“多路复用”。</strong> HTTP/1.1长连接是反复使用同一条连接；HTTP/2可把A、B两个响应拆成帧交错发送，B无需等A完整结束才能推进。</p>
+<p>但HTTP/2的这些帧仍装在<strong>同一条TCP有序字节流</strong>里。前面一段字节丢了，后面属于B的字节即使到达，也可能要等缺口补齐才能向HTTP层交付。这就是它仍有<strong>TCP层队头阻塞</strong>的原因。HTTP/3避免这种跨流的传输层按序等待；丢失某个流的数据仍会阻塞该流，连接级拥塞控制等也仍可能影响其他流，不能记成“HTTP/3永不阻塞”。</p>
+<p><strong>HTTPS是HTTP的安全传输。</strong> HTTP/1.1、HTTP/2的HTTPS通常是HTTP＋TLS＋TCP；HTTP/3由QUIC集成TLS 1.3握手。TLS负责加密、完整性和身份认证；HTTP版本升级不等于业务请求自动获得授权。</p>
+<p><strong>例题（假设场景）：</strong> 浏览器同时发出两个请求：<strong>请求A下载一张图片，请求B获取一份JSON数据</strong>，两者复用同一条HTTP/2连接。这里A、B是请求的代号，不是讲义中的图号。</p>
+<p><strong>问题：</strong> 如果承载A响应的某段TCP数据丢失，B的响应一定完全不受影响吗？</p>
+<p><strong>解答：不一定。</strong> 假设丢失的数据在TCP字节流中排在B的数据之前，即使后面的B数据已经到达，TCP也需要等前面的缺口补齐，才能按序向HTTP层交付。因此，HTTP/2虽然允许不同流的帧交错传输，仍可能受到TCP层队头阻塞的影响。</p>
+<p><strong>易错判断：</strong> “HTTP/2消除了HTTP/1.1管线化的响应顺序限制”可以成立；“HTTP/2消除了所有层面的队头阻塞”则不成立，要看题目说的是哪一层。</p>
+<p>依据：<a href="https://www.rfc-editor.org/rfc/rfc9112.html">HTTP/1.1 RFC 9112</a>、<a href="https://www.rfc-editor.org/rfc/rfc9113.html">HTTP/2 RFC 9113</a>、<a href="https://www.rfc-editor.org/rfc/rfc9114.html">HTTP/3 RFC 9114</a>。</p>
+<p class="callout no-print"><strong>读完这个知识点，接着练：</strong> <a href="#q-5-18">第5-18题</a> · <a href="#q-5-48">第5-48题</a></p><aside class="related"><strong>把知识连起来</strong><p><a href="engineering.html#lesson-11">流式响应与背压 →</a></p></aside><h2 id="lesson-4">4. 数据库索引：回表、覆盖与复合索引</h2>
+<p>索引帮助定位数据，但会占用存储空间，并增加相关写入的维护成本。先理解<a href="unit-6.html#lesson-5-step-2">单元6的B+树与叶子链</a>，再看索引页中究竟保存了哪些列。</p>
+<p><strong>落到MySQL InnoDB，记住“索引里有没有我要的列”。</strong> 聚簇索引叶页保存行数据；二级索引记录包含索引列和主键，可能先查到主键，再去聚簇索引找其余列，这叫回表。若索引已包含查询所需的列，可形成覆盖索引，减少这次查找。不要把“B+树叶子存数据”机械理解成“每一种索引叶子都存整行”。依据：<a href="https://dev.mysql.com/doc/refman/8.4/en/innodb-index-types.html">InnoDB聚簇索引与二级索引</a>。</p>
+<p><strong>复合索引 <code>(a,b)</code> 先按a，再在相同a内部按b排序。</strong> <code>a=2 AND b=7</code> 可按完整前缀定位；只有 <code>b=7</code> 时，命中项可能散落在不同a的区间，不能直接套用相同的前缀定位方法。这里说的是通常的查找方式；优化器也可能选择扫描或跳跃扫描，不能背成“没有最左列就绝对不会用索引”。索引还占空间，插入／删除／更新相关列有维护成本，越多不一定越好。依据：<a href="https://dev.mysql.com/doc/refman/8.4/en/multiple-column-indexes.html">MySQL复合索引</a>。</p>
+<p><strong>例题：</strong> 复合索引<code>(a,b)</code>中查<code>a=2 AND b=7</code>，可先定位a=2的区间，再定位b=7。若只查b=7，满足条件的项可能分散在多个a区间，不能照搬同一条前缀定位路径。是否使用索引以及如何使用，还要看数据库优化器。</p>
+<p class="callout no-print"><strong>读完这个知识点，接着练：</strong> <a href="#q-5-20">第5-20题</a></p><aside class="related"><strong>把知识连起来</strong><p><a href="unit-6.html#lesson-5">B-tree与B+树的结构和图示 →</a><a href="engineering.html#lesson-10">缓存、限流与索引 →</a></p></aside><h2 id="lesson-5">5. 缓存：穿透、击穿与雪崩</h2>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>发生什么</th>
+<th>常见应对思路</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>穿透</td>
+<td>反复请求不存在的数据，每次都绕过缓存查后端</td>
+<td>短期缓存空结果，或用布隆过滤器挡住明确不存在的键</td>
+</tr>
+<tr>
+<td>击穿</td>
+<td>一个热点key失效，大量请求同时去重建</td>
+<td>合并同一key的重建请求、互斥重建，或按业务允许提供旧值</td>
+</tr>
+<tr>
+<td>雪崩</td>
+<td>大量key集中到期，或缓存服务整体不可用</td>
+<td>TTL随机抖动缓解集中到期；整体故障还需高可用、限流与降级</td>
+</tr>
+</tbody>
+</table>
+<p><strong>例题：</strong> 一万个key都在12:00到期，加随机TTL可分散失效时刻；若只有一个超级热点key失效，单靠TTL随机化不能消除同一时刻的并发重建。缓存三类问题不能用同一个措施包打天下。</p>
+<p class="callout no-print"><strong>读完这个知识点，接着练：</strong> <a href="#q-5-19">第5-19题</a></p><h2 id="lesson-6">6. 事务、幂等与消息重投</h2>
+<p><strong>事务</strong>把一组操作作为一个逻辑单元；数据库唯一约束可阻止重复业务键。<strong>幂等</strong>是同一请求重复执行，最终业务效果与执行一次一致；仅加一把可能过期的锁，不能保证所有重试与崩溃场景都正确。</p>
+<p>消息“至少一次投递”意味着可能重投，消费侧常需幂等。业务提交后、ACK前崩溃，消息可能再次到达；先ACK再处理，又可能在崩溃时丢掉业务处理。</p>
+<p><strong>例题：</strong> 同一订单消息重投两次，不能每次都直接余额减100。可用唯一的业务幂等键识别重复，并把“记录已处理”和“扣款”放入合适的原子事务中；重复时复用原处理结果。若扣款跨外部系统，还需对方的幂等接口或相应一致性设计，单个本地事务不能自动覆盖所有外部动作。</p>
+<p>本节协议与索引例题、练习均为新编教学题；引用标准和课程资料用于核对概念，不代表阿里官方题目或考频统计。</p>
+<p><strong>合上讲义自检：</strong> 为什么TCP需要应用分帧？HTTP/2解决了哪一层的队头阻塞？缓存三类问题如何区分？为什么消息可靠投递仍需要业务幂等？</p>
+<p class="callout no-print"><strong>读完这个知识点，接着练：</strong> <a href="#q-5-20">第5-20题</a></p><aside class="related"><strong>把知识连起来</strong><p><a href="engineering.html#lesson-7">重试与幂等 →</a></p></aside><section id="practice" class="questions-heading"><h2>配套练习 · 8题</h2><p>先答题，再看逐项解析；多选须全部选对。可筛选错题、记录把握程度并导出答题记录。</p><div class="toolbar"><label>练习范围 <select id="scope"><option value="all">本章全部题</option><option value="wrong">最近提交答错</option><option value="uncertain">犹豫／猜测</option><option value="unanswered">本轮尚未提交</option></select></label><button id="export" type="button">导出答题记录</button></div><div id="summary" class="summary" aria-live="polite"></div><p id="save-status" class="status"></p><noscript><p>脚本未启用，仍可展开每道题的答案与解析。</p></noscript><div id="questions"><section class="question" id="q-5-17" data-id="5-17"><div class="meta">第5-17题 · 多选 · 对应第1节</div><h3>关于线程、锁与死锁，哪些正确？</h3><fieldset class="options"><legend class="meta">选择所有正确答案，多选需全部选对</legend><label class="option"><input type="checkbox" name="q-5-17" value="A"><b>A</b><span>同进程线程共享许多资源，但各有自己的栈</span></label><label class="option"><input type="checkbox" name="q-5-17" value="B"><b>B</b><span>线程有独立栈，所以完全不共享内存</span></label><label class="option"><input type="checkbox" name="q-5-17" value="C"><b>C</b><span>统一加锁顺序可避免某类循环等待</span></label><label class="option"><input type="checkbox" name="q-5-17" value="D"><b>D</b><span>拿到互斥锁后等待对方释放资源，一定不会死锁</span></label></fieldset><label class="certainty">作答把握<select class="confidence" aria-label="第5-17题作答把握"><option value="">请选择</option><option value="sure">确定，能解释</option><option value="unsure">犹豫</option><option value="guess">猜测</option></select></label><div class="actions"><button type="button" class="primary" data-submit="5-17">提交并看逐项解析</button><button type="button" data-retry="5-17">收起解析，重做本题</button></div><p class="attempt-note"></p><div class="feedback" aria-live="polite"></div><details class="offline-answer"><summary>无脚本阅读：查看答案与解析</summary><strong>正确答案：AC</strong><ol class="explanation-list"><li>A正确：共享进程资源与独立执行上下文可以同时成立。</li><li>B错误：堆、全局数据等可共享。</li><li>C正确：例如所有线程统一先A后B，可破坏A／B的循环等待。</li><li>D错误：持锁等待可能挡住能满足条件的对方。</li></ol><a href="#lesson-1">回到本题对应讲解</a></details><div class="print-answer"><strong>正确答案：AC</strong><ol class="explanation-list"><li>A正确：共享进程资源与独立执行上下文可以同时成立。</li><li>B错误：堆、全局数据等可共享。</li><li>C正确：例如所有线程统一先A后B，可破坏A／B的循环等待。</li><li>D错误：持锁等待可能挡住能满足条件的对方。</li></ol><a href="#lesson-1">回到本题对应讲解</a></div></section><section class="question" id="q-5-18" data-id="5-18"><div class="meta">第5-18题 · 多选 · 对应第3节</div><h3>关于TCP与HTTP，哪些正确？</h3><fieldset class="options"><legend class="meta">选择所有正确答案，多选需全部选对</legend><label class="option"><input type="checkbox" name="q-5-18" value="A"><b>A</b><span>TCP提供字节流，应用需按协议分帧</span></label><label class="option"><input type="checkbox" name="q-5-18" value="B"><b>B</b><span>一次send严格对应一次recv</span></label><label class="option"><input type="checkbox" name="q-5-18" value="C"><b>C</b><span>HTTP/2支持多个流复用</span></label><label class="option"><input type="checkbox" name="q-5-18" value="D"><b>D</b><span>HTTP/2保证同一TCP连接丢包完全不会影响其他流</span></label></fieldset><label class="certainty">作答把握<select class="confidence" aria-label="第5-18题作答把握"><option value="">请选择</option><option value="sure">确定，能解释</option><option value="unsure">犹豫</option><option value="guess">猜测</option></select></label><div class="actions"><button type="button" class="primary" data-submit="5-18">提交并看逐项解析</button><button type="button" data-retry="5-18">收起解析，重做本题</button></div><p class="attempt-note"></p><div class="feedback" aria-live="polite"></div><details class="offline-answer"><summary>无脚本阅读：查看答案与解析</summary><strong>正确答案：AC</strong><ol class="explanation-list"><li>A正确：可靠有序不代表保存应用消息边界。</li><li>B错误：接收可拆分或合并发送的数据。</li><li>C正确：多个流可共享连接。</li><li>D错误：TCP层仍可能出现跨流的丢包影响。</li></ol><a href="#lesson-3-step-2">回到本题对应讲解</a></details><div class="print-answer"><strong>正确答案：AC</strong><ol class="explanation-list"><li>A正确：可靠有序不代表保存应用消息边界。</li><li>B错误：接收可拆分或合并发送的数据。</li><li>C正确：多个流可共享连接。</li><li>D错误：TCP层仍可能出现跨流的丢包影响。</li></ol><a href="#lesson-3-step-2">回到本题对应讲解</a></div></section><section class="question" id="q-5-19" data-id="5-19"><div class="meta">第5-19题 · 多选 · 对应第5节</div><h3>哪些缓存问题与描述对应正确？</h3><fieldset class="options"><legend class="meta">选择所有正确答案，多选需全部选对</legend><label class="option"><input type="checkbox" name="q-5-19" value="A"><b>A</b><span>反复请求根本不存在的数据：穿透</span></label><label class="option"><input type="checkbox" name="q-5-19" value="B"><b>B</b><span>单个热点key过期，大量请求同时重建：击穿</span></label><label class="option"><input type="checkbox" name="q-5-19" value="C"><b>C</b><span>大量key集中到期：雪崩</span></label><label class="option"><input type="checkbox" name="q-5-19" value="D"><b>D</b><span>给TTL加随机抖动必然解决所有穿透</span></label></fieldset><label class="certainty">作答把握<select class="confidence" aria-label="第5-19题作答把握"><option value="">请选择</option><option value="sure">确定，能解释</option><option value="unsure">犹豫</option><option value="guess">猜测</option></select></label><div class="actions"><button type="button" class="primary" data-submit="5-19">提交并看逐项解析</button><button type="button" data-retry="5-19">收起解析，重做本题</button></div><p class="attempt-note"></p><div class="feedback" aria-live="polite"></div><details class="offline-answer"><summary>无脚本阅读：查看答案与解析</summary><strong>正确答案：ABC</strong><ol class="explanation-list"><li>A正确：缓存未命中且后端也不存在，可能反复打后端。</li><li>B正确：集中压力来自单个热点重建。</li><li>C正确：大范围同时失效产生后端压力。</li><li>D错误：抖动主要缓解集中到期，不处理所有不存在数据的请求。</li></ol><a href="#lesson-5">回到本题对应讲解</a></details><div class="print-answer"><strong>正确答案：ABC</strong><ol class="explanation-list"><li>A正确：缓存未命中且后端也不存在，可能反复打后端。</li><li>B正确：集中压力来自单个热点重建。</li><li>C正确：大范围同时失效产生后端压力。</li><li>D错误：抖动主要缓解集中到期，不处理所有不存在数据的请求。</li></ol><a href="#lesson-5">回到本题对应讲解</a></div></section><section class="question" id="q-5-20" data-id="5-20"><div class="meta">第5-20题 · 多选 · 对应第6节</div><h3>关于数据库与消息重试，哪些正确？</h3><fieldset class="options"><legend class="meta">选择所有正确答案，多选需全部选对</legend><label class="option"><input type="checkbox" name="q-5-20" value="A"><b>A</b><span>索引可能加速查询，但增加空间与写入维护成本</span></label><label class="option"><input type="checkbox" name="q-5-20" value="B"><b>B</b><span>加一把30秒锁就保证120秒业务与任意崩溃窗口都幂等</span></label><label class="option"><input type="checkbox" name="q-5-20" value="C"><b>C</b><span>至少一次投递可能重复，消费端常需要幂等</span></label><label class="option"><input type="checkbox" name="q-5-20" value="D"><b>D</b><span>业务提交后ACK前崩溃，消息可能重投</span></label></fieldset><label class="certainty">作答把握<select class="confidence" aria-label="第5-20题作答把握"><option value="">请选择</option><option value="sure">确定，能解释</option><option value="unsure">犹豫</option><option value="guess">猜测</option></select></label><div class="actions"><button type="button" class="primary" data-submit="5-20">提交并看逐项解析</button><button type="button" data-retry="5-20">收起解析，重做本题</button></div><p class="attempt-note"></p><div class="feedback" aria-live="polite"></div><details class="offline-answer"><summary>无脚本阅读：查看答案与解析</summary><strong>正确答案：ACD</strong><ol class="explanation-list"><li>A正确：索引有收益也有维护代价，效果依赖查询和结构。</li><li>B错误：锁过期和崩溃窗口需持久状态、唯一约束等共同处理。</li><li>C正确：至少一次强调不止一次的可能性。</li><li>D正确：消息系统未收到确认，可能再次交付。</li></ol><a href="#lesson-6">回到本题对应讲解</a></details><div class="print-answer"><strong>正确答案：ACD</strong><ol class="explanation-list"><li>A正确：索引有收益也有维护代价，效果依赖查询和结构。</li><li>B错误：锁过期和崩溃窗口需持久状态、唯一约束等共同处理。</li><li>C正确：至少一次强调不止一次的可能性。</li><li>D正确：消息系统未收到确认，可能再次交付。</li></ol><a href="#lesson-6">回到本题对应讲解</a></div></section><section class="question" id="q-5-45" data-id="5-45"><div class="meta">第5-45题 · 单选 · 对应第2节</div><h3>【TCP确认与窗口】接收方按序收到seq=2000、载荷300字节的数据段，之前无缺口。本方向rwnd=6000字节、cwnd=4000字节，发送方已有1500字节在途。确认号与最多还能新增发送的字节数分别为？</h3><fieldset class="options"><legend class="meta">选择一个答案</legend><label class="option"><input type="radio" name="q-5-45" value="A"><b>A</b><span>2300、2500</span></label><label class="option"><input type="radio" name="q-5-45" value="B"><b>B</b><span>2299、2500</span></label><label class="option"><input type="radio" name="q-5-45" value="C"><b>C</b><span>2300、4000</span></label><label class="option"><input type="radio" name="q-5-45" value="D"><b>D</b><span>2300、8500</span></label></fieldset><label class="certainty">作答把握<select class="confidence" aria-label="第5-45题作答把握"><option value="">请选择</option><option value="sure">确定，能解释</option><option value="unsure">犹豫</option><option value="guess">猜测</option></select></label><div class="actions"><button type="button" class="primary" data-submit="5-45">提交并看逐项解析</button><button type="button" data-retry="5-45">收起解析，重做本题</button></div><p class="attempt-note"></p><div class="feedback" aria-live="polite"></div><details class="offline-answer"><summary>无脚本阅读：查看答案与解析</summary><strong>正确答案：A</strong><ol class="explanation-list"><li>A正确：2000～2299号字节已到，下一个是2300；可新增min(6000,4000)−1500=2500字节。</li><li>B错误：确认号表示下一个期望字节，不是最后一个已收到字节。</li><li>C错误：4000是未确认在途数据上限，还须减去已有的1500字节。</li><li>D错误：窗口取较小值，不能把两个窗口相加。</li></ol><a href="#lesson-2-step-1">回到本题对应讲解</a></details><div class="print-answer"><strong>正确答案：A</strong><ol class="explanation-list"><li>A正确：2000～2299号字节已到，下一个是2300；可新增min(6000,4000)−1500=2500字节。</li><li>B错误：确认号表示下一个期望字节，不是最后一个已收到字节。</li><li>C错误：4000是未确认在途数据上限，还须减去已有的1500字节。</li><li>D错误：窗口取较小值，不能把两个窗口相加。</li></ol><a href="#lesson-2-step-1">回到本题对应讲解</a></div></section><section class="question" id="q-5-46" data-id="5-46"><div class="meta">第5-46题 · 多选 · 对应第2节</div><h3>【握手与关闭】关于常规TCP连接，下列哪些判断正确？</h3><fieldset class="options"><legend class="meta">选择所有正确答案，多选需全部选对</legend><label class="option"><input type="checkbox" name="q-5-46" value="A"><b>A</b><span>不携带数据的SYN、FIN都各占用一个序号</span></label><label class="option"><input type="checkbox" name="q-5-46" value="B"><b>B</b><span>第三次握手若是无载荷纯ACK，也一定消耗一个序号</span></label><label class="option"><input type="checkbox" name="q-5-46" value="C"><b>C</b><span>对方确认了本端FIN后，本端仍可能接收对方的数据</span></label><label class="option"><input type="checkbox" name="q-5-46" value="D"><b>D</b><span>若题设MSL=40秒，2MSL等待时间为80秒</span></label></fieldset><label class="certainty">作答把握<select class="confidence" aria-label="第5-46题作答把握"><option value="">请选择</option><option value="sure">确定，能解释</option><option value="unsure">犹豫</option><option value="guess">猜测</option></select></label><div class="actions"><button type="button" class="primary" data-submit="5-46">提交并看逐项解析</button><button type="button" data-retry="5-46">收起解析，重做本题</button></div><p class="attempt-note"></p><div class="feedback" aria-live="polite"></div><details class="offline-answer"><summary>无脚本阅读：查看答案与解析</summary><strong>正确答案：ACD</strong><ol class="explanation-list"><li>A正确：SYN用于同步序号，FIN表示发送方向结束，两者各占一个序号。</li><li>B错误：无载荷纯ACK不消耗序号。</li><li>C正确：两个方向独立关闭；本端不再发送并不表示对方已经发完。</li><li>D正确：2MSL=2×40=80秒；具体MSL按题设，不当成所有系统统一的常数。</li></ol><a href="#lesson-2-step-2">回到本题对应讲解</a></details><div class="print-answer"><strong>正确答案：ACD</strong><ol class="explanation-list"><li>A正确：SYN用于同步序号，FIN表示发送方向结束，两者各占一个序号。</li><li>B错误：无载荷纯ACK不消耗序号。</li><li>C正确：两个方向独立关闭；本端不再发送并不表示对方已经发完。</li><li>D正确：2MSL=2×40=80秒；具体MSL按题设，不当成所有系统统一的常数。</li></ol><a href="#lesson-2-step-2">回到本题对应讲解</a></div></section><section class="question" id="q-5-47" data-id="5-47"><div class="meta">第5-47题 · 多选 · 对应第3节</div><h3>【HTTP语义与缓存】按HTTP标准语义，下列哪些说法正确？</h3><fieldset class="options"><legend class="meta">选择所有正确答案，多选需全部选对</legend><label class="option"><input type="checkbox" name="q-5-47" value="A"><b>A</b><span>no-cache表示响应绝对不能被保存</span></label><label class="option"><input type="checkbox" name="q-5-47" value="B"><b>B</b><span>DELETE第一次成功、第二次返回404，仍可能满足幂等语义</span></label><label class="option"><input type="checkbox" name="q-5-47" value="C"><b>C</b><span>收到304通常要结合本地已有内容使用，304不是完整新页面</span></label><label class="option"><input type="checkbox" name="q-5-47" value="D"><b>D</b><span>GET是安全方法，所以其传输内容必然已加密</span></label></fieldset><label class="certainty">作答把握<select class="confidence" aria-label="第5-47题作答把握"><option value="">请选择</option><option value="sure">确定，能解释</option><option value="unsure">犹豫</option><option value="guess">猜测</option></select></label><div class="actions"><button type="button" class="primary" data-submit="5-47">提交并看逐项解析</button><button type="button" data-retry="5-47">收起解析，重做本题</button></div><p class="attempt-note"></p><div class="feedback" aria-live="polite"></div><details class="offline-answer"><summary>无脚本阅读：查看答案与解析</summary><strong>正确答案：BC</strong><ol class="explanation-list"><li>A错误：no-cache允许保存，但再次使用前须成功验证；no-store才要求不存储。</li><li>B正确：幂等看重复请求的预期效果，返回状态码不必相同。</li><li>C正确：304表示条件验证下资源未修改，可复用已有缓存表示。</li><li>D错误：HTTP方法的安全语义不等于传输加密，后者要看TLS等安全传输机制。</li></ol><a href="#lesson-3-step-1">回到本题对应讲解</a></details><div class="print-answer"><strong>正确答案：BC</strong><ol class="explanation-list"><li>A错误：no-cache允许保存，但再次使用前须成功验证；no-store才要求不存储。</li><li>B正确：幂等看重复请求的预期效果，返回状态码不必相同。</li><li>C正确：304表示条件验证下资源未修改，可复用已有缓存表示。</li><li>D错误：HTTP方法的安全语义不等于传输加密，后者要看TLS等安全传输机制。</li></ol><a href="#lesson-3-step-1">回到本题对应讲解</a></div></section><section class="question" id="q-5-48" data-id="5-48"><div class="meta">第5-48题 · 多选 · 对应第3节</div><h3>【HTTP版本】关于HTTP/1.1、HTTP/2与HTTP/3，下列哪些判断正确？</h3><fieldset class="options"><legend class="meta">选择所有正确答案，多选需全部选对</legend><label class="option"><input type="checkbox" name="q-5-48" value="A"><b>A</b><span>HTTP/1.1长连接就等于HTTP/2的帧级多路复用</span></label><label class="option"><input type="checkbox" name="q-5-48" value="B"><b>B</b><span>HTTP/2多流共用TCP字节流，丢包仍可能影响多个流的交付</span></label><label class="option"><input type="checkbox" name="q-5-48" value="C"><b>C</b><span>HTTP/3采用QUIC，基于UDP但可提供可靠流传输</span></label><label class="option"><input type="checkbox" name="q-5-48" value="D"><b>D</b><span>HTTP/3保证任何丢包都不会造成任何等待</span></label></fieldset><label class="certainty">作答把握<select class="confidence" aria-label="第5-48题作答把握"><option value="">请选择</option><option value="sure">确定，能解释</option><option value="unsure">犹豫</option><option value="guess">猜测</option></select></label><div class="actions"><button type="button" class="primary" data-submit="5-48">提交并看逐项解析</button><button type="button" data-retry="5-48">收起解析，重做本题</button></div><p class="attempt-note"></p><div class="feedback" aria-live="polite"></div><details class="offline-answer"><summary>无脚本阅读：查看答案与解析</summary><strong>正确答案：BC</strong><ol class="explanation-list"><li>A错误：连接可复用与不同流的帧可交错传输是两件事；HTTP/1.1管线化仍要求响应有序返回。</li><li>B正确：HTTP/2改变HTTP层的传输组织，但TCP仍须按序向上交付字节。</li><li>C正确：UDP本身不保证可靠，不代表建立在其上的QUIC也不可靠。</li><li>D错误：某流丢失的数据仍可阻塞该流，连接级拥塞控制等也可能影响其他流。</li></ol><a href="#lesson-3-step-2">回到本题对应讲解</a></details><div class="print-answer"><strong>正确答案：BC</strong><ol class="explanation-list"><li>A错误：连接可复用与不同流的帧可交错传输是两件事；HTTP/1.1管线化仍要求响应有序返回。</li><li>B正确：HTTP/2改变HTTP层的传输组织，但TCP仍须按序向上交付字节。</li><li>C正确：UDP本身不保证可靠，不代表建立在其上的QUIC也不可靠。</li><li>D错误：某流丢失的数据仍可阻塞该流，连接级拥塞控制等也可能影响其他流。</li></ol><a href="#lesson-3-step-2">回到本题对应讲解</a></div></section></div></section><div class="unit-navigation"><a class="button" href="unit-6.html">← 上一章</a><a class="button primary" href="unit-8.html">下一章：强化学习与偏好优化算法 →</a></div></main></div><footer class="site-footer"><p>本专题由 pyq623 整理，合并至支线客栈时调整了站点导航，讲义与题目保持原样。旧网址的答题与口述记录不会自动转移，请在旧站导出留存。</p><p>开放学习笔记 · 268道新编教学题 · 非官方题库</p><a href="about.html">关于、来源与许可</a><a href="https://github.com/pyq623/ai-study-notes/issues">勘误与建议</a><a href="https://github.com/pyq623/ai-study-notes">查看源码</a><p>答题记录只保存在当前浏览器，不上传服务器；不同设备和域名之间不会自动同步。</p></footer></div><script id="quiz-data" type="application/json">{"unit": 7, "label": "单元7", "title": "计算机系统基础", "storage_key": "ai-study-notes-unit-7-v2", "legacy_storage_key": "ai-study-notes-unit-5-v2", "questions": [{"id": "5-17", "unit": 7, "lesson": 1, "stem": "关于线程、锁与死锁，哪些正确？", "options": ["同进程线程共享许多资源，但各有自己的栈", "线程有独立栈，所以完全不共享内存", "统一加锁顺序可避免某类循环等待", "拿到互斥锁后等待对方释放资源，一定不会死锁"], "answer": "AC", "explanations": ["A正确：共享进程资源与独立执行上下文可以同时成立。", "B错误：堆、全局数据等可共享。", "C正确：例如所有线程统一先A后B，可破坏A／B的循环等待。", "D错误：持锁等待可能挡住能满足条件的对方。"], "type": "多选", "review_anchor": "lesson-1", "answer_html": "\u003cstrong>正确答案：AC\u003c/strong>\u003col class=\"explanation-list\">\u003cli>A正确：共享进程资源与独立执行上下文可以同时成立。\u003c/li>\u003cli>B错误：堆、全局数据等可共享。\u003c/li>\u003cli>C正确：例如所有线程统一先A后B，可破坏A／B的循环等待。\u003c/li>\u003cli>D错误：持锁等待可能挡住能满足条件的对方。\u003c/li>\u003c/ol>\u003ca href=\"#lesson-1\">回到本题对应讲解\u003c/a>"}, {"id": "5-18", "unit": 7, "lesson": 3, "stem": "关于TCP与HTTP，哪些正确？", "options": ["TCP提供字节流，应用需按协议分帧", "一次send严格对应一次recv", "HTTP/2支持多个流复用", "HTTP/2保证同一TCP连接丢包完全不会影响其他流"], "answer": "AC", "explanations": ["A正确：可靠有序不代表保存应用消息边界。", "B错误：接收可拆分或合并发送的数据。", "C正确：多个流可共享连接。", "D错误：TCP层仍可能出现跨流的丢包影响。"], "type": "多选", "review_anchor": "lesson-3-step-2", "answer_html": "\u003cstrong>正确答案：AC\u003c/strong>\u003col class=\"explanation-list\">\u003cli>A正确：可靠有序不代表保存应用消息边界。\u003c/li>\u003cli>B错误：接收可拆分或合并发送的数据。\u003c/li>\u003cli>C正确：多个流可共享连接。\u003c/li>\u003cli>D错误：TCP层仍可能出现跨流的丢包影响。\u003c/li>\u003c/ol>\u003ca href=\"#lesson-3-step-2\">回到本题对应讲解\u003c/a>"}, {"id": "5-19", "unit": 7, "lesson": 5, "stem": "哪些缓存问题与描述对应正确？", "options": ["反复请求根本不存在的数据：穿透", "单个热点key过期，大量请求同时重建：击穿", "大量key集中到期：雪崩", "给TTL加随机抖动必然解决所有穿透"], "answer": "ABC", "explanations": ["A正确：缓存未命中且后端也不存在，可能反复打后端。", "B正确：集中压力来自单个热点重建。", "C正确：大范围同时失效产生后端压力。", "D错误：抖动主要缓解集中到期，不处理所有不存在数据的请求。"], "type": "多选", "review_anchor": "lesson-5", "answer_html": "\u003cstrong>正确答案：ABC\u003c/strong>\u003col class=\"explanation-list\">\u003cli>A正确：缓存未命中且后端也不存在，可能反复打后端。\u003c/li>\u003cli>B正确：集中压力来自单个热点重建。\u003c/li>\u003cli>C正确：大范围同时失效产生后端压力。\u003c/li>\u003cli>D错误：抖动主要缓解集中到期，不处理所有不存在数据的请求。\u003c/li>\u003c/ol>\u003ca href=\"#lesson-5\">回到本题对应讲解\u003c/a>"}, {"id": "5-20", "unit": 7, "lesson": 6, "stem": "关于数据库与消息重试，哪些正确？", "options": ["索引可能加速查询，但增加空间与写入维护成本", "加一把30秒锁就保证120秒业务与任意崩溃窗口都幂等", "至少一次投递可能重复，消费端常需要幂等", "业务提交后ACK前崩溃，消息可能重投"], "answer": "ACD", "explanations": ["A正确：索引有收益也有维护代价，效果依赖查询和结构。", "B错误：锁过期和崩溃窗口需持久状态、唯一约束等共同处理。", "C正确：至少一次强调不止一次的可能性。", "D正确：消息系统未收到确认，可能再次交付。"], "type": "多选", "review_anchor": "lesson-6", "answer_html": "\u003cstrong>正确答案：ACD\u003c/strong>\u003col class=\"explanation-list\">\u003cli>A正确：索引有收益也有维护代价，效果依赖查询和结构。\u003c/li>\u003cli>B错误：锁过期和崩溃窗口需持久状态、唯一约束等共同处理。\u003c/li>\u003cli>C正确：至少一次强调不止一次的可能性。\u003c/li>\u003cli>D正确：消息系统未收到确认，可能再次交付。\u003c/li>\u003c/ol>\u003ca href=\"#lesson-6\">回到本题对应讲解\u003c/a>"}, {"id": "5-45", "unit": 7, "lesson": 2, "stem": "【TCP确认与窗口】接收方按序收到seq=2000、载荷300字节的数据段，之前无缺口。本方向rwnd=6000字节、cwnd=4000字节，发送方已有1500字节在途。确认号与最多还能新增发送的字节数分别为？", "options": ["2300、2500", "2299、2500", "2300、4000", "2300、8500"], "answer": "A", "explanations": ["A正确：2000～2299号字节已到，下一个是2300；可新增min(6000,4000)−1500=2500字节。", "B错误：确认号表示下一个期望字节，不是最后一个已收到字节。", "C错误：4000是未确认在途数据上限，还须减去已有的1500字节。", "D错误：窗口取较小值，不能把两个窗口相加。"], "type": "单选", "review_anchor": "lesson-2-step-1", "answer_html": "\u003cstrong>正确答案：A\u003c/strong>\u003col class=\"explanation-list\">\u003cli>A正确：2000～2299号字节已到，下一个是2300；可新增min(6000,4000)−1500=2500字节。\u003c/li>\u003cli>B错误：确认号表示下一个期望字节，不是最后一个已收到字节。\u003c/li>\u003cli>C错误：4000是未确认在途数据上限，还须减去已有的1500字节。\u003c/li>\u003cli>D错误：窗口取较小值，不能把两个窗口相加。\u003c/li>\u003c/ol>\u003ca href=\"#lesson-2-step-1\">回到本题对应讲解\u003c/a>"}, {"id": "5-46", "unit": 7, "lesson": 2, "stem": "【握手与关闭】关于常规TCP连接，下列哪些判断正确？", "options": ["不携带数据的SYN、FIN都各占用一个序号", "第三次握手若是无载荷纯ACK，也一定消耗一个序号", "对方确认了本端FIN后，本端仍可能接收对方的数据", "若题设MSL=40秒，2MSL等待时间为80秒"], "answer": "ACD", "explanations": ["A正确：SYN用于同步序号，FIN表示发送方向结束，两者各占一个序号。", "B错误：无载荷纯ACK不消耗序号。", "C正确：两个方向独立关闭；本端不再发送并不表示对方已经发完。", "D正确：2MSL=2×40=80秒；具体MSL按题设，不当成所有系统统一的常数。"], "type": "多选", "review_anchor": "lesson-2-step-2", "answer_html": "\u003cstrong>正确答案：ACD\u003c/strong>\u003col class=\"explanation-list\">\u003cli>A正确：SYN用于同步序号，FIN表示发送方向结束，两者各占一个序号。\u003c/li>\u003cli>B错误：无载荷纯ACK不消耗序号。\u003c/li>\u003cli>C正确：两个方向独立关闭；本端不再发送并不表示对方已经发完。\u003c/li>\u003cli>D正确：2MSL=2×40=80秒；具体MSL按题设，不当成所有系统统一的常数。\u003c/li>\u003c/ol>\u003ca href=\"#lesson-2-step-2\">回到本题对应讲解\u003c/a>"}, {"id": "5-47", "unit": 7, "lesson": 3, "stem": "【HTTP语义与缓存】按HTTP标准语义，下列哪些说法正确？", "options": ["no-cache表示响应绝对不能被保存", "DELETE第一次成功、第二次返回404，仍可能满足幂等语义", "收到304通常要结合本地已有内容使用，304不是完整新页面", "GET是安全方法，所以其传输内容必然已加密"], "answer": "BC", "explanations": ["A错误：no-cache允许保存，但再次使用前须成功验证；no-store才要求不存储。", "B正确：幂等看重复请求的预期效果，返回状态码不必相同。", "C正确：304表示条件验证下资源未修改，可复用已有缓存表示。", "D错误：HTTP方法的安全语义不等于传输加密，后者要看TLS等安全传输机制。"], "type": "多选", "review_anchor": "lesson-3-step-1", "answer_html": "\u003cstrong>正确答案：BC\u003c/strong>\u003col class=\"explanation-list\">\u003cli>A错误：no-cache允许保存，但再次使用前须成功验证；no-store才要求不存储。\u003c/li>\u003cli>B正确：幂等看重复请求的预期效果，返回状态码不必相同。\u003c/li>\u003cli>C正确：304表示条件验证下资源未修改，可复用已有缓存表示。\u003c/li>\u003cli>D错误：HTTP方法的安全语义不等于传输加密，后者要看TLS等安全传输机制。\u003c/li>\u003c/ol>\u003ca href=\"#lesson-3-step-1\">回到本题对应讲解\u003c/a>"}, {"id": "5-48", "unit": 7, "lesson": 3, "stem": "【HTTP版本】关于HTTP/1.1、HTTP/2与HTTP/3，下列哪些判断正确？", "options": ["HTTP/1.1长连接就等于HTTP/2的帧级多路复用", "HTTP/2多流共用TCP字节流，丢包仍可能影响多个流的交付", "HTTP/3采用QUIC，基于UDP但可提供可靠流传输", "HTTP/3保证任何丢包都不会造成任何等待"], "answer": "BC", "explanations": ["A错误：连接可复用与不同流的帧可交错传输是两件事；HTTP/1.1管线化仍要求响应有序返回。", "B正确：HTTP/2改变HTTP层的传输组织，但TCP仍须按序向上交付字节。", "C正确：UDP本身不保证可靠，不代表建立在其上的QUIC也不可靠。", "D错误：某流丢失的数据仍可阻塞该流，连接级拥塞控制等也可能影响其他流。"], "type": "多选", "review_anchor": "lesson-3-step-2", "answer_html": "\u003cstrong>正确答案：BC\u003c/strong>\u003col class=\"explanation-list\">\u003cli>A错误：连接可复用与不同流的帧可交错传输是两件事；HTTP/1.1管线化仍要求响应有序返回。\u003c/li>\u003cli>B正确：HTTP/2改变HTTP层的传输组织，但TCP仍须按序向上交付字节。\u003c/li>\u003cli>C正确：UDP本身不保证可靠，不代表建立在其上的QUIC也不可靠。\u003c/li>\u003cli>D错误：某流丢失的数据仍可阻塞该流，连接级拥塞控制等也可能影响其他流。\u003c/li>\u003c/ol>\u003ca href=\"#lesson-3-step-2\">回到本题对应讲解\u003c/a>"}]}</script><script src="assets/records.js" defer></script><script src="assets/quiz.js" defer></script><script src="assets/site.js" defer></script></body></html>

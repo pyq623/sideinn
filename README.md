@@ -10,6 +10,8 @@ GitHub Pages 入口：https://pyq623.github.io/sideinn/ （自动跳转到正式
 
 - RSI 递归自我改进：13 章、18 个公式。
 - vLLM、SGLang 与推理基础设施：18 章、35 个公式。
+- AI 基础与工程笔记：8 个主题单元和工程专题，208 道交互练习。
+- Agentic RL 面试笔记：5 个单元、60 道练习、20 道口述追问，附面经整理和打印总册。
 - 笔记分类、搜索、章节导航、公式和图解、Markdown 下载、打印。
 - 编辑草稿只保存在读者当前浏览器中，不会修改公开网站。
 
@@ -18,6 +20,18 @@ GitHub Pages 入口：https://pyq623.github.io/sideinn/ （自动跳转到正式
 ## 更新与发布
 
 直接编辑 `notes.md`、`inference-infra.md` 和相应资源。公式变更时，同步更新 `assets/formulas.json` 或 `assets/infra-formulas.json`；笔记目录位于 `assets/notebook.json`。
+
+### 基础与面试资料
+
+`study/` 是 [ai-study-notes](https://github.com/pyq623/ai-study-notes) 的公开构建产物，原仓库继续作为这些讲义与题目的编辑来源。导入版本记录在 `study/import-source.json`。本站调整了标题、导航和迁移说明，保留原题目、题号、公式、图示、判分、口述笔记和导出功能。
+
+更新时，先在原仓库按照其 README 安装依赖，运行 `npm run build && npm test`，再在本仓库运行：
+
+```sh
+python3 scripts/import-study.py /absolute/path/to/ai-study-notes
+```
+
+核对首页 `assets/notebook.json` 的介绍与题数后提交发布。新页面入口为 `/study/study.html` 和 `/study/interview.html`；原 GitHub Pages 网址仍保留。浏览器按域名隔离存储，旧站答题记录和口述笔记不会自动转移；请在旧站导出备份，当前练习不支持导入。
 
 GitHub Pages 从 `main` 分支的根目录发布。`.nojekyll` 关闭 Jekyll 处理，不需要安装依赖或执行构建命令。
 
@@ -34,3 +48,5 @@ python3 -m http.server 8000 --bind 127.0.0.1
 ## 第三方资源
 
 Marked 和 MathJax 的许可随文件保存在 `assets/vendor/`。引用的 SGLang 官方图出处见 `assets/infra-diagrams/SOURCES.md`；论文和资料来源保留在各篇笔记中。第三方资源遵循各自许可，其他内容未在此授予额外许可。
+
+`study/` 导入资料由 pyq623 整理，其代码与样式采用 MIT，原创内容采用 CC BY 4.0；具体范围见该目录的 `LICENSE`、`LICENSE-CONTENT.md` 和 `THIRD_PARTY_NOTICES.md`。KaTeX 许可保留在 `study/assets/katex/LICENSE`。这些许可不扩展到本站其他内容。

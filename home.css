@@ -16,3 +16,13 @@
 .note-card[data-note-id="inference-infra"] .cover-label,.note-card[data-note-id="inference-infra"] .cover-foot{color:#806337}
 
 .inn-vignette{width:100%;height:auto;display:block;margin:8px 0 0}.sign-caption{font-size:16px;letter-spacing:1px;color:var(--teal);margin:7px 0 10px}.inn-sign{transform:rotate(1deg);padding-top:19px}.sign-bottom{font-size:10px}
+
+/* Collection covers keep longer labels readable at every card width. */
+.note-card[data-note-id="inference-infra"] .note-cover strong,
+.note-card[data-note-id="ai-study"] .note-cover strong,
+.note-card[data-note-id="agentic-rl-interview"] .note-cover strong{font-size:34px;letter-spacing:-1px}
+.note-card[data-note-id="ai-study"] .note-cover{background:#edf2f7;border-color:#cbd8e5;border-left-color:#6786a5;color:#3f5c78}
+.note-card[data-note-id="ai-study"] .note-cover:after{border-color:#bdcedf;box-shadow:0 0 0 17px #edf2f7,0 0 0 18px #cbd8e5}
+.note-card[data-note-id="agentic-rl-interview"] .note-cover{background:#f3edf1;border-color:#ddcdd8;border-left-color:#9c768f;color:#75546a}
+.note-card[data-note-id="agentic-rl-interview"] .note-cover:after{border-color:#d3bccb;box-shadow:0 0 0 17px #f3edf1,0 0 0 18px #ddcdd8}
+@media(max-width:760px){.note-card[data-note-id="inference-infra"] .note-cover strong,.note-card[data-note-id="ai-study"] .note-cover strong,.note-card[data-note-id="agentic-rl-interview"] .note-cover strong{font-size:22px}}

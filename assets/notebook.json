@@ -36,5 +36,52 @@
     "sections": 72,
     "formulas": 35,
     "references": 52
+  },
+  {
+    "id": "ai-study",
+    "coverLabel": "STUDY",
+    "href": "./study/study.html",
+    "title": "AI 基础与工程笔记",
+    "english": "Foundations, Engineering & Written Practice",
+    "category": "基础与笔试",
+    "tags": [
+      "机器学习",
+      "线性代数",
+      "概率统计",
+      "神经网络",
+      "AI Infra",
+      "数据结构",
+      "计算机系统",
+      "强化学习",
+      "Agent工程"
+    ],
+    "summary": "按主题复习数学、机器学习与计算机基础，再进入强化学习和 Agent 工程。讲解配图、手算与逐项解析，支持做题、筛选错题和导出记录。",
+    "updated": "2026-10-19",
+    "details": "8 个基础单元 + 工程专题 · 208 道练习",
+    "coverFooter": "STUDY & PRACTICE",
+    "readLabel": "开始学习"
+  },
+  {
+    "id": "agentic-rl-interview",
+    "coverLabel": "PREP",
+    "href": "./study/interview.html",
+    "title": "Agentic RL 面试笔记",
+    "english": "Agentic RL Interviews & Project Discussion",
+    "category": "面试与项目表达",
+    "tags": [
+      "面试",
+      "Agentic RL",
+      "训练沙箱",
+      "轨迹数据",
+      "训练技巧",
+      "异步系统",
+      "项目表达",
+      "口述追问"
+    ],
+    "summary": "围绕 Agentic RL 与后训练工程组织 5 个单元，每节讲义后紧接练习和口述追问。配套公开面经整理、技术来源和可打印的复习总册。",
+    "updated": "2026-10-19",
+    "details": "5 个单元 · 60 道练习 · 20 道口述追问",
+    "coverFooter": "INTERVIEW NOTES",
+    "readLabel": "开始复习"
   }
 ]
