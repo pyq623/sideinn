@@ -6,6 +6,8 @@
 
 GitHub Pages 入口：https://pyq623.github.io/sideinn/ （自动跳转到正式网址）
 
+维护接手请先阅读 **[HANDOFF.md](HANDOFF.md)**：包含两套源码的位置、编辑与导入流程、预览验证、发布回退和域名配置。Agent 的简短入口为 [AGENTS.md](AGENTS.md)。
+
 ## 内容与功能
 
 - RSI 递归自我改进：13 章、18 个公式。
