@@ -2,7 +2,9 @@
 
 收留好奇心，记录未完成的探索。关于强化学习、智能体与推理系统的中文笔记。
 
-免费测试网址：https://pyq623.github.io/sideinn/
+正式网址：https://sideinn.ink/
+
+GitHub Pages 入口：https://pyq623.github.io/sideinn/ （自动跳转到正式网址）
 
 ## 内容与功能
 
@@ -27,7 +29,7 @@ python3 -m http.server 8000 --bind 127.0.0.1
 
 打开 http://127.0.0.1:8000/ 。笔记阅读页位于 `notes/`。站内使用相对路径，兼容 GitHub 项目网址和后续自定义域名。
 
-当前尚未绑定 `sideinn.ink`。先验证目标读者的网络能打开免费测试网址，再在 GitHub Pages 设置中绑定域名并更新 DNS。不要在尚未准备好时添加 `CNAME`，以免测试网址提前跳转到原站。
+`CNAME` 声明自定义域名 `sideinn.ink`。阿里云 DNS 的 `@` A 记录指向 GitHub Pages 的四个地址：`185.199.108.153`、`185.199.109.153`、`185.199.110.153`、`185.199.111.153`。HTTPS 证书由 GitHub Pages 免费签发和维护。
 
 ## 第三方资源
 
