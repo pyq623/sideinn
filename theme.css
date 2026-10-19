@@ -1,0 +1,17 @@
+/* Side Inn — paper white, forest ink, amber accents. */
+:root {
+ --canvas: #fffdf9;
+ --paper: #ffffff;
+ --ink: #263c35;
+ --teal: #245b4d;
+ --muted: #62746b;
+ --line: #e2e8e2;
+ --gold: #c18b3b;
+ --gold-ink: #82602d;
+ --surface-soft: #f5f8f4;
+ --surface-green: #eaf3ec;
+ --surface-warm: #fbf3e3;
+ --border-strong: #b8cbbd;
+ color-scheme: light;
+}
+::selection { background: #dcecdf; color: #183c2e; }

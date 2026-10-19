@@ -1,0 +1,212 @@
+[
+  {
+    "number": 1,
+    "title": "自回归分解",
+    "wide": "p_\\theta(y\\mid x)=\\prod_{j=1}^{O}p_\\theta(y_j\\mid x,y_{<j})",
+    "narrow": "p_\\theta(y\\mid x)=\\prod_{j=1}^{O}p_\\theta(y_j\\mid x,y_{<j})"
+  },
+  {
+    "number": 2,
+    "title": "注意力投影",
+    "wide": "Q=XW_Q,\\qquad K_{\\mathrm{mat}}=XW_K,\\qquad V=XW_V",
+    "narrow": "\\begin{aligned}Q&=XW_Q,\\\\K_{\\mathrm{mat}}&=XW_K,\\\\V&=XW_V\\end{aligned}"
+  },
+  {
+    "number": 3,
+    "title": "缩放点积注意力",
+    "wide": "A=\\operatorname{softmax}\\!\\left(\\frac{QK_{\\mathrm{mat}}^{\\mathsf T}}{\\sqrt{d_h}}+U\\right)V",
+    "narrow": "\\begin{aligned}Z&=QK_{\\mathrm{mat}}^{\\mathsf T}/\\sqrt{d_h}+U,\\\\A&=\\operatorname{softmax}(Z)V\\end{aligned}"
+  },
+  {
+    "number": 4,
+    "title": "门控前馈网络",
+    "wide": "\\operatorname{FFN}(X)=\\left[\\operatorname{SiLU}(XW_1)\\odot(XW_3)\\right]W_2",
+    "narrow": "\\begin{aligned}G&=\\operatorname{SiLU}(XW_1)\\odot(XW_3),\\\\\\operatorname{FFN}(X)&=GW_2\\end{aligned}"
+  },
+  {
+    "number": 5,
+    "title": "延迟指标",
+    "wide": "\\begin{aligned}\n\\operatorname{TTFT}&=t_1-t_{\\mathrm{arr}},\\\\\n\\operatorname{TPOT}&=\\frac{t_O-t_1}{O-1},\\\\\nT_{\\mathrm{E2E}}&=\\operatorname{TTFT}+(O-1)\\operatorname{TPOT}\n\\end{aligned}",
+    "narrow": "\\begin{aligned}\n\\operatorname{TTFT}&=t_1-t_{\\mathrm{arr}},\\\\\n\\operatorname{TPOT}&=\\frac{t_O-t_1}{O-1},\\\\\nT_{\\mathrm{E2E}}&=\\operatorname{TTFT}+(O-1)\\operatorname{TPOT}\n\\end{aligned}"
+  },
+  {
+    "number": 6,
+    "title": "吞吐与满足约束的请求吞吐",
+    "wide": "\\begin{aligned}\nR_{\\mathrm{out}}&=\\frac{\\sum_{i\\in\\mathcal C}O_i}{T_{\\mathrm{wall}}},\\\\\nG_{\\mathrm{req}}&=\\frac{\\sum_{i\\in\\mathcal C}\\mathbf 1[\\text{请求 }i\\text{ 满足 SLO}]}{T_{\\mathrm{wall}}}\n\\end{aligned}",
+    "narrow": "\\begin{aligned}R_{\\mathrm{out}}&=\\frac{\\sum_{i\\in\\mathcal C}O_i}{T_{\\mathrm{wall}}},\\\\G_{\\mathrm{req}}&=\\frac{\\sum_{i\\in\\mathcal C}\\mathbf 1[\\mathrm{SLO}_i]}{T_{\\mathrm{wall}}}\\end{aligned}"
+  },
+  {
+    "number": 7,
+    "title": "Little 定律",
+    "wide": "\\bar n=\\lambda\\bar T",
+    "narrow": "\\bar n=\\lambda\\bar T"
+  },
+  {
+    "number": 8,
+    "title": "按合格输出摊销 GPU 成本",
+    "wide": "c_{\\mathrm{good}}=\\frac{r_{\\mathrm{GPU}}\\,n_{\\mathrm{GPU}}\\,T_{\\mathrm{wall}}}{N_{\\mathrm{good\\ token}}}",
+    "narrow": "c_{\\mathrm{good}}=\\frac{r_{\\mathrm{GPU}}\\,n_{\\mathrm{GPU}}\\,T_{\\mathrm{wall}}}{N_{\\mathrm{good\\ token}}}"
+  },
+  {
+    "number": 9,
+    "title": "单卡显存预算",
+    "wide": "M_w+M_{\\mathrm{KV}}+M_{\\mathrm{act}}+M_{\\mathrm{work}}+M_{\\mathrm{graph}}+M_{\\mathrm{runtime}}\\leq M_{\\mathrm{budget}}",
+    "narrow": "\\begin{aligned}M_{\\mathrm{total}}={}&M_w+M_{\\mathrm{KV}}+M_{\\mathrm{act}}\\\\&+M_{\\mathrm{work}}+M_{\\mathrm{graph}}+M_{\\mathrm{runtime}},\\\\M_{\\mathrm{total}}\\leq{}&M_{\\mathrm{budget}}\\end{aligned}"
+  },
+  {
+    "number": 10,
+    "title": "稠密权重存储估算",
+    "wide": "M_w\\approx Nb_w",
+    "narrow": "M_w\\approx Nb_w"
+  },
+  {
+    "number": 11,
+    "title": "KV 存储量",
+    "wide": "M_{\\mathrm{KV}}=2LH_{\\mathrm{kv}}d_hb_{\\mathrm{kv}}\\sum_{i=1}^{B}S_i",
+    "narrow": "M_{\\mathrm{KV}}=2LH_{\\mathrm{kv}}d_hb_{\\mathrm{kv}}\\sum_{i=1}^{B}S_i"
+  },
+  {
+    "number": 12,
+    "title": "每个缓存 token 的字节开销",
+    "wide": "\\begin{aligned}\nm_{\\mathrm{token}}&=2LH_{\\mathrm{kv}}d_hb_{\\mathrm{kv}}\\\\\n&=2\\times32\\times8\\times128\\times2\\\\\n&=131072\\ \\mathrm{byte}=128\\ \\mathrm{KiB}\n\\end{aligned}",
+    "narrow": "\\begin{aligned}\nm_{\\mathrm{token}}&=2LH_{\\mathrm{kv}}d_hb_{\\mathrm{kv}}\\\\\n&=2\\times32\\times8\\times128\\times2\\\\\n&=131072\\ \\mathrm{byte}=128\\ \\mathrm{KiB}\n\\end{aligned}"
+  },
+  {
+    "number": 13,
+    "title": "MLA 的一种缓存表示估算",
+    "wide": "M_{\\mathrm{MLA}}\\approx L(d_c+d_r)b_{\\mathrm{kv}}\\sum_{i=1}^{B}S_i",
+    "narrow": "M_{\\mathrm{MLA}}\\approx L(d_c+d_r)b_{\\mathrm{kv}}\\sum_{i=1}^{B}S_i"
+  },
+  {
+    "number": 14,
+    "title": "Roofline 时间下界",
+    "wide": "I=\\frac{F}{D},\\qquad t\\geq\\max\\!\\left(\\frac{F}{\\Phi},\\frac{D}{\\beta_{\\mathrm{HBM}}}\\right)",
+    "narrow": "\\begin{aligned}I&=F/D,\\\\t&\\geq\\max\\!\\left(F/\\Phi,D/\\beta_{\\mathrm{HBM}}\\right)\\end{aligned}"
+  },
+  {
+    "number": 15,
+    "title": "Prefill 的主要计算规模",
+    "wide": "F_{\\mathrm{prefill}}\\approx2NP,\\qquad F_{\\mathrm{attn,prefill}}=\\Theta(LH_qd_hP^2)",
+    "narrow": "\\begin{aligned}F_{\\mathrm{prefill}}&\\approx2NP,\\\\F_{\\mathrm{attn,prefill}}&=\\Theta(LH_qd_hP^2)\\end{aligned}"
+  },
+  {
+    "number": 16,
+    "title": "一步 Decode 的计算与主要读取量",
+    "wide": "\\begin{aligned}\nF_{\\mathrm{decode}}&\\approx2BN+4LH_qd_h\\sum_iS_i,\\\\\nD_{\\mathrm{decode}}&\\approx Nb_w+2LH_{\\mathrm{kv}}d_hb_{\\mathrm{kv}}\\sum_iS_i\n\\end{aligned}",
+    "narrow": "\\begin{aligned}F_{\\mathrm{decode}}&\\approx2BN\\\\&\\quad+4LH_qd_h\\sum_iS_i,\\\\D_{\\mathrm{decode}}&\\approx Nb_w\\\\&\\quad+2LH_{\\mathrm{kv}}d_hb_{\\mathrm{kv}}\\sum_iS_i\\end{aligned}"
+  },
+  {
+    "number": 17,
+    "title": "块分配与尾部浪费",
+    "wide": "n_i=\\left\\lceil\\frac{S_i}{C}\\right\\rceil,\\qquad w_i=n_iC-S_i,\\qquad 0\\leq w_i<C",
+    "narrow": "\\begin{aligned}n_i&=\\left\\lceil S_i/C\\right\\rceil,\\\\w_i&=n_iC-S_i,\\\\0&\\leq w_i<C\\end{aligned}"
+  },
+  {
+    "number": 18,
+    "title": "调度必须同时满足 token 与缓存预算",
+    "wide": "\\sum_i q_i\\leq\\tau,\\qquad n_{\\mathrm{physical,after}}\\leq n_{\\mathrm{capacity}}",
+    "narrow": "\\begin{aligned}\\sum_iq_i&\\leq\\tau,\\\\n_{\\mathrm{physical,after}}&\\leq n_{\\mathrm{capacity}}\\end{aligned}"
+  },
+  {
+    "number": 19,
+    "title": "按 token 统计的前缀命中率",
+    "wide": "h_{\\mathrm{token}}=\\frac{\\sum_i P_{i,\\mathrm{cached}}}{\\sum_iP_i}",
+    "narrow": "h_{\\mathrm{token}}=\\frac{\\sum_i P_{i,\\mathrm{cached}}}{\\sum_iP_i}"
+  },
+  {
+    "number": 20,
+    "title": "共享前缀的理想 KV 节省量",
+    "wide": "\\Delta M=(B-1)P_{\\mathrm{shared}}m_{\\mathrm{token}}",
+    "narrow": "\\Delta M=(B-1)P_{\\mathrm{shared}}m_{\\mathrm{token}}"
+  },
+  {
+    "number": 21,
+    "title": "一个 Query 的在线 Softmax 合并",
+    "wide": "\\begin{aligned}\nm'&=\\max(m,\\max_j z_j),\\\\\n\\ell'&=e^{m-m'}\\ell+\\sum_j e^{z_j-m'},\\\\\nu'&=e^{m-m'}u+\\sum_j e^{z_j-m'}v_j,\\\\\na&=u'/\\ell'\n\\end{aligned}",
+    "narrow": "\\begin{aligned}\nm'&=\\max(m,\\max_j z_j),\\\\\n\\ell'&=e^{m-m'}\\ell+\\sum_j e^{z_j-m'},\\\\\nu'&=e^{m-m'}u+\\sum_j e^{z_j-m'}v_j,\\\\\na&=u'/\\ell'\n\\end{aligned}"
+  },
+  {
+    "number": 22,
+    "title": "理想流水的稳态步时",
+    "wide": "t_{\\mathrm{serial}}=t_{\\mathrm{CPU}}+t_{\\mathrm{GPU}},\\qquad t_{\\mathrm{overlap}}\\approx\\max(t_{\\mathrm{CPU}},t_{\\mathrm{GPU}})",
+    "narrow": "\\begin{aligned}t_{\\mathrm{serial}}&=t_{\\mathrm{CPU}}+t_{\\mathrm{GPU}},\\\\t_{\\mathrm{overlap}}&\\approx\\max(t_{\\mathrm{CPU}},t_{\\mathrm{GPU}})\\end{aligned}"
+  },
+  {
+    "number": 23,
+    "title": "量化与重建",
+    "wide": "\\begin{aligned}\nQ_{\\max}&=2^{n_b-1}-1,\\\\\nx_{\\mathrm{int}}&=\\operatorname{clip}\\!\\left(\\operatorname{round}(x/s),-Q_{\\max},Q_{\\max}\\right),\\\\\n\\hat x&=s\\,x_{\\mathrm{int}}\n\\end{aligned}",
+    "narrow": "\\begin{aligned}Q_{\\max}&=2^{n_b-1}-1,\\\\r_x&=\\operatorname{round}(x/s),\\\\x_{\\mathrm{int}}&=\\operatorname{clip}(r_x,-Q_{\\max},Q_{\\max}),\\\\\\hat x&=s\\,x_{\\mathrm{int}}\\end{aligned}"
+  },
+  {
+    "number": 24,
+    "title": "SmoothQuant 的等价缩放",
+    "wide": "XW=(XD_s^{-1})(D_sW)",
+    "narrow": "XW=(XD_s^{-1})(D_sW)"
+  },
+  {
+    "number": 25,
+    "title": "草稿 token 的接受概率",
+    "wide": "a(v\\mid h)=\\min\\!\\left(1,\\frac{p(v\\mid h)}{q(v\\mid h)}\\right)",
+    "narrow": "a(v\\mid h)=\\min\\!\\left(1,\\frac{p(v\\mid h)}{q(v\\mid h)}\\right)"
+  },
+  {
+    "number": 26,
+    "title": "首次拒绝时的修正分布",
+    "wide": "r(v\\mid h)=\\frac{[p(v\\mid h)-q(v\\mid h)]_+}{\\sum_u[p(u\\mid h)-q(u\\mid h)]_+}",
+    "narrow": "r(v\\mid h)=\\frac{[p(v\\mid h)-q(v\\mid h)]_+}{\\sum_u[p(u\\mid h)-q(u\\mid h)]_+}"
+  },
+  {
+    "number": 27,
+    "title": "理想接受产出与速度估算",
+    "wide": "\\begin{aligned}\n\\mathbb E[m]&=\\sum_{j=0}^{K}\\alpha^j=\\frac{1-\\alpha^{K+1}}{1-\\alpha},\\\\\nS_{\\mathrm{spec}}&\\approx\\frac{\\mathbb E[m]t_{\\mathrm{base}}}{t_{\\mathrm{draft}}+t_{\\mathrm{verify}}+t_{\\mathrm{extra}}}\n\\end{aligned}",
+    "narrow": "\\begin{aligned}\\mathbb E[m]&=\\sum_{j=0}^{K}\\alpha^j\\\\&=\\frac{1-\\alpha^{K+1}}{1-\\alpha},\\\\S_{\\mathrm{spec}}&\\approx\\frac{\\mathbb E[m]t_{\\mathrm{base}}}{t_{\\mathrm{draft}}+t_{\\mathrm{verify}}+t_{\\mathrm{extra}}}\\end{aligned}"
+  },
+  {
+    "number": 28,
+    "title": "约束后的下一 token 分布",
+    "wide": "p_{\\mathcal A}(v)=\\frac{\\mathbf 1[v\\in\\mathcal A]e^{z_v}}{\\sum_{u\\in\\mathcal A}e^{z_u}}",
+    "narrow": "p_{\\mathcal A}(v)=\\frac{\\mathbf 1[v\\in\\mathcal A]e^{z_v}}{\\sum_{u\\in\\mathcal A}e^{z_u}}"
+  },
+  {
+    "number": 29,
+    "title": "理想 Ring AllReduce 时间模型",
+    "wide": "t_{\\mathrm{AR}}\\approx2(g-1)\\ell_{\\mathrm{net}}+\\frac{2(g-1)}{g}\\frac{D_{\\mathrm{comm}}}{\\beta_{\\mathrm{net}}}",
+    "narrow": "\\begin{aligned}t_{\\mathrm{AR}}\\approx{}&2(g-1)\\ell_{\\mathrm{net}}\\\\&+\\frac{2(g-1)}{g}\\frac{D_{\\mathrm{comm}}}{\\beta_{\\mathrm{net}}}\\end{aligned}"
+  },
+  {
+    "number": 30,
+    "title": "TP 的简化单步时间模型",
+    "wide": "t_{\\mathrm{TP}}\\approx\\frac{t_{\\mathrm{compute,1}}}{g}+n_{\\mathrm{coll}}t_{\\mathrm{coll}}+t_{\\mathrm{other}}",
+    "narrow": "\\begin{aligned}t_{\\mathrm{TP}}\\approx{}&t_{\\mathrm{compute,1}}/g\\\\&+n_{\\mathrm{coll}}t_{\\mathrm{coll}}+t_{\\mathrm{other}}\\end{aligned}"
+  },
+  {
+    "number": 31,
+    "title": "MoE 的 Top-k 专家聚合",
+    "wide": "y=\\sum_{e\\in\\operatorname{TopK}(r(x))}\\pi_e(x)\\operatorname{FFN}_e(x)",
+    "narrow": "y=\\sum_{e\\in\\operatorname{TopK}(r(x))}\\pi_e(x)\\operatorname{FFN}_e(x)"
+  },
+  {
+    "number": 32,
+    "title": "PD 交接代价与收益条件",
+    "wide": "\\begin{aligned}\nt_{\\mathrm{handoff}}&\\approx\\frac{D_{\\mathrm{KV}}}{\\beta_{\\mathrm{net}}}+t_{\\mathrm{setup}}+t_{\\mathrm{format}},\\\\\n\\Delta t_{\\mathrm{interference}}&>t_{\\mathrm{handoff}}+\\Delta t_{\\mathrm{queue}}\n\\end{aligned}",
+    "narrow": "\\begin{aligned}t_{\\mathrm{handoff}}\\approx{}&D_{\\mathrm{KV}}/\\beta_{\\mathrm{net}}\\\\&+t_{\\mathrm{setup}}+t_{\\mathrm{format}},\\\\\\Delta t_{\\mathrm{interference}}>{}&t_{\\mathrm{handoff}}+\\Delta t_{\\mathrm{queue}}\\end{aligned}"
+  },
+  {
+    "number": 33,
+    "title": "加载缓存的粗略选择条件",
+    "wide": "t_{\\mathrm{lookup}}+\\frac{D_{\\mathrm{hit}}}{\\beta_{\\mathrm{tier}}}+t_{\\mathrm{restore}}<t_{\\mathrm{recompute}}(P_{\\mathrm{hit}})",
+    "narrow": "\\begin{aligned}t_{\\mathrm{load}}={}&t_{\\mathrm{lookup}}+D_{\\mathrm{hit}}/\\beta_{\\mathrm{tier}}\\\\&+t_{\\mathrm{restore}},\\\\t_{\\mathrm{load}}<{}&t_{\\mathrm{recompute}}(P_{\\mathrm{hit}})\\end{aligned}"
+  },
+  {
+    "number": 34,
+    "title": "一个用于理解路由的代价函数",
+    "wide": "J(w)=a\\widehat T_{\\mathrm{queue}}(w)+b\\widehat T_{\\mathrm{miss}}(w)+c\\widehat T_{\\mathrm{transfer}}(w)",
+    "narrow": "\\begin{aligned}J(w)={}&a\\widehat T_{\\mathrm{queue}}(w)\\\\&+b\\widehat T_{\\mathrm{miss}}(w)\\\\&+c\\widehat T_{\\mathrm{transfer}}(w)\\end{aligned}"
+  },
+  {
+    "number": 35,
+    "title": "串行 Agent 轨迹时间",
+    "wide": "T_{\\mathrm{traj}}=\\sum_{r=1}^{R}\\left(T_{\\mathrm{model},r}+T_{\\mathrm{tool},r}+T_{\\mathrm{orchestrate},r}\\right)",
+    "narrow": "\\begin{aligned}T_{\\mathrm{traj}}=\\sum_{r=1}^{R}\\big(&T_{\\mathrm{model},r}\\\\+{}&T_{\\mathrm{tool},r}\\\\+{}&T_{\\mathrm{orchestrate},r}\\big)\\end{aligned}"
+  }
+]

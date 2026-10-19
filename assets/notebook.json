@@ -1,0 +1,40 @@
+[
+  {
+    "id": "rsi",
+    "href": "./notes/rsi.html",
+    "title": "RSI 递归自我改进",
+    "english": "Recursive Self-Improvement",
+    "category": "智能体与自我改进",
+    "tags": [
+      "Agents",
+      "RSI",
+      "强化学习"
+    ],
+    "summary": "从背景与概念边界出发，梳理反馈、训练与系统更新如何组成自我改进循环，结合公式、图解和论文理解常用技术与近期进展。",
+    "updated": "2026-10-14",
+    "chapters": 13,
+    "sections": 43,
+    "formulas": 18,
+    "references": 44
+  },
+  {
+    "id": "inference-infra",
+    "coverLabel": "INFRA",
+    "href": "./notes/inference-infra.html",
+    "title": "vLLM、SGLang 与推理基础设施",
+    "english": "LLM Inference Optimization & AI Infra",
+    "category": "推理系统与 AI Infra",
+    "tags": [
+      "vLLM",
+      "SGLang",
+      "KV Cache",
+      "推理优化"
+    ],
+    "summary": "从 Transformer 推理与性能指标开始，逐层理解 KV 显存、调度、注意力算子、量化、投机解码与分布式服务。每个公式就地解释，结合原理图与实用调优流程。",
+    "updated": "2026-10-15",
+    "chapters": 18,
+    "sections": 72,
+    "formulas": 35,
+    "references": 52
+  }
+]
