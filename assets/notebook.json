@@ -18,6 +18,28 @@
     "references": 44
   },
   {
+    "id": "occamy",
+    "coverLabel": "OCCAMY",
+    "href": "./notes/occamy.html",
+    "title": "Occamy 技术报告与面试笔记",
+    "english": "Execution-grounded Learning for Co-work Agents",
+    "category": "Agent 与后训练",
+    "tags": [
+      "Occamy",
+      "Accio",
+      "Agentic RL",
+      "Dressage",
+      "SAO",
+      "CompactionRL",
+      "面试"
+    ],
+    "summary": "从采购工作流读懂可执行任务契约、双重 replay 与上下文压缩，再拆解两类专家、模型合并和最终 RL。结合原报告图表、公式手算及面试口述，串起数据、系统、训练和评测。",
+    "updated": "2026-10-19",
+    "details": "11 章 · 7 张图 · 7 组公式 · 面试追问",
+    "coverFooter": "PAPER & INTERVIEW",
+    "readLabel": "阅读专题"
+  },
+  {
     "id": "inference-infra",
     "coverLabel": "INFRA",
     "href": "./notes/inference-infra.html",

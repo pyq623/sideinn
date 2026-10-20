@@ -26,3 +26,9 @@
 .note-card[data-note-id="agentic-rl-interview"] .note-cover{background:#f3edf1;border-color:#ddcdd8;border-left-color:#9c768f;color:#75546a}
 .note-card[data-note-id="agentic-rl-interview"] .note-cover:after{border-color:#d3bccb;box-shadow:0 0 0 17px #f3edf1,0 0 0 18px #ddcdd8}
 @media(max-width:760px){.note-card[data-note-id="inference-infra"] .note-cover strong,.note-card[data-note-id="ai-study"] .note-cover strong,.note-card[data-note-id="agentic-rl-interview"] .note-cover strong{font-size:22px}}
+
+/* Occamy research notebook: same shelf layout, a distinct warm teal cover. */
+.note-card[data-note-id="occamy"] .note-cover{background:#e9f0ed;border-color:#bfd5cc;border-left-color:#4c8178;color:#315e58}
+.note-card[data-note-id="occamy"] .note-cover:after{border-color:#b5cdc3;box-shadow:0 0 0 17px #e9f0ed,0 0 0 18px #c8d9d0}
+.note-card[data-note-id="occamy"] .note-cover strong{font-size:27px;letter-spacing:-1px}
+@media(max-width:760px){.note-card[data-note-id="occamy"] .note-cover strong{font-size:18px;letter-spacing:-.5px}}

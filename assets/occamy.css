@@ -1,0 +1,4 @@
+/* Reserve image space before lazy loading so chapter anchors remain stable. */
+body[data-note-id="occamy"] .note-figure img{aspect-ratio:22/9;object-fit:contain;background:#fff}
+body[data-note-id="occamy"] .note-figure img[src$="01-paper-overview.webp"]{aspect-ratio:91/46}
+body[data-note-id="occamy"] .note-figure img[src$="04-paper-infrastructure.webp"]{aspect-ratio:455/232}

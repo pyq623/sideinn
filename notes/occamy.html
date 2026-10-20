@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+ <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+ <meta name="description" content="支线客栈：收留好奇心，记录未完成的探索。Occamy 技术报告笔记：可执行任务、可信轨迹、上下文压缩、分阶段训练与面试复习。">
+ <title>支线客栈 · Occamy 技术报告与面试笔记</title>
+ <link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="../styles.css?v=20261019">
+ <link rel="stylesheet" href="../assets/occamy.css?v=20261019">
+ <script>window.MathJax={startup:{typeset:false},tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg:{fontCache:'none'},options:{enableMenu:false}};</script>
+ <script defer src="../assets/vendor/marked.umd.js"></script>
+ <script defer src="../assets/vendor/tex-svg.js"></script>
+ <script defer src="../paragraph-core.js?v=20261019"></script>
+ <script defer src="../app.js?v=20261019"></script>
+</head>
+<body data-note-id="occamy" data-note-source="../occamy.md" data-formula-source="../assets/occamy-formulas.json" data-download-name="occamy-notes.md">
+ <a class="skip-link" href="#document">跳到笔记正文</a>
+ <header class="topbar">
+  <a class="brand" href="../" aria-label="返回支线客栈笔记目录"><span class="brand-monogram">栈</span><span>支线客栈<span class="brand-sub">论文 · 实验 · 学习连载</span></span></a>
+  <div class="search-wrap"><label for="search" class="sr-only">搜索笔记</label><span class="search-icon" aria-hidden="true">⌕</span><input id="search" type="search" placeholder="搜索概念、技术或论文" autocomplete="off"><span id="search-count" aria-live="polite"></span><button id="search-next" class="search-next" title="下一个匹配" aria-label="下一个搜索匹配" hidden>↓</button></div>
+  <div class="top-actions"><span id="draft-badge" class="draft-badge" hidden>浏览器草稿</span><button id="edit-toggle" class="button primary" aria-pressed="false">编辑笔记</button><button id="mobile-menu" class="button mobile-menu" aria-expanded="false" aria-controls="toc-panel">目录</button></div>
+  <div class="progress-track" aria-hidden="true"><div id="reading-progress"></div></div>
+ </header>
+ <div class="layout" id="top">
+  <aside id="toc-panel" class="toc-panel" aria-label="章节目录"><a class="library-back" href="../">← 返回笔记目录</a><div class="toc-heading"><span>阅读目录</span><span id="chapter-count"></span><button id="close-menu" class="text-button mobile-menu" aria-label="关闭目录">关闭</button></div><nav id="toc"></nav><div class="toc-footer"><span id="note-stats">正在加载笔记…</span><a href="../occamy.md" target="_blank" rel="noopener">Markdown 原稿 ↗</a></div></aside>
+  <main class="paper">
+   <nav class="breadcrumbs" aria-label="当前位置"><a href="../">所有笔记</a><span aria-hidden="true">/</span><span>Agent 与后训练</span><span aria-hidden="true">/</span><span aria-current="page">Occamy</span></nav>
+   <div class="paper-meta"><span>OCCAMY · CO-WORK AGENTS</span><span>报告 v1 · 整理于 2026.10.19</span></div>
+   <div class="document-tools"><span id="location-label">任务可执行 · 经历可重建 · 信号可学习 · 收益可验证</span><div><button id="download" class="text-button">下载 Markdown</button><button id="print" class="text-button">打印</button></div></div>
+   <div id="notice" class="notice" role="status" hidden></div>
+   <article id="document" class="document" aria-busy="true"><p>正在加载笔记与公式…</p></article>
+   <footer class="paper-footer">支线客栈 · 论文拆解、Agent 实验与学习连载<br><small>在线评论暂未开放。</small></footer>
+  </main>
+  <section id="editor-panel" class="editor-panel" aria-label="Markdown 编辑器" hidden>
+   <div class="editor-heading"><div><strong>编辑笔记</strong><p>修改后实时预览；草稿保存在此浏览器。</p></div><button id="editor-close" class="text-button">完成</button></div>
+   <label class="sr-only" for="editor">笔记 Markdown 源文</label><textarea id="editor" spellcheck="false"></textarea>
+   <div class="editor-footer"><span id="save-status" role="status">Markdown 支持标题、表格和 LaTeX 公式。</span><div><button id="restore" class="text-button">恢复原稿</button><button id="editor-download" class="button primary">下载修改稿</button></div></div>
+  </section>
+ </div>
+ <button id="back-top" class="back-top" title="返回顶部" aria-label="返回顶部" hidden>↑</button>
+ <div id="menu-backdrop" class="menu-backdrop" hidden></div>
+ <noscript>请启用 JavaScript，以显示章节导航与标准公式。原文可通过 occamy.md 下载。</noscript>
+</body></html>

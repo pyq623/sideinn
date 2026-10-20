@@ -1,0 +1,50 @@
+[
+  {
+    "number": 1,
+    "title": "带监督掩码的 SFT 损失",
+    "wide": "L_{\\mathrm{SFT}}=-\\frac{\\sum_{t=1}^{T}m_t\\log\\pi_\\theta(y_t\\mid h_t)}{\\sum_{t=1}^{T}m_t}",
+    "narrow": "L_{\\mathrm{SFT}}=-\\frac{\\sum_{t=1}^{T}m_t\\log\\pi_\\theta(y_t\\mid h_t)}{\\sum_{t=1}^{T}m_t}"
+  },
+  {
+    "number": 2,
+    "title": "同准确性组及平均步数",
+    "wide": "\\mathcal Q_i=\\{j:R_j^{\\mathrm{acc}}=R_i^{\\mathrm{acc}}\\},\\qquad \\bar S_i=\\frac{1}{|\\mathcal Q_i|}\\sum_{j\\in\\mathcal Q_i}S_j",
+    "narrow": "\\begin{aligned}\\mathcal Q_i&=\\{j:R_j^{\\mathrm{acc}}=R_i^{\\mathrm{acc}}\\},\\\\\\bar S_i&=\\frac{1}{|\\mathcal Q_i|}\\sum_{j\\in\\mathcal Q_i}S_j\\end{aligned}"
+  },
+  {
+    "number": 3,
+    "title": "效率奖励",
+    "wide": "R_i^{\\mathrm{eff}}=\\frac{\\bar S_i-S_i}{\\bar S_i}",
+    "narrow": "R_i^{\\mathrm{eff}}=\\frac{\\bar S_i-S_i}{\\bar S_i}"
+  },
+  {
+    "number": 4,
+    "title": "两模型均匀参数合并",
+    "wide": "\\theta_{\\mathrm{soup}}=\\tfrac12\\theta_{\\mathrm{Marathon}}+\\tfrac12\\theta_{\\mathrm{Sprint}}",
+    "narrow": "\\theta_{\\mathrm{soup}}=\\tfrac12\\theta_{\\mathrm{Marathon}}+\\tfrac12\\theta_{\\mathrm{Sprint}}"
+  },
+  {
+    "number": 5,
+    "title": "直接概率比与双侧筛选",
+    "wide": "\\rho_t=\\exp\\!\\left(\\log\\pi_\\theta(y_t\\mid h_t)-\\log\\pi_{\\mathrm{rollout}}(y_t\\mid h_t)\\right)",
+    "narrow": "\\begin{aligned}\\rho_t&=\\exp(\\ell_t-\\ell_t^{\\mathrm{rollout}}),\\\\\\ell_t&=\\log\\pi_\\theta(y_t\\mid h_t),\\\\\\ell_t^{\\mathrm{rollout}}&=\\log\\pi_{\\mathrm{rollout}}(y_t\\mid h_t)\\end{aligned}"
+  },
+  {
+    "number": 5,
+    "title": "直接概率比与双侧筛选",
+    "wide": "f(\\rho_t)=\\begin{cases}\\rho_t,&1-\\epsilon_l<\\rho_t<1+\\epsilon_h,\\\\0,&\\text{其他情况}.\\end{cases}",
+    "narrow": "f(\\rho_t)=\\begin{cases}\\rho_t,&1-\\epsilon_l<\\rho_t<1+\\epsilon_h,\\\\0,&\\text{其他情况}.\\end{cases}"
+  },
+  {
+    "number": 6,
+    "title": "按训练 token 统一归一化",
+    "wide": "L=\\frac{1}{|\\mathcal M|}\\sum_{(s,i)\\in\\mathcal M}\\ell_{s,i}",
+    "narrow": "L=\\frac{1}{|\\mathcal M|}\\sum_{(s,i)\\in\\mathcal M}\\ell_{s,i}"
+  },
+  {
+    "number": 7,
+    "title": "CompactionRL 的位置修正",
+    "wide": "\\widehat A_{s,i}=(\\gamma\\lambda)^{N_{>s}}A^{\\mathrm{loc}}_{s,i},\\qquad N_{>s}=\\sum_{j>s}n_j",
+    "narrow": "\\begin{aligned}N_{>s}&=\\sum_{j>s}n_j,\\\\\\widehat A_{s,i}&=(\\gamma\\lambda)^{N_{>s}}A^{\\mathrm{loc}}_{s,i}\\end{aligned}"
+  }
+]
