@@ -23,7 +23,7 @@ body {
  padding-inline: max(32px, calc((100% - 1192px) / 2));
 }
 .brand { font-size: 18px; }
-.brand-mark { background: #f4ecd9; border-color: #c9b98e; box-shadow: 3px 3px 0 #e3d8bc; }
+.brand-logo { display: block; width: 62px; height: 62px; object-fit: contain; flex: 0 0 auto; }
 .brand small { letter-spacing: 2px; }
 .homepage-main { max-width: none; padding: 0; }
 
@@ -123,7 +123,7 @@ body {
 @media (max-width: 760px) {
  .site-header { height: 70px; padding-inline: 23px; }
  .brand { font-size: 16px; gap: 10px; }
- .brand-mark { width: 32px; height: 36px; font-size: 22px; }
+ .brand-logo { width: 52px; height: 52px; }
  .brand small { font-size: 9px; }
  .header-link { font-size: 12px; }
  .intro { display: flex; flex-direction: column; height: auto; padding: 32px 0 0; background: var(--canvas); }

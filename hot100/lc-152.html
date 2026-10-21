@@ -1,9 +1,9 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>第 88 题 乘积最大子数组 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
-<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021-painted-logo"><script defer src="./hot100.js?v=20261021"></script></head>
 <body data-problem-id="lc-152"><a class="skip" href="#main">跳到正文</a>
-<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<header class="top"><a class="brand" href="../"><img class="brand-logo" src="../assets/sideinn-logo-painted-v2-256.png" width="54" height="54" alt=""><span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
 <div class="reading"><aside class="toc"><a href="./#topic-15">← 动态规划目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-6" href="#section-3">返回值为什么是 max maxdp 不是 maxdp n 1</a><a class="level-6" href="#section-4">和其他 DP 题的对比</a><a class="level-6" href="#section-5">代码对比 单词拆分 与 乘积最大子数组</a><a class="level-5" href="#section-6">代码实现</a></nav></details></aside>
 <main id="main" class="paper"><div class="eyebrow">HOT100 / 动态规划</div><h1>第 88 题 乘积最大子数组</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 152  Maximum Product Subarray</p><p class="metadata"><strong>难度  中等</strong>    标签  动态规划  数组    <a href="https://leetcode-cn.com/problems/maximum-product-subarray/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>给你一个整数数组 <code>nums</code> ，请你找出数组中乘积最大的非空连续子数组（该子数组中至少包含一个数字），并返回该子数组所对应的乘积。</p><p>测试用例的答案是一个 32-位 整数。</p><p>请注意 ，一个只包含一个元素的数组的乘积是这个元素的值。</p><p>示例 1:</p><pre tabindex="0"><code>输入: nums = [2,3,-2,4]
 输出: 6
