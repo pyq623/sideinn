@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 06 题 三数之和 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-15"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-2">← 双指针目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">解法</a><a class="level-5" href="#section-3">语法要点</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 双指针</div><h1>第 06 题 三数之和</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 15  3Sum</p><p class="metadata"><strong>难度  中等</strong>    标签  双指针  数组  排序    <a href="https://leetcode-cn.com/problems/3sum/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>给你一个整数数组 <code>nums</code> ，判断是否存在三元组 <code>[nums[i], nums[j], nums[k]]</code> 满足 <code>i != j</code>、<code>i != k</code> 且 <code>j != k</code> ，同时还满足 <code>nums[i] + nums[j] + nums[k] == 0</code> 。请你返回所有和为 <code>0</code> 且不重复的三元组。</p><p>注意： 答案中不可以包含重复的三元组</p><p>示例 1：</p><pre tabindex="0"><code>输入： nums = [-1,0,1,2,-1,-4]
+输出：[[-1,-1,2],[-1,0,1]]
+解释：
+nums[0] + nums[1] + nums[2] = (-1) + 0 + 1 = 0 。
+nums[1] + nums[2] + nums[4] = 0 + 1 + (-1) = 0 。
+nums[0] + nums[3] + nums[4] = (-1) + 2 + (-1) = 0 。
+不同的三元组是 [-1,0,1] 和 [-1,-1,2] 。
+注意，输出的顺序和三元组的顺序并不重要。</code></pre><p>示例 2：</p><pre tabindex="0"><code>输入： nums = [0,1,1]
+输出：[]
+解释： 唯一可能的三元组和不为 0 。</code></pre><p>示例 3：</p><pre tabindex="0"><code>输入： nums = [0,0,0]
+输出：[[0,0,0]]
+解释： 唯一可能的三元组和为 0 。</code></pre><p>提示：</p><ul><li><code>3 &lt;= nums.length &lt;= 3000</code></li><li><code>-105 &lt;= nums[i] &lt;= 105</code></li></ul><p>思想：排序 + 双指针。固定 i，在 i 右侧用相向双指针找两数之和等于 -nums[i]。关键是去重：外层跳过相同的 i，内层找到解后跳过相同的 l 和 r。</p><h2 id="section-2">解法</h2><pre tabindex="0"><code>class Solution:
+    def threeSum(self, nums: list[int]) -&gt; list[list[int]]:
+        n = len(nums)
+        nums.sort() #返回值是none，直接使用nums
+        res_list = list()
+        for i in range(n):
+            if nums[i] &gt; 0:
+                break
+            if i &gt; 0 and nums[i - 1] == nums[i]:
+                continue # 后面是对于l和r的去重，这里是对于i的去重
+
+            l = i + 1
+            r = n - 1
+            while l &lt; r:
+                if nums[i] + nums[l] + nums[r] == 0:
+                    res_list.append([nums[i], nums[l], nums[r]])
+                    while l &lt; r and nums[l+1]==nums[l]:
+                        l = l + 1
+                    while l &lt; r and nums[r - 1] == nums[r]:
+                        r = r - 1
+                    # 此时是已经三数相加等于0的情况，所以直接l和r都前进就好了，单一前进肯定没可能得到新的等于0
+                    l = l + 1
+                    r = r - 1
+                elif nums[i] + nums[l] + nums[r] &lt; 0:
+                    l = l + 1
+                else:
+                    r = r - 1
+        return res_list</code></pre><h2 id="section-3">语法要点</h2><ul><li><code>nums.sort()</code>：原地排序，返回 None；<code>sorted(nums)</code> 返回新列表，原列表不变</li><li>外层去重 <code>if i &gt; 0 and nums[i] == nums[i-1]</code>：必须是 <code>i &gt; 0</code> 而不是 <code>nums[i] &gt; 0</code>，否则逻辑永远走不到</li><li>内层去重用 <code>while</code> 而不是 <code>if</code>：连续重复可能不止一个</li><li><code>nums[i] &gt; 0: break</code>：排序后第一个数都大于 0，三数之和不可能等于 0，直接结束</li></ul></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-11.html"><small>← 上一篇</small>第 05 题 盛最多水的容器</a><a href="./lc-42.html"><small>下一篇 →</small>第 07 题 接雨水</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

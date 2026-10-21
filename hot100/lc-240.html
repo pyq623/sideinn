@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 21 题 搜索二维矩阵 II · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-240"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-6">← 矩阵目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-5" href="#section-3">代码实现</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 矩阵</div><h1>第 21 题 搜索二维矩阵 II</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 240  Search a 2D Matrix II</p><p class="metadata"><strong>难度  中等</strong>    标签  矩阵  数组  二分查找  分治    <a href="https://leetcode-cn.com/problems/search-a-2d-matrix-ii/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>编写一个高效的算法来搜索 <code>m  x n</code> 矩阵 <code>matrix</code> 中的一个目标值 <code>target</code> 。该矩阵具有以下特性：</p><ul><li>每行的元素从左到右升序排列。</li><li>每列的元素从上到下升序排列。</li></ul><p>示例 1：</p><figure><a href="./images/image8.png" target="_blank" rel="noopener" aria-label="查看原图"><img src="./images/image8.png" width="402" height="402" loading="lazy" alt="第 21 题 搜索二维矩阵 II · 原笔记图示"></a><figcaption>原笔记图示 · 点击查看原图</figcaption></figure><pre tabindex="0"><code>输入： matrix = [[1,4,7,11,15],[2,5,8,12,19],[3,6,9,16,22],[10,13,14,17,24],[18,21,23,26,30]], target = 5
+输出： true</code></pre><p>示例 2：</p><figure><a href="./images/image9.png" target="_blank" rel="noopener" aria-label="查看原图"><img src="./images/image9.png" width="402" height="402" loading="lazy" alt="第 21 题 搜索二维矩阵 II · 原笔记图示"></a><figcaption>原笔记图示 · 点击查看原图</figcaption></figure><pre tabindex="0"><code>输入： matrix = [[1,4,7,11,15],[2,5,8,12,19],[3,6,9,16,22],[10,13,14,17,24],[18,21,23,26,30]], target = 20
+输出： false</code></pre><p>提示：</p><ul><li><code>m == matrix.length</code></li><li><code>n == matrix[i].length</code></li><li><code>1 &lt;= n, m &lt;= 300</code></li><li><code>-109 &lt;= matrix[i][j] &lt;= 109</code></li><li>每行的所有元素从左到右升序排列</li><li>每列的所有元素从上到下升序排列</li><li><code>-109 &lt;= target &lt;= 109</code></li></ul><h2 id="section-2">思路</h2><ul><li>暴力遍历是 O(mn)，没有利用矩阵&quot;从上到下递增、从左到右递增&quot;的特点</li><li>关键洞察：把矩阵<strong>逆时针旋转 45°</strong>，从左下角（或右上角）看，结构类似<strong>二叉搜索树</strong>——左分支更小、右分支更大：</li></ul><p>原笔记中的自定义题图文件未找到</p><ul><li>以<strong>左下角</strong>元素为起点（标志数 <code>flag</code>）：</li><li><code>flag &gt; target</code>：target 一定在 flag <strong>上方</strong> → 消去当前行，<code>i -= 1</code></li><li><code>flag &lt; target</code>：target 一定在 flag <strong>右方</strong> → 消去当前列，<code>j += 1</code></li><li><code>flag == target</code>：找到，返回 <code>True</code></li><li>每次移动都消去一整行或一整列，相当于在&quot;BST&quot;上走了一步</li><li>循环终止：<code>i &lt; 0</code>（走出上边界）或 <code>j &gt;= n</code>（走出右边界），说明不存在，返回 <code>False</code></li></ul><h2 id="section-3">代码实现</h2><pre tabindex="0"><code>class Solution:
+    def searchMatrix(self, matrix: List[List[int]], target: int) -&gt; bool:
+        i, j = len(matrix) - 1, 0
+
+        while i &gt;= 0 and j &lt; len(matrix[0]):
+            if matrix[i][j] &gt; target:
+                i -= 1
+            elif matrix[i][j] &lt; target:
+                j += 1
+            else:
+                return True
+        return False</code></pre><ul><li>复杂度：时间 O(m + n)（每步消去一行或一列，最多走 m + n 步），空间 O(1)</li></ul></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-48.html"><small>← 上一篇</small>第 20 题 旋转图像</a><a href="./lc-160.html"><small>下一篇 →</small>第 22 题 相交链表</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

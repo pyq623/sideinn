@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 19 题 螺旋矩阵 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-54"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-6">← 矩阵目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-5" href="#section-3">代码实现</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 矩阵</div><h1>第 19 题 螺旋矩阵</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 54  Spiral Matrix</p><p class="metadata"><strong>难度  中等</strong>    标签  矩阵  数组  模拟    <a href="https://leetcode-cn.com/problems/spiral-matrix/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>给你一个 <code>m</code> 行 <code>n</code> 列的矩阵 <code>matrix</code> ，请按照 顺时针螺旋顺序 ，返回矩阵中的所有元素。</p><p>示例 1：</p><figure><a href="./images/image4.png" target="_blank" rel="noopener" aria-label="查看原图"><img src="./images/image4.png" width="242" height="242" loading="lazy" alt="第 19 题 螺旋矩阵 · 原笔记图示"></a><figcaption>原笔记图示 · 点击查看原图</figcaption></figure><pre tabindex="0"><code>输入： matrix = [[1,2,3],[4,5,6],[7,8,9]]
+输出：[1,2,3,6,9,8,7,4,5]</code></pre><p>示例 2：</p><figure><a href="./images/image5.png" target="_blank" rel="noopener" aria-label="查看原图"><img src="./images/image5.png" width="322" height="242" loading="lazy" alt="第 19 题 螺旋矩阵 · 原笔记图示"></a><figcaption>原笔记图示 · 点击查看原图</figcaption></figure><pre tabindex="0"><code>输入： matrix = [[1,2,3,4],[5,6,7,8],[9,10,11,12]]
+输出：[1,2,3,4,8,12,11,10,9,5,6,7]</code></pre><p>提示：</p><ul><li><code>m == matrix.length</code></li><li><code>n == matrix[i].length</code></li><li><code>1 &lt;= m, n &lt;= 10</code></li><li><code>-100 &lt;= matrix[i][j] &lt;= 100</code></li></ul><h2 id="section-2">思路</h2><ul><li>模拟螺旋遍历，维护四个边界 <code>l, r, t, b</code>，按 →↓←↑ 的顺序逐层收缩：</li></ul><ol><li><strong>→</strong> 从左到右遍历顶行，然后 <code>t += 1</code>（顶行下移）</li><li><strong>↓</strong> 从上到下遍历右列，然后 <code>r -= 1</code>（右列左移）</li><li><strong>←</strong> 从右到左遍历底行，然后 <code>b -= 1</code>（底行上移）</li><li><strong>↑</strong> 从下到上遍历左列，然后 <code>l += 1</code>（左列右移）</li></ol><ul><li><strong>每走完一条边就检查边界是否越界</strong>，越界则 <code>break</code>。这样不需要在 <code>while</code> 条件里判断，也不会遗漏中心元素或重复遍历</li><li>易错点：</li></ul><ol><li><strong>循环条件写 `while l &lt; r` 会漏元素</strong>：当剩余区域为单行/单列/单个元素时 <code>l == r</code> 或 <code>t == b</code>，用 <code>&lt;</code> 会直接跳出。改用 <code>while True</code> + 每步 <code>break</code> 更不容易出错</li><li><strong>break 检查不能少也不能放错位置</strong>：每条边走完、边界更新后立刻检查，否则下一条边会用越界的边界遍历，导致重复或越界</li></ol><h2 id="section-3">代码实现</h2><pre tabindex="0"><code>class Solution:
+    def spiralOrder(self, matrix: List[List[int]]) -&gt; List[int]:
+        if not matrix:
+            return []
+
+        l, r, t, b, res = 0, len(matrix[0]) - 1, 0, len(matrix) - 1, []
+        while True:
+            for i in range(l, r + 1):
+                res.append(matrix[t][i])
+            t += 1
+            if t &gt; b:
+                break
+            for i in range(t, b + 1):
+                res.append(matrix[i][r])
+            r -= 1
+            if l &gt; r:
+                break
+            for i in range(r, l - 1, -1):
+                res.append(matrix[b][i])
+            b -= 1
+            if t &gt; b:
+                break
+            for i in range(b, t - 1, -1):
+                res.append(matrix[i][l])
+            l += 1
+            if l &gt; r:
+                break
+        return res</code></pre><ul><li>复杂度：时间 O(m × n)（每个元素恰好访问一次），空间 O(1)（不计输出数组）</li></ul></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-73.html"><small>← 上一篇</small>第 18 题 矩阵置零</a><a href="./lc-48.html"><small>下一篇 →</small>第 20 题 旋转图像</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

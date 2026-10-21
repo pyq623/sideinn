@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 13 题 最大子数组和 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-53"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-5">← 数组目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-5" href="#section-3">代码实现</a><a class="level-5" href="#section-4">写法二 空间优化</a><a class="level-5" href="#section-5">写法三 分治法</a><a class="level-6" href="#section-6">为什么左右两边使用递归？</a><a class="level-6" href="#section-7">为什么跨中间可以直接计算？</a><a class="level-6" href="#section-8">分治法复杂度</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 数组</div><h1>第 13 题 最大子数组和</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 53  Maximum Subarray</p><p class="metadata"><strong>难度  中等</strong>    标签  普通数组  数组  分治  动态规划    <a href="https://leetcode-cn.com/problems/maximum-subarray/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>给你一个整数数组 <code>nums</code> ，请你找出一个具有最大和的连续子数组（子数组最少包含一个元素），返回其最大和。</p><p>子数组 是数组中的一个连续部分。</p><p>示例 1：</p><pre tabindex="0"><code>输入： nums = [-2,1,-3,4,-1,2,1,-5,4]
+输出： 6
+解释： 连续子数组 [4,-1,2,1] 的和最大，为 6 。</code></pre><p>示例 2：</p><pre tabindex="0"><code>输入： nums = [1]
+输出： 1</code></pre><p>示例 3：</p><pre tabindex="0"><code>输入： nums = [5,4,-1,7,8]
+输出： 23</code></pre><p>提示：</p><ul><li><code>1 &lt;= nums.length &lt;= 105</code></li><li><code>-104 &lt;= nums[i] &lt;= 104</code></li></ul><p>进阶： 如果你已经实现复杂度为 <code>O(n)</code> 的解法，尝试使用更为精妙的 分治法 求解。</p><h2 id="section-2">思路</h2><ul><li>动态规划</li><li>定义 <code>dp[i]</code> = 以 <code>nums[i]</code> 为结尾的最大子数组和</li><li>转移逻辑：对于每个位置 <code>i</code>，要么接上前面的子数组（<code>dp[i-1] + nums[i]</code>），要么从自己重新开始（<code>nums[i]</code>）</li><li>如果 <code>dp[i-1] &lt; 0</code>：前面的和是负贡献，不如从 <code>nums[i]</code> 重新开始，<code>dp[i] = nums[i]</code></li><li>如果 <code>dp[i-1] &gt;= 0</code>：前面的和是正贡献，接上更好，<code>dp[i] = dp[i-1] + nums[i]</code></li><li>最终答案 = 所有 <code>dp[i]</code> 中的最大值</li><li>为什么不能用滑动窗口？因为数组含负数，无法保证收缩左边界会让和减小</li></ul><h2 id="section-3">代码实现</h2><pre tabindex="0"><code>class Solution:
+    def maxSubArray(self, nums: List[int]) -&gt; int:
+        dp_n = [0] * len(nums)
+        # dp_n = [0 for _ in range(len(nums))]
+        res = nums[0]
+        dp_n[0] = nums[0]
+        for i in range(1, len(nums)):
+            if dp_n[i-1] &lt; 0:
+                dp_n[i] = nums[i]
+            else:
+                dp_n[i] = dp_n[i-1] + nums[i]
+            res = res if dp_n[i] &lt; res else dp_n[i]
+        return res</code></pre><ul><li>复杂度：时间 O(N)，空间 O(N)</li></ul><h2 id="section-4">写法二 空间优化</h2><ul><li>由于 <code>dp[i]</code> 只依赖 <code>dp[i-1]</code>，用一个变量 <code>pre</code> 代替整个数组即可</li></ul><pre tabindex="0"><code>class Solution:
+    def maxSubArray(self, nums: List[int]) -&gt; int:
+        pre = nums[0]
+        res = pre
+        for i in range(1, len(nums)):
+            if pre &lt; 0:
+                pre = nums[i]
+            else:
+                pre = pre + nums[i]
+            res = res if pre &lt; res else pre
+        return res</code></pre><ul><li>复杂度：时间 O(N)，空间 O(1)</li></ul><h2 id="section-5">写法三 分治法</h2><pre tabindex="0"><code>class Solution:
+    def maxSubArray(self, nums: list[int]) -&gt; int:
+        def divide(left, right):
+            # 区间中只剩一个数字
+            if left == right:
+                return nums[left]
+            mid = (left + right) // 2
+            # 情况一：最大子数组完全在左半边
+            left_max = divide(left, mid)
+            # 情况二：最大子数组完全在右半边
+            right_max = divide(mid + 1, right)
+            # 情况三：最大子数组跨过中间
+            total = 0
+            best_left_sum = float(&quot;-inf&quot;)
+            # 找到以 nums[mid] 结尾的最大连续和
+            for i in range(mid, left - 1, -1):
+                total += nums[i]
+                best_left_sum = max(best_left_sum, total)
+            total = 0
+            best_right_sum = float(&quot;-inf&quot;)
+            # 找到以 nums[mid + 1] 开头的最大连续和
+            for i in range(mid + 1, right + 1):
+                total += nums[i]
+                best_right_sum = max(best_right_sum, total)
+            cross_max = best_left_sum + best_right_sum
+            return max(left_max, right_max, cross_max)
+        return divide(0, len(nums) - 1)</code></pre><h3 id="section-6">为什么左右两边使用递归？</h3><p>左半边的最大子数组不一定占满整个左半边，它的起点、终点和长度都不知道。右半边也是如此。</p><p>这两个问题和原问题完全相同，只是数组区间变小了，所以适合继续调用 `divide`。</p><h3 id="section-7">为什么跨中间可以直接计算？</h3><p>跨中间的子数组必须由两部分组成：</p><p>```text</p><p>以 nums[mid] 结尾的左侧最大连续和</p><p>+</p><p>以 nums[mid + 1] 开头的右侧最大连续和</p><p>```</p><p>中间位置提供了锚点，所以不需要猜测任意起点和终点：</p><ul><li>从 `mid` 开始向左扫描，找出最好的左半段。</li><li>从 `mid + 1` 开始向右扫描，找出最好的右半段。</li><li>把两部分相加，得到 `cross_max`。</li></ul><h3 id="section-8">分治法复杂度</h3><p>- 时间复杂度：`O(n log n)`。每层递归扫描的元素总数为 `O(n)`，递归树大约有 `log n` 层。</p><p>- 递归栈空间复杂度：`O(log n)`。</p></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-76.html"><small>← 上一篇</small>第 12 题 最小覆盖子串</a><a href="./lc-56.html"><small>下一篇 →</small>第 14 题 合并区间</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 67 题 寻找旋转排序数组中的最小值 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-153"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-11">← 二分查找目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-6" href="#section-3">与上一题 搜索旋转排序数组 的区别</a><a class="level-6" href="#section-4">核心策略 拿 nums mid 和 nums right 比较</a><a class="level-6" href="#section-5">为什么不和 nums left 比</a><a class="level-6" href="#section-6">为什么 right mid 而不是 mid 1</a><a class="level-5" href="#section-7">代码实现</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 二分查找</div><h1>第 67 题 寻找旋转排序数组中的最小值</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 153  Find Minimum in Rotated Sorted Array</p><p class="metadata"><strong>难度  中等</strong>    标签  二分查找  数组    <a href="https://leetcode-cn.com/problems/find-minimum-in-rotated-sorted-array/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>已知一个长度为 <code>n</code> 的数组，预先按照升序排列，经由 <code>1</code> 到 <code>n</code> 次 旋转 后，得到输入数组。例如，原数组 <code>nums = [0,1,2,4,5,6,7]</code> 在变化后可能得到：</p><ul><li>若旋转 <code>4</code> 次，则可以得到 <code>[4,5,6,7,0,1,2]</code></li><li>若旋转 <code>7</code> 次，则可以得到 <code>[0,1,2,4,5,6,7]</code></li></ul><p>注意，数组 <code>[a[0], a[1], a[2], ..., a[n-1]]</code> 旋转一次 的结果为数组 <code>[a[n-1], a[0], a[1], a[2], ..., a[n-2]]</code> 。</p><p>给你一个元素值 互不相同 的数组 <code>nums</code> ，它原来是一个升序排列的数组，并按上述情形进行了多次旋转。请你找出并返回数组中的 最小元素 。</p><p>你必须设计一个时间复杂度为 <code>O(log n)</code> 的算法解决此问题。</p><p>示例 1：</p><pre tabindex="0"><code>输入： nums = [3,4,5,1,2]
+输出： 1
+解释： 原数组为 [1,2,3,4,5] ，旋转 3 次得到输入数组。</code></pre><p>示例 2：</p><pre tabindex="0"><code>输入： nums = [4,5,6,7,0,1,2]
+输出： 0
+解释： 原数组为 [0,1,2,4,5,6,7] ，旋转 4 次得到输入数组。</code></pre><p>示例 3：</p><pre tabindex="0"><code>输入： nums = [11,13,15,17]
+输出： 11
+解释： 原数组为 [11,13,15,17] ，旋转 4 次得到输入数组。</code></pre><p>提示：</p><ul><li><code>n == nums.length</code></li><li><code>1 &lt;= n &lt;= 5000</code></li><li><code>-5000 &lt;= nums[i] &lt;= 5000</code></li><li><code>nums</code> 中的所有整数 互不相同</li><li><code>nums</code> 原来是一个升序排序的数组，并进行了 <code>1</code> 至 <code>n</code> 次旋转</li></ul><h2 id="section-2">思路</h2><h3 id="section-3">与上一题 搜索旋转排序数组 的区别</h3><ul><li>上一题找 target：找到就提前 <code>return mid</code>，找不到返回 -1，用 <code>while left &lt;= right</code></li><li>这一题找最小值：没有提前退出的条件，不断缩小区间，直到区间只剩一个元素就是答案，用 <code>while left &lt; right</code></li></ul><h3 id="section-4">核心策略 拿 nums mid 和 nums right 比较</h3><p>旋转数组的结构是两段升序：<code>[升序1, 升序2]</code>，断裂点就是最小值。</p><ul><li><code>nums[mid] &gt; nums[right]</code> → mid 到 right 之间一定有断裂（从大跳到小），最小值在右边</li><li><code>nums[mid] &lt;= nums[right]</code> → mid 到 right 是平滑递增的，最小值在左边或就是 mid</li></ul><h3 id="section-5">为什么不和 nums left 比</h3><p>当 <code>nums[left] &lt; nums[mid]</code> 时，只能确定左边有序，但最小值可能在左端也可能在右边，无法安全收缩区间。而和 <code>nums[right]</code> 比可以每轮都安全缩小区间。</p><h3 id="section-6">为什么 right mid 而不是 mid 1</h3><p>因为 mid 本身可能就是最小值，不能跳过它。而 <code>left = mid + 1</code> 是安全的，因为 <code>nums[mid] &gt; nums[right]</code> 说明 mid 肯定不是最小值。</p><h2 id="section-7">代码实现</h2><pre tabindex="0"><code>class Solution:
+    def findMin(self, nums: List[int]) -&gt; int:
+        n = len(nums)
+        left, right = 0, n - 1
+        while left &lt; right:
+            mid = (left+right) // 2
+            if nums[mid] &lt;= nums[right]:
+                # 右边有序，可以确定，肯定是最小值在左边
+                right = mid # 不确定最小值是不是 mid
+            elif nums[mid] &gt; nums[right]:
+                # 一定是右边出现了断裂，[升序1， 升序2]
+                # 所以进入右边，最小值一定不是mid，所以像二分一样mid + 1
+                left = mid + 1
+        return nums[left]</code></pre></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-33.html"><small>← 上一篇</small>第 66 题 搜索旋转排序数组</a><a href="./lc-4.html"><small>下一篇 →</small>第 68 题 寻找两个正序数组的中位数</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

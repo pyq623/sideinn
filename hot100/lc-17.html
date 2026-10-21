@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 57 题 电话号码的字母组合 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-17"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-10">← 回溯目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-6" href="#section-3">三道题的决策树对比</a><a class="level-6" href="#section-4">和全排列 子集的对比</a><a class="level-6" href="#section-5">为什么不需要 used 或 start</a><a class="level-6" href="#section-6">字符串是不可变类型 可以省略回溯</a><a class="level-5" href="#section-7">代码实现</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 回溯</div><h1>第 57 题 电话号码的字母组合</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 17  Letter Combinations of a Phone Number</p><p class="metadata"><strong>难度  中等</strong>    标签  回溯  哈希表  字符串    <a href="https://leetcode-cn.com/problems/letter-combinations-of-a-phone-number/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>给定一个仅包含数字 <code>2-9</code> 的字符串，返回所有它能表示的字母组合。答案可以按 任意顺序 返回。</p><p>给出数字到字母的映射如下（与电话按键相同）。注意 1 不对应任何字母。</p><figure><a href="./images/image58.png" target="_blank" rel="noopener" aria-label="查看原图"><img src="./images/image58.png" width="1200" height="973" loading="lazy" alt="第 57 题 电话号码的字母组合 · 原笔记图示"></a><figcaption>原笔记图示 · 点击查看原图</figcaption></figure><p>示例 1：</p><pre tabindex="0"><code>输入： digits = &quot;23&quot;
+输出：[&quot;ad&quot;,&quot;ae&quot;,&quot;af&quot;,&quot;bd&quot;,&quot;be&quot;,&quot;bf&quot;,&quot;cd&quot;,&quot;ce&quot;,&quot;cf&quot;]</code></pre><p>示例 2：</p><pre tabindex="0"><code>输入： digits = &quot;2&quot;
+输出：[&quot;a&quot;,&quot;b&quot;,&quot;c&quot;]</code></pre><p>提示：</p><ul><li><code>1 &lt;= digits.length &lt;= 4</code></li><li><code>digits[i]</code> 是范围 <code>[&#x27;2&#x27;, &#x27;9&#x27;]</code> 的一个数字。</li></ul><h2 id="section-2">思路</h2><ul><li>和全排列、子集是同一个回溯框架，只是每层的候选不同</li></ul><h3 id="section-3">三道题的决策树对比</h3><pre tabindex="0"><code>全排列 [1,2,3]：每个位置从&quot;所有没用过的数&quot;里选
+子集 [1,2,3]：每个位置从&quot;后面的数&quot;里选
+电话号码 &quot;23&quot;：每个位置从&quot;当前数字对应的字母&quot;里选</code></pre><p>用 <code>&quot;23&quot;</code> 画决策树：</p><pre tabindex="0"><code>数字 2 对应 &quot;abc&quot;，数字 3 对应 &quot;def&quot;
+
+第一个位置（数字2）选谁？→ 第二个位置（数字3）选谁？
+
+              &quot;&quot;
+      /        |        \
+    &quot;a&quot;       &quot;b&quot;       &quot;c&quot;        ← 数字2：从 &quot;abc&quot; 里选
+   / | \     / | \     / | \
+ &quot;ad&quot;&quot;ae&quot;&quot;af&quot;&quot;bd&quot;&quot;be&quot;&quot;bf&quot;&quot;cd&quot;&quot;ce&quot;&quot;cf&quot;  ← 数字3：从 &quot;def&quot; 里选</code></pre><h3 id="section-4">和全排列 子集的对比</h3><pre tabindex="0"><code># 全排列：每个位置从所有数里选（跳过已用的）
+def dfs(path):
+    if len(path) == len(nums):
+        self.res.append(path[:])
+        return
+    for i in nums:              # 候选：所有数
+        if i in path:
+            continue
+        path.append(i)
+        dfs(path)
+        path.pop()
+
+# 子集：每个位置从后面的数里选
+def dfs(start, path):
+    self.res.append(path[:])    # 每个节点都收集
+    for i in range(start, n):   # 候选：start 之后的数
+        path.append(nums[i])
+        dfs(i + 1, path)
+        path.pop()
+
+# 电话号码：每个位置从当前数字对应的字母里选
+def dfs(index, path):
+    if index == len(digits):
+        self.res.append(path[:])
+        return
+    for c in phone_map[digits[index]]:   # 候选：当前数字的字母
+        path += c
+        dfs(index + 1, path)
+        path = path[:-1]</code></pre><div class="table-scroll" tabindex="0" aria-label="可横向滚动的表格"><table><tr><th scope="col"></th><th scope="col"><p><strong>全排列（第 55 题）</strong></p></th><th scope="col"><p><strong>子集（第 56 题）</strong></p></th><th scope="col"><p><strong>电话号码（本题）</strong></p></th></tr><tr><td><p>每层的候选</p></td><td><p>所有没用过的数</p></td><td><p><code>start</code> 之后的数</p></td><td><p>当前数字对应的字母</p></td></tr><tr><td><p>控制层数</p></td><td><p><code>len(path) == len(nums)</code></p></td><td><p>自然终止（for 范围空）</p></td><td><p><code>index == len(digits)</code></p></td></tr><tr><td><p>需要 used/start？</p></td><td><p>需要（避免重复选）</p></td><td><p>需要（避免回头）</p></td><td><p><strong>不需要</strong>（每层候选完全不同）</p></td></tr><tr><td><p>收集答案时机</p></td><td><p>选满才收集</p></td><td><p>每个节点都收集</p></td><td><p>选满才收集</p></td></tr></table></div><h3 id="section-5">为什么不需要 used 或 start</h3><p>因为每层的候选集完全由当前数字决定，不同层之间没有交集（数字 2 对应 &quot;abc&quot;，数字 3 对应 &quot;def&quot;），根本不存在重复选的问题。</p><h3 id="section-6">字符串是不可变类型 可以省略回溯</h3><p>Python 中 <strong>str 是不可变类型</strong>，<code>path += c</code> 实际上创建了一个新字符串对象，不会影响上层调用者的 <code>path</code>。所以本题可以直接写成：</p><pre tabindex="0"><code># 简洁写法：直接传 path + c，不需要&quot;撤销&quot;
+for c in phone_map[digits[index]]:
+    dfs(index + 1, path + c)       # 上层 path 根本没变，无需回溯</code></pre><p>这和写 <code>path += c</code> / <code>path = path[:-1]</code> 效果完全一样，但更简洁。</p><p><strong>对比：为什么 list 版本不能省？</strong></p><pre tabindex="0"><code># list 是可变类型，append 修改的是同一个对象
+path.append(i)     # 所有层共享同一个 list，改了就是改了
+dfs(path)
+path.pop()         # 必须手动撤销！不撤就乱了</code></pre><p><strong>总结：不可变 vs 可变类型的回溯规则</strong></p><div class="table-scroll" tabindex="0" aria-label="可横向滚动的表格"><table><tr><th scope="col"><p><strong>类型</strong></p></th><th scope="col"><p><strong>例子</strong></p></th><th scope="col"><p><code><strong>+=</strong></code><strong> 的效果</strong></p></th><th scope="col"><p><strong>需要手动回溯？</strong></p></th></tr><tr><td><p>不可变</p></td><td><p>int, str, tuple</p></td><td><p>创建新对象，旧的不变</p></td><td><p><strong>不需要</strong>（天然回溯）</p></td></tr><tr><td><p>可变</p></td><td><p>list, dict, set</p></td><td><p>原地修改同一个对象</p></td><td><p><strong>必须手动撤销</strong></p></td></tr></table></div><p>这就是为什么第 48 题中 <code>cnt_sum</code>（int）不需要回溯，而 <code>cnt</code>（dict）必须 <code>-= 1</code>。同理，本题 <code>path</code>（str）本质上也不需要回溯，写 <code>path = path[:-1]</code> 只是形式上的对称，实际上直接传 <code>path + c</code> 就够了。</p><h2 id="section-7">代码实现</h2><pre tabindex="0"><code>class Solution:
+    def letterCombinations(self, digits: str) -&gt; List[str]:
+        phone_map = {&#x27;2&#x27;:&#x27;abc&#x27;, &#x27;3&#x27;:&#x27;def&#x27;, &#x27;4&#x27;:&#x27;ghi&#x27;, &#x27;5&#x27;:&#x27;jkl&#x27;,
+        &#x27;6&#x27;:&#x27;mno&#x27;, &#x27;7&#x27;:&#x27;pqrs&#x27;, &#x27;8&#x27;:&#x27;tuv&#x27;, &#x27;9&#x27;:&#x27;wxyz&#x27;}
+        self.res = []
+        path = &quot;&quot;
+        def dfs(index, path):
+            if index == len(digits):
+                self.res.append(path[:])
+                return
+            for c in phone_map[digits[index]]:
+                path += c
+                dfs(index + 1, path)
+                path = path[:-1]
+        dfs(0, path)
+        return self.res</code></pre><ul><li>易错点：</li></ul><ol><li><strong>`phone_map[digits[index]]` 不是 `phone_map[index]`</strong>：<code>index</code> 是位置（0, 1, 2...），要先取出 <code>digits[index]</code> 得到数字字符（如 <code>&#x27;2&#x27;</code>），再查映射得到字母</li><li><strong>`len(digits)` 不是 `len(nums)`</strong>：输入是字符串 <code>digits</code>，不是数组</li><li><strong>`path[:]` 复制</strong>：虽然字符串是不可变类型、<code>path[:]</code> 和 <code>path</code> 效果一样，但写上无害，保持和前面题目一致的习惯</li><li><strong>空输入处理</strong>：题目保证 <code>1 &lt;= digits.length</code>，所以不需要特判空串（但有些版本需要 <code>if not digits: return []</code>）</li></ol><ul><li>复杂度：时间 O(3^m × 4^n)（m 是对应 3 个字母的数字个数，n 是对应 4 个字母的数字个数），空间 O(len(digits))（递归深度）</li></ul></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-78.html"><small>← 上一篇</small>第 56 题 子集</a><a href="./lc-39.html"><small>下一篇 →</small>第 58 题 组合总和</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 85 题 零钱兑换 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-322"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-15">← 动态规划目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-5" href="#section-3">代码实现</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 动态规划</div><h1>第 85 题 零钱兑换</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 322  Coin Change</p><p class="metadata"><strong>难度  中等</strong>    标签  动态规划  广度优先搜索  数组    <a href="https://leetcode-cn.com/problems/coin-change/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>给你一个整数数组 <code>coins</code> ，表示不同面额的硬币；以及一个整数 <code>amount</code> ，表示总金额。</p><p>计算并返回可以凑成总金额所需的 最少的硬币个数 。如果没有任何一种硬币组合能组成总金额，返回 <code>-1</code> 。</p><p>你可以认为每种硬币的数量是无限的。</p><p>示例  1：</p><pre tabindex="0"><code>输入： coins = [1, 2, 5], amount = 11
+输出：3
+解释： 11 = 5 + 5 + 1</code></pre><p>示例 2：</p><pre tabindex="0"><code>输入： coins = [2], amount = 3
+输出： -1</code></pre><p>示例 3：</p><pre tabindex="0"><code>输入： coins = [1], amount = 0
+输出： 0</code></pre><p>提示：</p><ul><li><code>1 &lt;= coins.length &lt;= 12</code></li><li><code>1 &lt;= coins[i] &lt;= 231 - 1</code></li><li><code>0 &lt;= amount &lt;= 104</code></li></ul><h2 id="section-2">思路</h2><p>和上一题（完全平方数）几乎一模一样！</p><div class="table-scroll" tabindex="0" aria-label="可横向滚动的表格"><table><tr><th scope="col"></th><th scope="col"><p><strong>完全平方数</strong></p></th><th scope="col"><p><strong>零钱兑换</strong></p></th></tr><tr><td><p>&quot;硬币&quot;是什么</p></td><td><p>1, 4, 9, 16, ...（完全平方数）</p></td><td><p>coins 数组里的面额</p></td></tr><tr><td><p>求什么</p></td><td><p>最少用几个平方数凑出 n</p></td><td><p>最少用几个硬币凑出 amount</p></td></tr><tr><td><p>无解情况</p></td><td><p>一定有解（1 是完全平方数）</p></td><td><p>可能无解，返回 -1</p></td></tr></table></div><p>递推：<code>dp[i] = min(dp[i - coin] + 1)</code>，对所有 <code>coin &lt;= i</code> 的硬币。</p><pre tabindex="0"><code>coins = [1, 2, 5], amount = 11
+
+dp[0] = 0
+dp[1] = dp[0]+1 = 1        （1）
+dp[2] = min(dp[1]+1, dp[0]+1) = 1  （直接用 2）
+dp[3] = min(dp[2]+1, dp[1]+1) = 2  （2+1）
+dp[5] = min(dp[4]+1, dp[3]+1, dp[0]+1) = 1  （直接用 5）
+...
+dp[11] = 3                  （5+5+1）</code></pre><h2 id="section-3">代码实现</h2><pre tabindex="0"><code>class Solution:
+    def coinChange(self, coins: List[int], amount: int) -&gt; int:
+        dp = [inf] * (amount + 1)
+        dp[0] = 0
+        for i in range(1, amount + 1):
+            for j in range(len(coins)):
+                if i &gt;= coins[j]:
+                    dp[i] = min(dp[i], dp[i - coins[j]] + 1)
+        if dp[amount] == inf:
+            return -1
+        else:
+            return dp[amount]</code></pre><ul><li>易错点：</li></ul><ol><li><strong>必须遍历所有硬币，不能用 while + `i &gt;= coins[j]` 提前退出</strong>：coins 不一定有序，遇到一个大面额就停掉会跳过后面的小面额。比如 <code>coins=[474,83,404,3]</code>，i=264 时第一个就大于 i，但 coins[3]=3 是可用的</li><li><strong>无解返回 -1</strong>：和完全平方数不同，这题可能凑不出 amount（比如 <code>coins=[2]</code>, <code>amount=3</code>），dp[amount] 还是 inf 就说明无解</li><li><strong>`dp[0] = 0`</strong>：凑出 0 元需要 0 个硬币，和完全平方数一样</li></ol><ul><li>复杂度：时间 O(amount × len(coins))，空间 O(amount)</li></ul></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-279.html"><small>← 上一篇</small>第 84 题 完全平方数</a><a href="./lc-139.html"><small>下一篇 →</small>第 86 题 单词拆分</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

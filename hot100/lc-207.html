@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 53 题 课程表 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-207"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-9">← 图论目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-6" href="#section-3">数据结构怎么构造</a><a class="level-6" href="#section-4">BFS 拓扑排序 入度法</a><a class="level-6" href="#section-5">完整流程走一遍</a><a class="level-6" href="#section-6">为什么有环就修不完</a><a class="level-6" href="#section-7">和前两题的对比</a><a class="level-5" href="#section-8">代码实现</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 图论</div><h1>第 53 题 课程表</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 207  Course Schedule</p><p class="metadata"><strong>难度  中等</strong>    标签  图论  深度优先搜索  广度优先搜索  图  拓扑排序    <a href="https://leetcode-cn.com/problems/course-schedule/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>你这个学期必须选修 <code>numCourses</code> 门课程，记为 <code>0</code> 到 <code>numCourses - 1</code> 。</p><p>在选修某些课程之前需要一些先修课程。 先修课程按数组 <code>prerequisites</code> 给出，其中 <code>prerequisites[i] = [ai, bi]</code> ，表示如果要学习课程 <code>ai</code> 则 必须 先学习课程  <code>bi</code> 。</p><ul><li>例如，先修课程对 <code>[0, 1]</code> 表示：想要学习课程 <code>0</code> ，你需要先完成课程 <code>1</code> 。</li></ul><p>请你判断是否可能完成所有课程的学习？如果可以，返回 <code>true</code> ；否则，返回 <code>false</code> 。</p><p>示例 1：</p><pre tabindex="0"><code>输入： numCourses = 2, prerequisites = [[1,0]]
+输出： true
+解释： 总共有 2 门课程。学习课程 1 之前，你需要完成课程 0 。这是可能的。</code></pre><p>示例 2：</p><pre tabindex="0"><code>输入： numCourses = 2, prerequisites = [[1,0],[0,1]]
+输出： false
+解释： 总共有 2 门课程。学习课程 1 之前，你需要先完成​课程 0 ；并且学习课程 0 之前，你还应先完成课程 1 。这是不可能的。</code></pre><p>提示：</p><ul><li><code>1 &lt;= numCourses &lt;= 2000</code></li><li><code>0 &lt;= prerequisites.length &lt;= 5000</code></li><li><code>prerequisites[i].length == 2</code></li><li><code>0 &lt;= ai, bi &lt; numCourses</code></li><li><code>prerequisites[i]</code> 中的所有课程对 互不相同</li></ul><h2 id="section-2">思路</h2><ul><li>本质问题：<code>[1, 0]</code> 表示&quot;修 1 之前要先修 0&quot;，即有向边 <code>0 → 1</code>。如果出现<strong>环</strong>（比如 <code>0→1→0</code>，互为前置），就永远修不完。所以题目就是：<strong>有向图是否有环？</strong></li></ul><h3 id="section-3">数据结构怎么构造</h3><p>这是本题最关键的一步——需要两个数据结构：</p><p><strong>1. 邻接表 `graph`</strong>：记录&quot;修完我之后能解锁谁&quot;</p><pre tabindex="0"><code>graph = defaultdict(list)
+for cur, pre in prerequisites:
+    graph[pre].append(cur)    # pre 修完后能解锁 cur
+
+# prerequisites = [[1,0], [2,0], [3,1], [3,2]]
+# graph = {0: [1, 2], 1: [3], 2: [3]}</code></pre><ul><li>为什么用 <code>defaultdict(list)</code>：查一个不存在的 key 时自动返回空列表，不会报错</li><li>为什么不用其他结构：邻接表能 O(1) 查到&quot;某门课能解锁哪些课&quot;，BFS 时直接查 <code>graph[node]</code> 就行，不用遍历所有节点去找</li></ul><p><strong>2. 入度数组 `indegree`</strong>：记录&quot;每门课还有几个前置没修&quot;</p><pre tabindex="0"><code>indegree = [0] * numCourses
+for cur, pre in prerequisites:
+    indegree[cur] += 1    # cur 被指了一次，入度 +1
+
+# prerequisites = [[1,0], [2,0], [3,1], [3,2]]
+# indegree = [0, 1, 1, 2]
+#             ↑ 入度为 0，可以直接修</code></pre><ul><li>入度为 0 = 没有前置要求 = 可以直接修 = BFS 的起点</li><li>建图和统计入度在同一个循环里完成</li></ul><h3 id="section-4">BFS 拓扑排序 入度法</h3><ol><li><strong>建图 + 算入度</strong>：一次遍历 <code>prerequisites</code> 完成</li><li><strong>入度为 0 的课程入队</strong>：遍历 <code>indegree</code> 找起点</li><li><strong>BFS 逐轮修课</strong>：修完一门课，把它能解锁的课程入度 -1。入度变 0 就入队</li><li><strong>判断</strong>：最后所有课程入度都为 0 → 无环 → <code>true</code></li></ol><h3 id="section-5">完整流程走一遍</h3><pre tabindex="0"><code>prerequisites = [[1,0], [2,0], [3,1], [3,2]]
+graph:     0 → [1, 2],  1 → [3],  2 → [3]
+indegree:  [0, 1, 1, 2]
+            ↑ 入队
+
+第一轮：queue = [0]
+  修课程 0 → graph[0] = [1, 2]
+    课程 1 入度 1→0 ✅ 入队
+    课程 2 入度 1→0 ✅ 入队
+
+第二轮：queue = [1, 2]
+  修课程 1 → graph[1] = [3]
+    课程 3 入度 2→1 ❌ 还没到 0
+  修课程 2 → graph[2] = [3]
+    课程 3 入度 1→0 ✅ 入队
+
+第三轮：queue = [3]
+  修课程 3 → graph[3] = []
+
+所有入度为 0 → true</code></pre><h3 id="section-6">为什么有环就修不完</h3><pre tabindex="0"><code>0 → 1 → 0（环）
+indegree: [1, 1]    # 都不为 0，没有课能入队
+queue = []           # BFS 直接结束
+indegree 里还有非 0 的 → false</code></pre><p>环上的每个节点入度至少为 1，永远不会变成 0，永远入不了队</p><h3 id="section-7">和前两题的对比</h3><div class="table-scroll" tabindex="0" aria-label="可横向滚动的表格"><table><tr><th scope="col"></th><th scope="col"><p><strong>岛屿数量（51）</strong></p></th><th scope="col"><p><strong>腐烂橘子（52）</strong></p></th><th scope="col"><p><strong>课程表（本题）</strong></p></th></tr><tr><td><p>算法</p></td><td><p>DFS</p></td><td><p>BFS</p></td><td><p>BFS</p></td></tr><tr><td><p>图的类型</p></td><td><p>二维网格</p></td><td><p>二维网格</p></td><td><p><strong>有向图（邻接表）</strong></p></td></tr><tr><td><p>起点</p></td><td><p>每个未访问的 &#x27;1&#x27;</p></td><td><p>所有腐烂橘子</p></td><td><p>所有<strong>入度为 0</strong> 的课程</p></td></tr><tr><td><p>扩散含义</p></td><td><p>淹没相连陆地</p></td><td><p>感染相邻橘子</p></td><td><p>修完课，解锁后续（入度 -1）</p></td></tr><tr><td><p>结束判断</p></td><td><p>数连通块个数</p></td><td><p><code>fresh == 0</code></p></td><td><p>所有 <code>indegree == 0</code></p></td></tr></table></div><h2 id="section-8">代码实现</h2><pre tabindex="0"><code>class Solution:
+    def canFinish(self, numCourses: int, prerequisites: List[List[int]]) -&gt; bool:
+        graph = defaultdict(list)
+        indegree = [0] * (numCourses)
+        for [cur, pre] in prerequisites:
+            graph[pre].append(cur)
+            indegree[cur] += 1
+
+        queue = []
+        for i in range(numCourses):
+            if indegree[i] == 0:
+                queue.append(i)
+        while queue:
+            tmp = []
+            for node in queue:
+                for node_next in graph[node]:
+                    # 以它为前置条件的都可以过了
+                    indegree[node_next] -= 1
+                    if indegree[node_next] == 0:
+                        tmp.append(node_next)
+
+            queue = tmp
+        flag = True
+        for i in range(numCourses):
+            if indegree[i] != 0:
+                flag = False
+                return flag
+        return flag</code></pre><ul><li>易错点：</li></ul><ol><li><strong>邻接表的方向别搞反</strong>：<code>graph[pre].append(cur)</code> 是 pre → cur（修完 pre 能解锁 cur），不是反过来</li><li><strong>入度统计的是 `cur` 不是 `pre`</strong>：<code>indegree[cur] += 1</code>，cur 是被指向的那个</li><li><strong>入度 -1 后要立即判断是否为 0</strong>：等于 0 才入队，不是小于等于 0</li><li><strong>最终判断是看 indegree 而不是 queue</strong>：queue 为空只说明 BFS 结束，不代表所有课都修完了。要检查是否所有入度都为 0</li></ol><ul><li>复杂度：时间 O(V + E)（V 为课程数，E 为依赖关系数），空间 O(V + E)（邻接表 + 入度数组 + 队列）</li></ul></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-994.html"><small>← 上一篇</small>第 52 题 腐烂的橘子</a><a href="./lc-208.html"><small>下一篇 →</small>第 54 题 实现 Trie (前缀树)</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

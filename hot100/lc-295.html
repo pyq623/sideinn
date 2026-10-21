@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 76 题 数据流的中位数 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-295"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-13">← 堆目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-6" href="#section-3">和前两题的对比</a><a class="level-6" href="#section-4">addNum 的核心 绕一圈</a><a class="level-6" href="#section-5">走一遍例子</a><a class="level-6" href="#section-6">findMedian</a><a class="level-6" href="#section-7">heapq 小知识</a><a class="level-5" href="#section-8">代码实现</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 堆</div><h1>第 76 题 数据流的中位数</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 295  Find Median from Data Stream</p><p class="metadata"><strong>难度  困难</strong>    标签  堆  设计  双指针  数据流  排序  堆（优先队列）    <a href="https://leetcode-cn.com/problems/find-median-from-data-stream/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>中位数 是有序整数列表中的中间值。如果列表的大小是偶数，则没有中间值，中位数是两个中间值的平均值。</p><ul><li>例如 <code>arr = [2,3,4]</code> 的中位数是 <code>3</code> 。</li><li>例如 <code>arr = [2,3]</code> 的中位数是 <code>(2 + 3) / 2 = 2.5</code> 。</li></ul><p>实现 MedianFinder 类:</p><ul><li><code>MedianFinder()</code> 初始化 <code>MedianFinder</code> 对象。</li><li><code>void addNum(int num)</code> 将数据流中的整数 <code>num</code> 添加到数据结构中。</li><li><code>double findMedian()</code> 返回到目前为止所有元素的中位数。与实际答案相差 <code>10-5</code> 以内的答案将被接受。</li></ul><p>示例 1：</p><pre tabindex="0"><code>输入
+[&quot;MedianFinder&quot;, &quot;addNum&quot;, &quot;addNum&quot;, &quot;findMedian&quot;, &quot;addNum&quot;, &quot;findMedian&quot;]
+[[], [1], [2], [], [3], []]
+输出
+[null, null, null, 1.5, null, 2.0]
+
+解释
+MedianFinder medianFinder = new MedianFinder();
+medianFinder.addNum(1);    // arr = [1]
+medianFinder.addNum(2);    // arr = [1, 2]
+medianFinder.findMedian(); // 返回 1.5 ((1 + 2) / 2)
+medianFinder.addNum(3);    // arr[1, 2, 3]
+medianFinder.findMedian(); // return 2.0</code></pre><p>提示:</p><ul><li><code>-105 &lt;= num &lt;= 105</code></li><li>在调用 <code>findMedian</code> 之前，数据结构中至少有一个元素</li></ul><pre tabindex="0"><code>  最多 `5  104` 次调用 `addNum` 和 `findMedian`</code></pre><h2 id="section-2">思路</h2><p>用<strong>两个堆</strong>把数据流切成两半：</p><pre tabindex="0"><code>排序后：[1, 2, 3, | 5, 7, 8]
+        ← big_heap →  ← small_heap →
+        大顶堆(存负号)    小顶堆
+        堆顶 = 3         堆顶 = 5</code></pre><ul><li><code>big_heap</code>（大顶堆）：存较小的一半，堆顶是左半边的最大值</li><li><code>small_heap</code>（小顶堆）：存较大的一半，堆顶是右半边的最小值</li></ul><p>Python 没有大顶堆，所以 <code>big_heap</code> 存负号，取的时候再取负。</p><h3 id="section-3">和前两题的对比</h3><div class="table-scroll" tabindex="0" aria-label="可横向滚动的表格"><table><tr><th scope="col"></th><th scope="col"><p><strong>74. 第 k 大</strong></p></th><th scope="col"><p><strong>75. 前 k 高频</strong></p></th><th scope="col"><p><strong>76. 数据流中位数</strong></p></th></tr><tr><td><p>用堆干嘛</p></td><td><p>维护大小为 k 的小顶堆</p></td><td><p>维护大小为 k 的小顶堆</p></td><td><p>两个堆对半分数据流</p></td></tr><tr><td><p>堆的个数</p></td><td><p>1 个</p></td><td><p>1 个</p></td><td><p>2 个（大顶 + 小顶）</p></td></tr><tr><td><p>大顶堆</p></td><td><p>不需要</p></td><td><p>不需要</p></td><td><p>需要，存负号模拟</p></td></tr></table></div><h3 id="section-4">addNum 的核心 绕一圈</h3><p>不需要判断 num 该去哪个堆，<strong>让堆自动帮你分配</strong>：</p><ul><li><strong>想往 A 加</strong> → 先 push 进 B → B 把最该去 A 的弹出来 → push 进 A</li></ul><p>这样堆自动完成了大小排序，保证 big 所有元素 ≤ small 所有元素。</p><p>我们选的规则是&quot;相等时往 small 加&quot;，所以 small 的个数始终 ≥ big：</p><div class="table-scroll" tabindex="0" aria-label="可横向滚动的表格"><table><tr><th scope="col"><p><strong>情况</strong></p></th><th scope="col"><p><strong>操作</strong></p></th><th scope="col"><p><strong>绕一圈的过程</strong></p></th></tr><tr><td><p><code>len(small) == len(big)</code></p></td><td><p>往 small 加</p></td><td><p>num → big → 弹出 big 最大 → 放进 small</p></td></tr><tr><td><p><code>len(small) &gt; len(big)</code></p></td><td><p>往 big 加</p></td><td><p>num → small → 弹出 small 最小 → 放进 big</p></td></tr></table></div><h3 id="section-5">走一遍例子</h3><pre tabindex="0"><code>addNum(5): small==big==0, 往 small 加
+  → 5 放进 big → big 弹出 5 → 放进 small
+  big=[]  small=[5]
+
+addNum(2): small 多了, 往 big 加
+  → 2 放进 small → small 弹出 2 → 放进 big
+  big=[2]  small=[5]
+
+addNum(1): small==big, 往 small 加
+  → 1 放进 big → big 弹出 2(最大的) → 放进 small
+  big=[1]  small=[2,5]
+
+addNum(7): small 多了, 往 big 加
+  → 7 放进 small → small 弹出 2(最小的) → 放进 big
+  big=[1,2]  small=[5,7]</code></pre><p>排序后 <code>[1, 2 | 5, 7]</code>，完美对半分。</p><h3 id="section-6">findMedian</h3><ul><li>偶数个：两个堆顶的平均值 = <code>(small[0] + (-big[0])) / 2</code></li><li>奇数个：small 多一个，中位数 = <code>small[0]</code></li></ul><h3 id="section-7">heapq 小知识</h3><ul><li><code>heap[0]</code>：只看堆顶，不弹出（和栈的 <code>stack[-1]</code> 一样，只看不动）</li><li><code>heappop(heap)</code>：弹出堆顶（和 <code>stack.pop()</code> 一样，看了还弹走）</li><li><code>heappush(heap, val)</code>：往堆里加一个元素</li></ul><h2 id="section-8">代码实现</h2><pre tabindex="0"><code>class MedianFinder:
+
+    def __init__(self):
+        self.small = []
+        self.big = []
+
+    def addNum(self, num: int) -&gt; None:
+        if len(self.small) == len(self.big):
+            # 往 small 里加：num → big → 弹出 big 最大 → 放进 small
+            heappush(self.big, -num)
+            top = heappop(self.big)
+            heappush(self.small, -top)
+        else:
+            # 往 big 里加：num → small → 弹出 small 最小 → 放进 big
+            heappush(self.small, num)
+            top = heappop(self.small)
+            heappush(self.big, -top)
+
+    def findMedian(self) -&gt; float:
+        if len(self.small) == len(self.big):
+            median = (self.small[0] + -self.big[0]) / 2
+        else:
+            median = self.small[0]
+        return median</code></pre><ul><li>易错点：</li></ul><ol><li><strong>big_heap 存负号，取的时候取负</strong>：Python 只有小顶堆，<code>heappush(big, -num)</code> 存入，<code>-heappop(big)</code> 取出。忘记取负会导致结果全是负数</li><li><strong>&quot;绕一圈&quot;是三行代码，不是一行</strong>：push 进一个堆 → pop 出来 → push 进另一个堆，不能跳过中间步骤直接放</li><li><strong>findMedian 取 big 堆顶时要取负</strong>：<code>-self.big[0]</code> 才是真实值，写成 <code>self.big[0]</code> 就是负数了</li><li><strong>&quot;相等时往哪加&quot;和&quot;findMedian 从哪取&quot;要一致</strong>：我们选相等时往 small 加，所以奇数个时中位数是 <code>small[0]</code>。如果选相等时往 big 加，奇数个就得取 <code>-big[0]</code></li></ol><ul><li>复杂度：<code>addNum</code> O(log n)（三次堆操作），<code>findMedian</code> O(1)（取堆顶），空间 O(n)</li></ul></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-347.html"><small>← 上一篇</small>第 75 题 前 K 个高频元素</a><a href="./lc-121.html"><small>下一篇 →</small>第 77 题 买卖股票的最佳时机</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

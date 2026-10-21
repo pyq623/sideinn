@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 18 题 矩阵置零 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-73"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-6">← 矩阵目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">解法一 O m 加 n 额外空间</a><a class="level-6" href="#section-3">思路</a><a class="level-6" href="#section-4">代码实现</a><a class="level-5" href="#section-5">解法二 O 1 额外空间</a><a class="level-6" href="#section-6">思路</a><a class="level-6" href="#section-7">代码实现</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 矩阵</div><h1>第 18 题 矩阵置零</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 73  Set Matrix Zeroes</p><p class="metadata"><strong>难度  中等</strong>    标签  矩阵  数组  哈希表    <a href="https://leetcode-cn.com/problems/set-matrix-zeroes/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>给定一个 <code>m x n</code> 的矩阵，如果一个元素为 0 ，则将其所在行和列的所有元素都设为 0 。请使用 <a href="http://baike.baidu.com/item/%E5%8E%9F%E5%9C%B0%E7%AE%97%E6%B3%95" target="_blank" rel="noopener noreferrer">原地</a> 算法。</p><p>示例 1：</p><figure><a href="./images/image2.png" target="_blank" rel="noopener" aria-label="查看原图"><img src="./images/image2.png" width="641" height="241" loading="lazy" alt="第 18 题 矩阵置零 · 原笔记图示"></a><figcaption>原笔记图示 · 点击查看原图</figcaption></figure><pre tabindex="0"><code>输入： matrix = [[1,1,1],[1,0,1],[1,1,1]]
+输出：[[1,0,1],[0,0,0],[1,0,1]]</code></pre><p>示例 2：</p><figure><a href="./images/image3.png" target="_blank" rel="noopener" aria-label="查看原图"><img src="./images/image3.png" width="791" height="241" loading="lazy" alt="第 18 题 矩阵置零 · 原笔记图示"></a><figcaption>原笔记图示 · 点击查看原图</figcaption></figure><pre tabindex="0"><code>输入： matrix = [[0,1,2,0],[3,4,5,2],[1,3,1,5]]
+输出：[[0,0,0,0],[0,4,5,0],[0,3,1,0]]</code></pre><p>提示：</p><ul><li><code>m == matrix.length</code></li><li><code>n == matrix[0].length</code></li><li><code>1 &lt;= m, n &lt;= 200</code></li><li><code>-231 &lt;= matrix[i][j] &lt;= 231 - 1</code></li></ul><p>进阶：</p><ul><li>一个直观的解决方案是使用  <code>O(m n)</code> 的额外空间，但这并不是一个好的解决方案。</li><li>一个简单的改进方案是使用 <code>O(m  + n)</code> 的额外空间，但这仍然不是最好的解决方案。</li><li>你能想出一个仅使用常量空间的解决方案吗？</li></ul><h2 id="section-2">解法一 O m 加 n 额外空间</h2><h3 id="section-3">思路</h3><ul><li>先标记，再置零：</li></ul><ol><li>第一遍扫描：记录哪些行、哪些列包含 0</li><li>第二遍扫描：只要当前元素所在的行或列被标记过，就置零</li></ol><ul><li>Python 技巧：</li><li><code>[0 in row for row in matrix]</code>：列表推导式，对每一行检查是否包含 0，得到布尔列表</li><li><code>zip(*matrix)</code>：转置矩阵（把行变成列），<code>*matrix</code> 解包所有行，<code>zip</code> 按相同位置配对，得到每一列的元组</li><li>两者结合，一行代码就能得到行/列的零标记</li><li>易错点：</li></ul><ol><li><strong>列表推导式里不需要 `if`</strong>：<code>[0 in row for row in matrix]</code> 而非 <code>[if 0 in row for row in matrix]</code>，<code>0 in row</code> 本身就是布尔表达式</li><li><strong>置零时要加条件判断</strong>：<code>if zero_row[i] or zero_col[j]</code> 才置零，不能无条件把所有元素都置零</li></ol><h3 id="section-4">代码实现</h3><pre tabindex="0"><code>class Solution:
+    def setZeroes(self, matrix: List[List[int]]) -&gt; None:
+        zero_row = [0 in raw for raw in matrix]
+        zero_col = [0 in col for col in zip(*matrix)]
+        # first_col_has_zero = any(row[0] == 0 for row in matrix)  # 记录第一列是否包含 0
+
+        for i in range(len(matrix)):
+            for j in range(len(matrix[0])):
+                if zero_row[i] or zero_col[j]:
+                    matrix[i][j] = 0</code></pre><ul><li>复杂度：时间 O(m × n)，空间 O(m + n)（存储行列标记）</li></ul><h2 id="section-5">解法二 O 1 额外空间</h2><h3 id="section-6">思路</h3><ul><li>核心思想：<strong>用矩阵的第一行和第一列本身作为标记数组</strong>，替代解法一中额外的 <code>zero_row</code> 和 <code>zero_col</code></li><li><code>matrix[0][j] == 0</code> 表示第 <code>j</code> 列需要置零</li><li><code>matrix[i][0] == 0</code> 表示第 <code>i</code> 行需要置零</li><li>但第一行和第一列自身是否要置零，会被标记过程覆盖，所以要<strong>先单独记录</strong></li><li>四步走：</li></ul><ol><li><strong>预存</strong>：记录第一行、第一列本身是否含 0（<code>first_row_zero</code>、<code>first_col_zero</code>）</li><li><strong>标记</strong>：扫描内部区域（<code>range(1,m)</code> × <code>range(1,n)</code>），遇到 0 就在对应的第一行/第一列打标记</li><li><strong>置零内部</strong>：再扫描内部区域，根据第一行/第一列的标记置零</li><li><strong>置零边界</strong>：根据预存的标志，单独处理第一行和第一列</li></ol><ul><li><strong>为什么循环从 `range(1, m)` / `range(1, n)` 开始？</strong></li><li>第一行和第一列被征用为标记数组，它们的值在标记阶段会被改写</li><li>如果标记时也扫描第一行/第一列（从 0 开始），第一行/第一列中<strong>原本的 0</strong> 会把标记&quot;污染&quot;——本来只有第一行/第一列自己该置零，却会错误地让其他行/列也置零</li><li>所以标记和置零内部都必须<strong>跳过</strong>第一行和第一列（从 1 开始），第一行/第一列由 <code>first_row_zero</code> 和 <code>first_col_zero</code> 单独处理</li><li>易错点：</li></ul><ol><li><strong>`first_row_zero` 和 `first_col_zero` 必须在标记之前记录</strong>：标记阶段会修改第一行/第一列的值，之后就分不清哪些 0 是原有的、哪些是标记写入的</li><li><strong>最后置零边界时，行和列别搞反</strong>：<code>first_row_zero</code> 要置零第一<strong>行</strong>（<code>matrix[0][col]</code>），<code>first_col_zero</code> 要置零第一<strong>列</strong>（<code>matrix[row][0]</code>）。变量名和索引位置要对应，很容易写反</li><li><strong>`first_col_zero` 不能直接 `0 in zip(*matrix)[0]`</strong>：<code>zip()</code> 返回的是迭代器，不支持下标访问，需要先 <code>list()</code> 转换：<code>0 in list(zip(*matrix))[0]</code></li></ol><h3 id="section-7">代码实现</h3><pre tabindex="0"><code>class Solution:
+    def setZeroes(self, matrix: List[List[int]]) -&gt; None:
+        m, n = len(matrix), len(matrix[0])
+        first_row_zero = 0 in matrix[0]
+        first_col_zero = 0 in list(zip(*matrix))[0]
+
+        for i in range(1, m):
+            for j in range(1, n):
+                if matrix[i][j] == 0:
+                    matrix[0][j] = 0
+                    matrix[i][0] = 0
+
+        for i in range(1, m):
+            for j in range(1, n):
+                if matrix[0][j] == 0 or matrix[i][0] == 0:
+                    matrix[i][j] = 0
+
+        if first_row_zero:
+            for col in range(n):
+                matrix[0][col] = 0
+        if first_col_zero:
+            for row in range(m):
+                matrix[row][0] = 0</code></pre><ul><li>复杂度：时间 O(m × n)，空间 O(1)（只用了两个布尔变量）</li></ul></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-41.html"><small>← 上一篇</small>第 17 题 缺失的第一个正数</a><a href="./lc-54.html"><small>下一篇 →</small>第 19 题 螺旋矩阵</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

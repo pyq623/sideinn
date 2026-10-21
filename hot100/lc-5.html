@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 93 题 最长回文子串 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-5"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-16">← 多维动态规划目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-6" href="#section-3">递推逻辑</a><a class="level-6" href="#section-4">遍历顺序 为什么按长度从短到长</a><a class="level-6" href="#section-5">循环范围怎么算</a><a class="level-5" href="#section-6">代码实现</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 多维动态规划</div><h1>第 93 题 最长回文子串</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 5  Longest Palindromic Substring</p><p class="metadata"><strong>难度  中等</strong>    标签  多维动态规划  双指针  字符串  动态规划    <a href="https://leetcode-cn.com/problems/longest-palindromic-substring/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>给你一个字符串 <code>s</code>，找到 <code>s</code> 中最长的 回文 子串。</p><p>示例 1：</p><pre tabindex="0"><code>输入： s = &quot;babad&quot;
+输出： &quot;bab&quot;
+解释： &quot;aba&quot; 同样是符合题意的答案。</code></pre><p>示例 2：</p><pre tabindex="0"><code>输入： s = &quot;cbbd&quot;
+输出： &quot;bb&quot;</code></pre><p>提示：</p><ul><li><code>1 &lt;= s.length &lt;= 1000</code></li><li><code>s</code> 仅由数字和英文字母组成</li></ul><h2 id="section-2">思路</h2><p>和前面的&quot;网格 DP&quot;完全不同。前面的题 <code>dp[i][j]</code> 表示走到坐标 (i,j) 的结果，这题 <code>dp[i][j]</code> 表示<strong>子串 s[i..j] 是不是回文</strong>。</p><div class="table-scroll" tabindex="0" aria-label="可横向滚动的表格"><table><tr><th scope="col"></th><th scope="col"><p><strong>不同路径/最小路径和</strong></p></th><th scope="col"><p><strong>最长回文子串</strong></p></th></tr><tr><td><p>dp 维度含义</p></td><td><p>网格坐标 (行, 列)</p></td><td><p>子串范围 (起点 i, 终点 j)</p></td></tr><tr><td><p>依赖方向</p></td><td><p>上方 + 左方</p></td><td><p><strong>内部</strong>（dp[i+1][j-1]）</p></td></tr><tr><td><p>遍历顺序</p></td><td><p>从左上到右下</p></td><td><p>按子串长度从短到长</p></td></tr><tr><td><p>返回值</p></td><td><p><code>dp[m-1][n-1]</code></p></td><td><p>记录最长的 True 对应的子串</p></td></tr></table></div><h3 id="section-3">递推逻辑</h3><p><code>s[i..j]</code> 是回文的条件：</p><ol><li>两头字母相等：<code>s[i] == s[j]</code></li><li>去掉两头后内部也是回文：<code>dp[i+1][j-1] == True</code>（或者长度 ≤ 2 不需要检查内部）</li></ol><pre tabindex="0"><code>s = &quot;babad&quot;
+
+&quot;bab&quot; 是回文吗？
+  s[0]==&#x27;b&#x27;, s[2]==&#x27;b&#x27; ✓ 相等
+  去掉两头 → s[1..1] = &quot;a&quot;，长度1，一定是回文 ✓
+  → dp[0][2] = True</code></pre><h3 id="section-4">遍历顺序 为什么按长度从短到长</h3><p>算 <code>dp[i][j]</code> 需要 <code>dp[i+1][j-1]</code>（更短的子串）。所以必须先把短子串算好，长子串才能用。</p><pre tabindex="0"><code>长度1：dp[0][0], dp[1][1], ... 全是 True（单字符都是回文）
+长度2：dp[0][1], dp[1][2], ... 看 s[i]==s[j] 就行
+长度3：dp[0][2], dp[1][3], ... 看 s[i]==s[j] 且 dp[i+1][j-1]
+...</code></pre><h3 id="section-5">循环范围怎么算</h3><pre tabindex="0"><code>for length in range(2, n + 1):          # 长度从 2 到 n
+    for i in range(n - length + 1):     # 起点 i 的范围
+        j = i + length - 1              # 终点 j</code></pre><p><strong>`j = i + length - 1`</strong>：子串从 i 开始、长度为 length，终点下标 = 起点 + 长度 - 1。</p><p><strong>`range(n - length + 1)`</strong>：要求 j 不越界，即 <code>i + length - 1 &lt; n</code> → <code>i &lt; n - length + 1</code>。</p><pre tabindex="0"><code>s = &quot;babad&quot;（n=5），length=3
+i 可取 0, 1, 2（即 range(5-3+1) = range(3)）
+  i=0: j=2, 子串 &quot;bab&quot; ✓
+  i=1: j=3, 子串 &quot;aba&quot; ✓
+  i=2: j=4, 子串 &quot;bad&quot; ✓
+  i=3: j=5 → 越界！所以不能取</code></pre><h2 id="section-6">代码实现</h2><pre tabindex="0"><code>class Solution:
+    def longestPalindrome(self, s: str) -&gt; str:
+        n = len(s)
+        max_length = 1
+        start = 0
+        dp = [[False] * n for _ in range(n)]
+
+        for i in range(n):
+            dp[i][i] = True
+        for length in range(2, n+1):
+            for i in range(n-length + 1):
+                j = i + length - 1
+                if s[i] == s[j]:
+                    if length == 2 or dp[i+1][j-1] == True:
+                        dp[i][j] = True
+                        if length &gt; max_length:
+                            max_length = length
+                            start = i
+
+        return s[start: start+max_length]</code></pre><ul><li>易错点：</li></ul><ol><li><strong>`max_length` 必须初始化为 1 不是 0</strong>：单字符本身就是长度 1 的回文。如果 <code>n=1</code>，不会进入 <code>range(2, n+1)</code> 循环，<code>max_length=0</code> 会导致返回空串</li><li><strong>长度为 2 时特殊处理</strong>：<code>length == 2</code> 时 <code>dp[i+1][j-1] = dp[i+1][i]</code>，i+1 &gt; i 不合法。所以长度为 2 只需判断 <code>s[i] == s[j]</code></li><li><strong>遍历顺序必须按长度从短到长</strong>：不能简单地 i 从小到大遍历，因为 <code>dp[i][j]</code> 依赖 <code>dp[i+1][j-1]</code>（更短的子串），必须先算短的</li><li><strong>返回的是子串本身不是长度</strong>：需要用 start 和 max_length 记录位置，最后切片返回</li></ol><ul><li>复杂度：时间 O(n²)，空间 O(n²)</li></ul></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-64.html"><small>← 上一篇</small>第 92 题 最小路径和</a><a href="./lc-1143.html"><small>下一篇 →</small>第 94 题 最长公共子序列</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 34 题 合并 K 个升序链表 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-23"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-7">← 链表目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-6" href="#section-3">Python 新语法 函数讲解</a><a class="level-6" href="#section-4">易错点</a><a class="level-5" href="#section-5">代码实现</a><a class="level-5" href="#section-6">写法二 元组入堆 不修改 ListNode</a><a class="level-6" href="#section-7">思路</a><a class="level-6" href="#section-8">代码实现</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 链表</div><h1>第 34 题 合并 K 个升序链表</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 23  Merge k Sorted Lists</p><p class="metadata"><strong>难度  困难</strong>    标签  链表  分治  堆（优先队列）    <a href="https://leetcode-cn.com/problems/merge-k-sorted-lists/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>给你一个链表数组，每个链表都已经按升序排列。</p><p>请你将所有链表合并到一个升序链表中，返回合并后的链表。</p><p>示例 1：</p><pre tabindex="0"><code>输入： lists = [[1,4,5],[1,3,4],[2,6]]
+输出：[1,1,2,3,4,4,5,6]
+解释： 链表数组如下：
+[
+  1-&gt;4-&gt;5,
+  1-&gt;3-&gt;4,
+  2-&gt;6
+]
+将它们合并到一个有序链表中得到。
+1-&gt;1-&gt;2-&gt;3-&gt;4-&gt;4-&gt;5-&gt;6</code></pre><p>示例 2：</p><pre tabindex="0"><code>输入： lists = []
+输出：[]</code></pre><p>示例 3：</p><pre tabindex="0"><code>输入： lists = [[]]
+输出：[]</code></pre><p>提示：</p><ul><li><code>k == lists.length</code></li><li><code>0 &lt;= k &lt;= 10^4</code></li><li><code>0 &lt;= lists[i].length &lt;= 500</code></li><li><code>-10^4 &lt;= lists[i][j] &lt;= 10^4</code></li><li><code>lists[i]</code> 按 升序 排列</li><li><code>lists[i].length</code> 的总和不超过 <code>10^4</code></li></ul><h2 id="section-2">思路</h2><ul><li>核心思想：用<strong>最小堆</strong>维护&quot;每个链表当前的最小节点&quot;，每次从堆顶弹出全局最小的节点接到结果链表，然后把该节点的 next 入堆</li><li>流程：</li></ul><ol><li>把所有链表的头节点放入堆（跳过空链表）</li><li><code>while</code> 堆不为空：弹出最小节点，接到结果链表末尾，如果该节点有 next 就入堆</li><li>返回哨兵节点的 next</li></ol><ul><li>为什么时间复杂度是 O(L log m)（L = 总节点数，m = 链表个数）：</li><li>堆里始终最多 m 个节点（每个链表最多贡献一个）</li><li>每个节点被 pop 一次、push 一次，每次操作 O(log m)</li><li>总共 L 个节点 × O(log m) = O(L log m)</li></ul><h3 id="section-3">Python 新语法 函数讲解</h3><ol><li><strong>`ListNode.__lt__ = lambda a, b: a.val &lt; b.val`</strong></li></ol><ul><li>给 ListNode 类<strong>动态添加</strong>小于比较方法</li><li><code>__lt__</code> 是 Python 魔术方法，<code>a &lt; b</code> 实际调用 <code>a.__lt__(b)</code></li><li>堆内部需要用 <code>&lt;</code> 比较元素，ListNode 默认没定义比较，不加这行会报 <code>TypeError: &#x27;&lt;&#x27; not supported between instances of &#x27;ListNode&#x27; and &#x27;ListNode&#x27;</code></li></ul><ol><li><strong>`heapify(h_list)`</strong>（需要 <code>from heapq import heapify, heappush, heappop</code>）</li></ol><ul><li>原地把列表变成最小堆，时间 O(m)</li><li>堆化后 <code>h_list[0]</code> 是最小元素</li><li>内部比较使用 <code>__lt__</code>，所以堆顶是 <code>.val</code> 最小的节点</li></ul><ol><li><strong>`heappop(h_list)`</strong></li></ol><ul><li>弹出并返回堆顶（最小）元素，自动维护堆性质，O(log m)</li><li>是<strong>模块级函数</strong>，不是列表的方法：<code>heappop(h)</code> ✓，<code>h.heappop()</code> ✗</li></ul><ol><li><strong>`heappush(h_list, node)`</strong></li></ol><ul><li>往堆里插入元素并自动上浮调整，维护堆性质，O(log m)</li></ul><ol><li><strong>`[head for head in lists if head]`</strong></li></ol><ul><li>列表推导式 + 过滤：只保留非空（非 None）的头节点</li><li><code>if head</code> 过滤掉 None 和空链表，避免把 None 放进堆导致比较报错</li></ul><h3 id="section-4">易错点</h3><ol><li><strong>必须用 `heappush` 而不是 `append`</strong>：<code>append</code> 只在末尾加元素，不维护堆的顺序，下次 <code>heappop</code> 拿到的就不是最小值了</li><li><strong>必须定义 `__lt__`</strong>：没有比较方法，heapify/heappush/heappop 全都会报错</li><li><strong>列表推导里 `if head` 不能省</strong>：<code>lists</code> 可能包含 None 或空链表（如 <code>[[]]</code> 对应 <code>[None]</code>），不过滤就会把 None 放进堆</li></ol><h2 id="section-5">代码实现</h2><pre tabindex="0"><code>import heapq
+ListNode.__lt__ = lambda a, b: a.val &lt; b.val
+
+class Solution:
+    def mergeKLists(self, lists: List[Optional[ListNode]]) -&gt; Optional[ListNode]:
+        cur = dum = ListNode(0)
+        h_list = [head for head in lists if head]
+        heapify(h_list)
+        while h_list:
+            s_node = heappop(h_list)
+            if s_node.next:
+                heappush(h_list, s_node.next)
+            cur.next = s_node
+            cur = cur.next
+        return dum.next</code></pre><ul><li>复杂度：时间 O(L log m)（L 为总节点数，m 为链表个数），空间 O(m)（堆的大小）</li></ul><h2 id="section-6">写法二 元组入堆 不修改 ListNode</h2><h3 id="section-7">思路</h3><ul><li>和写法一逻辑完全相同，唯一区别：堆里放的不是 ListNode 对象，而是<strong>元组 `(val, i, node)`</strong></li><li>这样就不需要给 ListNode 定义 <code>__lt__</code>，因为 Python 比较元组是<strong>逐元素比较</strong>：</li></ul><ol><li>先比 <code>val</code>（int，一定能比）</li><li>如果 <code>val</code> 相同，比 <code>i</code>（每个链表的唯一编号，一定不相等）</li><li>永远不会比到第三个元素 <code>node</code>——所以 ListNode 不需要支持比较</li></ol><ul><li><code>i</code> 的作用是 <strong>tiebreaker（打破平局）</strong>：同一条链表的节点始终用同一个 <code>i</code>，不同链表的 <code>i</code> 不同，保证第二层一定能分出大小</li></ul><h3 id="section-8">代码实现</h3><pre tabindex="0"><code>class Solution:
+    def mergeKLists(self, lists: List[Optional[ListNode]]) -&gt; Optional[ListNode]:
+        cur = dum = ListNode(0)
+        h = [(head.val, i, head) for i, head in enumerate(lists) if head]
+        heapify(h)
+        while h:
+            _, i, node = heappop(h)
+            if node.next:
+                heappush(h, (node.next.val, i, node.next))
+            cur.next = node
+            cur = cur.next
+        return dum.next</code></pre><ul><li>复杂度：同写法一</li></ul></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-148.html"><small>← 上一篇</small>第 33 题 排序链表</a><a href="./lc-146.html"><small>下一篇 →</small>第 35 题 LRU 缓存</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

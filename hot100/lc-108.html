@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 42 题 将有序数组转换为二叉搜索树 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-108"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-8">← 二叉树目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-5" href="#section-3">代码实现</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 二叉树</div><h1>第 42 题 将有序数组转换为二叉搜索树</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 108  Convert Sorted Array to Binary Search Tree</p><p class="metadata"><strong>难度  简单</strong>    标签  二叉树  树  二叉搜索树  数组  分治    <a href="https://leetcode-cn.com/problems/convert-sorted-array-to-binary-search-tree/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>给你一个整数数组 <code>nums</code> ，其中元素已经按 升序 排列，请你将其转换为一棵 平衡 二叉搜索树。</p><p>示例 1：</p><figure><a href="./images/image43.png" target="_blank" rel="noopener" aria-label="查看原图"><img src="./images/image43.png" width="302" height="222" loading="lazy" alt="第 42 题 将有序数组转换为二叉搜索树 · 原笔记图示"></a><figcaption>原笔记图示 · 点击查看原图</figcaption></figure><pre tabindex="0"><code>输入： nums = [-10,-3,0,5,9]
+输出：[0,-3,9,-10,null,5]
+解释：[0,-10,5,null,-3,null,9] 也将被视为正确答案：
+![](https://assets.leetcode.com/uploads/2021/02/18/btree2.jpg)</code></pre><p>示例 2：</p><figure><a href="./images/image44.png" target="_blank" rel="noopener" aria-label="查看原图"><img src="./images/image44.png" width="342" height="142" loading="lazy" alt="第 42 题 将有序数组转换为二叉搜索树 · 原笔记图示"></a><figcaption>原笔记图示 · 点击查看原图</figcaption></figure><pre tabindex="0"><code>输入： nums = [1,3]
+输出：[3,1]
+解释：[1,null,3] 和 [3,1] 都是高度平衡二叉搜索树。</code></pre><p>提示：</p><ul><li><code>1 &lt;= nums.length &lt;= 104</code></li><li><code>-104 &lt;= nums[i] &lt;= 104</code></li><li><code>nums</code> 按 严格递增 顺序排列</li></ul><h2 id="section-2">思路</h2><ul><li><strong>前提</strong>：只有已排序的数组才能这么做。排好序后取中间元素做根，左边都小、右边都大，天然满足 BST 性质</li><li><strong>平衡二叉搜索树</strong>需满足两个条件：</li></ul><ol><li><strong>BST</strong>：对每个节点，左子树所有值 &lt; 当前值 &lt; 右子树所有值</li><li><strong>平衡</strong>：每个节点的左右子树高度差不超过 1</li></ol><ul><li>做法：每次取中间元素作为根，左半段递归建左子树，右半段递归建右子树。左右两边节点数差不多，自然就平衡了</li><li><strong>为什么没有单独的&quot;调用&quot;？</strong> 因为这个函数<strong>本身就是入口</strong>，递归返回的就是最终答案（树的根节点），直接自己调自己就行。不需要像直径那样定义内部函数再手动调用——那是因为直径的递归返回深度，和最终答案（直径）不一样，需要包装</li><li><strong>`left = self.sortedArrayToBST(nums[:m])` 返回的是 TreeNode，不是列表！</strong> <code>nums</code> 列表只是输入参数（原材料），函数的返回值永远是 <code>TreeNode</code> 或 <code>None</code>。递归的每一层都把列表&quot;消化&quot;成一个 TreeNode 返回给上层</li><li>和两数相加一样是<strong>正向递归</strong>——先把根节点建好，递归结果直接作为参数传入：<code>TreeNode(nums[m], left, right)</code>，类似 <code>ListNode(val, recur(...))</code></li></ul><h2 id="section-3">代码实现</h2><pre tabindex="0"><code>class Solution:
+    def sortedArrayToBST(self, nums: List[int]) -&gt; Optional[TreeNode]:
+        if not nums:
+            return
+        m = len(nums) // 2
+        left = self.sortedArrayToBST(nums[:m])
+        right = self.sortedArrayToBST(nums[m + 1:])
+
+        return TreeNode(nums[m], left, right)</code></pre><ul><li>复杂度：时间 O(n)，空间 O(log n)（递归调用栈，因为每次对半分）</li></ul></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-102.html"><small>← 上一篇</small>第 41 题 二叉树的层序遍历</a><a href="./lc-98.html"><small>下一篇 →</small>第 43 题 验证二叉搜索树</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

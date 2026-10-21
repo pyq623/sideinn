@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 54 题 实现 Trie (前缀树) · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-208"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-9">← 图论目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-6" href="#section-3">Trie 前缀树 是什么</a><a class="level-6" href="#section-4">数据结构</a><a class="level-6" href="#section-5">图示 插入 &quot;apps&quot; 再插入 &quot;apple&quot;</a><a class="level-6" href="#section-6">内存中的实际嵌套结构 插入 &quot;app&quot; 后</a><a class="level-6" href="#section-7">三个方法的逻辑</a><a class="level-5" href="#section-8">代码实现</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 图论</div><h1>第 54 题 实现 Trie (前缀树)</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 208  Implement Trie (Prefix Tree)</p><p class="metadata"><strong>难度  中等</strong>    标签  图论  设计  字典树  哈希表  字符串    <a href="https://leetcode-cn.com/problems/implement-trie-prefix-tree/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p><a href="https://baike.baidu.com/item/字典树/9825209?fr=aladdin" target="_blank" rel="noopener noreferrer">Trie</a> （发音类似 &quot;try&quot;）或者说 前缀树 是一种树形数据结构，用于高效地存储和检索字符串数据集中的键。这一数据结构有相当多的应用情景，例如自动补全和拼写检查。</p><p>请你实现 Trie 类：</p><ul><li><code>Trie()</code> 初始化前缀树对象。</li><li><code>void insert(String word)</code> 向前缀树中插入字符串 <code>word</code> 。</li><li><code>boolean search(String word)</code> 如果字符串 <code>word</code> 在前缀树中，返回 <code>true</code>（即，在检索之前已经插入）；否则，返回 <code>false</code> 。</li><li><code>boolean startsWith(String prefix)</code> 如果之前已经插入的字符串 <code>word</code> 的前缀之一为 <code>prefix</code> ，返回 <code>true</code> ；否则，返回 <code>false</code> 。</li></ul><p>示例：</p><pre tabindex="0"><code>输入
+[&quot;Trie&quot;, &quot;insert&quot;, &quot;search&quot;, &quot;search&quot;, &quot;startsWith&quot;, &quot;insert&quot;, &quot;search&quot;]
+[[], [&quot;apple&quot;], [&quot;apple&quot;], [&quot;app&quot;], [&quot;app&quot;], [&quot;app&quot;], [&quot;app&quot;]]
+输出
+[null, null, true, false, true, null, true]
+
+解释
+Trie trie = new Trie();
+trie.insert(&quot;apple&quot;);
+trie.search(&quot;apple&quot;);   // 返回 True
+trie.search(&quot;app&quot;);     // 返回 False
+trie.startsWith(&quot;app&quot;); // 返回 True
+trie.insert(&quot;app&quot;);
+trie.search(&quot;app&quot;);     // 返回 True</code></pre><p>提示：</p><ul><li><code>1 &lt;= word.length, prefix.length &lt;= 2000</code></li><li><code>word</code> 和 <code>prefix</code> 仅由小写英文字母组成</li><li><code>insert</code>、<code>search</code> 和 <code>startsWith</code> 调用次数 总计 不超过 <code>3 * 10^4</code> 次</li></ul><h2 id="section-2">思路</h2><h3 id="section-3">Trie 前缀树 是什么</h3><p>一种树，每条边代表一个字母，从根到某个节点的路径就是一个前缀。公共前缀共享路径，不同部分各走各的分支。</p><h3 id="section-4">数据结构</h3><p>每个节点就是一个 Trie 对象，有两样东西：</p><ul><li><strong>`children`</strong>：dict，记录&quot;下一个字母 → 子节点（又一个 Trie 对象）&quot;</li><li><strong>`is_end`</strong>：布尔值，标记&quot;是否有单词在这里结束&quot;</li></ul><pre tabindex="0"><code>def __init__(self):
+    self.children = {}      # {&#x27;a&#x27;: Trie(), &#x27;p&#x27;: Trie(), ...}
+    self.is_end = False</code></pre><p>dict 里的 value 是另一个 Trie，每个 Trie 又有自己的 dict……一层套一层，自然形成树结构。和链表的 <code>ListNode(val, next=ListNode(...))</code> 是同一个思路。</p><h3 id="section-5">图示 插入 &quot;apps&quot; 再插入 &quot;apple&quot;</h3><p><strong>insert(&quot;apps&quot;)</strong> — 逐字母铺路：</p><pre tabindex="0"><code>root → &#x27;a&#x27; → &#x27;p&#x27; → &#x27;p&#x27; → &#x27;s&#x27;(is_end=True)</code></pre><p><strong>insert(&quot;apple&quot;)</strong> — 公共前缀 &quot;app&quot; 已存在，直接走过去，在 &#x27;p&#x27; 处分叉：</p><pre tabindex="0"><code>ch = &#x27;a&#x27;  → 已存在，走过去
+ch = &#x27;p&#x27;  → 已存在，走过去
+ch = &#x27;p&#x27;  → 已存在，走过去
+ch = &#x27;l&#x27;  → 不存在！创建新节点（分叉）
+ch = &#x27;e&#x27;  → 不存在，创建新节点
+标记 is_end = True</code></pre><p>最终结构：</p><pre tabindex="0"><code>root → &#x27;a&#x27; → &#x27;p&#x27; → &#x27;p&#x27; → &#x27;s&#x27;(is_end=True)
+                     |
+                     └→ &#x27;l&#x27; → &#x27;e&#x27;(is_end=True)</code></pre><p>节点 &#x27;p&#x27; 的 <code>children = {&#x27;s&#x27;: Trie(), &#x27;l&#x27;: Trie()}</code>，一个节点可以有多个子节点。</p><h3 id="section-6">内存中的实际嵌套结构 插入 &quot;app&quot; 后</h3><pre tabindex="0"><code>self = {
+    children: {
+        &#x27;a&#x27;: {                          # Trie 对象
+            children: {
+                &#x27;p&#x27;: {                  # Trie 对象
+                    children: {
+                        &#x27;p&#x27;: {          # Trie 对象
+                            children: {},
+                            is_end: True   ← &quot;app&quot; 在这里结束
+                        }
+                    },
+                    is_end: False
+                }
+            },
+            is_end: False
+        }
+    },
+    is_end: False
+}</code></pre><h3 id="section-7">三个方法的逻辑</h3><p>三个方法的遍历部分完全一样（逐字母往下走），唯一区别在&quot;不存在时怎么办&quot;和&quot;最后返回什么&quot;：</p><div class="table-scroll" tabindex="0" aria-label="可横向滚动的表格"><table><tr><th scope="col"><p><strong>方法</strong></p></th><th scope="col"><p><strong>字母不存在时</strong></p></th><th scope="col"><p><strong>走完后返回</strong></p></th></tr><tr><td><p><code>insert</code></p></td><td><p>创建新节点</p></td><td><p>标记 <code>is_end = True</code></p></td></tr><tr><td><p><code>search</code></p></td><td><p><code>return False</code></p></td><td><p><code>node.is_end</code>（必须是完整单词）</p></td></tr><tr><td><p><code>startsWith</code></p></td><td><p><code>return False</code></p></td><td><p><code>True</code>（能走完就行）</p></td></tr></table></div><h2 id="section-8">代码实现</h2><pre tabindex="0"><code>class Trie:
+
+    def __init__(self):
+        self.childern = {}
+        self.is_end = False
+
+    def insert(self, word: str) -&gt; None:
+        node = self
+        for ch in word:
+            if ch not in node.childern:
+                node.childern[ch] = Trie()
+            node = node.childern[ch]
+        node.is_end = True
+
+    def search(self, word: str) -&gt; bool:
+        node = self
+        for ch in word:
+            if ch not in node.childern:
+                return False
+            node = node.childern[ch]
+        return node.is_end
+
+    def startsWith(self, prefix: str) -&gt; bool:
+        node = self
+        for ch in prefix:
+            if ch not in node.childern:
+                return False
+            node = node.childern[ch]
+        return True</code></pre><ul><li>易错点：</li></ul><ol><li><strong>`search` 和 `startsWith` 的区别只在最后一行</strong>：<code>search</code> 返回 <code>node.is_end</code>（&quot;app&quot; 是前缀但不是完整单词时返回 False），<code>startsWith</code> 返回 <code>True</code>（能走完就行）</li><li><strong>`node = self` 开头别忘</strong>：<code>self</code> 就是根节点，所有单词都从根出发。就像查字典一定从第一页开始，不可能从中间某页开始查。每次 insert/search/startsWith 都必须从根开始一个字母一个字母往下走</li><li><strong>`node.children[ch] = Trie()` 创建的是新的 Trie 对象</strong>：不是字符串，不是布尔值，是一个完整的节点（有自己的 children 和 is_end）</li><li><strong>`node = node.children[ch]` 要在 if 外面</strong>：不管是新建的还是已存在的，都要移动到下一个节点</li></ol><ul><li>复杂度：insert/search/startsWith 时间都是 O(n)（n 为单词长度），空间 O(T)（T 为所有插入字符的总数）</li></ul></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-207.html"><small>← 上一篇</small>第 53 题 课程表</a><a href="./lc-46.html"><small>下一篇 →</small>第 55 题 全排列</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

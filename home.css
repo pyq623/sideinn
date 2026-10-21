@@ -34,6 +34,10 @@
 @media(max-width:760px){.note-card[data-note-id="occamy"] .note-cover strong{font-size:18px;letter-spacing:-.5px}}
 
 /* Related training papers share the shelf, with short readable cover labels. */
+.note-card[data-note-id="hot100"] .note-cover{background:#f6eddf;border-color:#e2cda9;border-left-color:#b3894b;color:#74552b}
+.note-card[data-note-id="hot100"] .note-cover:after{border-color:#d6bb91;box-shadow:0 0 0 17px #f6eddf,0 0 0 18px #e2cda9}
+.note-card[data-note-id="hot100"] .note-cover strong{font-size:29px;letter-spacing:-1px}
+@media(max-width:760px){.note-card[data-note-id="hot100"] .note-cover strong{font-size:19px;letter-spacing:-.5px}}
 .note-card[data-note-id="sao"] .note-cover{background:#edf2f7;border-color:#cbd8e5;border-left-color:#6786a5;color:#3f5c78}
 .note-card[data-note-id="sao"] .note-cover:after{border-color:#bdcedf;box-shadow:0 0 0 17px #edf2f7,0 0 0 18px #cbd8e5}
 .note-card[data-note-id="compactionrl"] .note-cover{background:#f1edf6;border-color:#d6cce3;border-left-color:#8a70a6;color:#67527f}

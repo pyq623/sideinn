@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 04 题 移动零 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-283"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-2">← 双指针目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">解法</a><a class="level-5" href="#section-3">解法二 交换法</a><a class="level-5" href="#section-4">语法要点</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 双指针</div><h1>第 04 题 移动零</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 283  Move Zeroes</p><p class="metadata"><strong>难度  简单</strong>    标签  双指针  数组    <a href="https://leetcode-cn.com/problems/move-zeroes/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>给定一个数组 <code>nums</code>，编写一个函数将所有 <code>0</code> 移动到数组的末尾，同时保持非零元素的相对顺序。</p><p>请注意  ，必须在不复制数组的情况下原地对数组进行操作。</p><p>示例 1:</p><pre tabindex="0"><code>输入: nums = [0,1,0,3,12]
+输出: [1,3,12,0,0]</code></pre><p>示例 2:</p><pre tabindex="0"><code>输入: nums = [0]
+输出: [0]</code></pre><p>提示 :</p><ul><li><code>1 &lt;= nums.length &lt;= 10^4</code></li><li><code>-2^31 &lt;= nums[i] &lt;= 2^31 - 1</code></li></ul><p>进阶： 你能尽量减少完成的操作次数吗？</p><p>思想：原地操作，就是直接对nums进行修改。</p><h2 id="section-2">解法</h2><pre tabindex="0"><code>class Solution:
+    def moveZeroes(self, nums: List[int]) -&gt; None:
+        stacksize = 0
+        for x in nums:
+            if x != 0:
+                nums[stacksize] = x
+                stacksize = stacksize + 1
+        for i in range(stacksize, len(nums)):
+            nums[i] = 0
+        return nums</code></pre><h2 id="section-3">解法二 交换法</h2><p>思想：<code>i0</code> 始终指向&quot;第一个 0 的位置&quot;。<code>i</code> 向前扫描，遇到非零就和 <code>i0</code> 交换——相当于把非零元素换到前面，0 被换到后面。如果前面没有 0，<code>i</code> 和 <code>i0</code> 同步前进，swap 是自交换（no-op）；一旦遇到 0，<code>i0</code> 停住、<code>i</code> 继续走，之后的 swap 才真正生效。这样第一次<code>i</code>遇到0，就会和<code>i0</code>拉开一点差距，<code>i0</code>指向的就是0，<code>i</code>如果后面继续非0，就一边交换，一边继续前进；如果是0，则<code>i0</code>不前进，<code>i</code>前进。之后如果只需一次遍历，不需要第二轮填零。</p><pre tabindex="0"><code>class Solution:
+    def moveZeroes(self, nums: List[int]) -&gt; None:
+        i0 = 0
+        for i in range(len(nums)):
+            if nums[i] != 0:
+                nums[i0], nums[i] = nums[i], nums[i0]
+                i0 = i0 + 1
+        return nums</code></pre><h2 id="section-4">语法要点</h2><ul><li><code>range(stacksize, len(nums))</code>：从 <code>stacksize</code> 到 <code>len(nums)-1</code>，左闭右开</li><li>原地修改：题目要求不返回新数组，直接修改 <code>nums</code>（实际上 <code>return nums</code> 可省略）</li><li><code>nums[i0], nums[i] = nums[i], nums[i0]</code>：Python 同时赋值语法，一行完成交换，不需要临时变量</li><li><code>stacksize</code> / <code>i0</code> 都充当慢指针，记录下一个非零元素应放的位置</li></ul></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-128.html"><small>← 上一篇</small>第 03 题 最长连续序列</a><a href="./lc-11.html"><small>下一篇 →</small>第 05 题 盛最多水的容器</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

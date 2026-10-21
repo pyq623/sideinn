@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 77 题 买卖股票的最佳时机 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-121"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-14">← 贪心目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-5" href="#section-3">代码实现</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 贪心</div><h1>第 77 题 买卖股票的最佳时机</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 121  Best Time to Buy and Sell Stock</p><p class="metadata"><strong>难度  简单</strong>    标签  贪心算法  数组  动态规划    <a href="https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>给定一个数组 <code>prices</code> ，它的第 <code>i</code> 个元素 <code>prices[i]</code> 表示一支给定股票第 <code>i</code> 天的价格。</p><p>你只能选择 某一天 买入这只股票，并选择在 未来的某一个不同的日子 卖出该股票。设计一个算法来计算你所能获取的最大利润。</p><p>返回你可以从这笔交易中获取的最大利润。如果你不能获取任何利润，返回 <code>0</code> 。</p><p>示例 1：</p><pre tabindex="0"><code>输入：[7,1,5,3,6,4]
+输出： 5
+解释： 在第 2 天（股票价格 = 1）的时候买入，在第 5 天（股票价格 = 6）的时候卖出，最大利润 = 6-1 = 5 。
+     注意利润不能是 7-1 = 6, 因为卖出价格需要大于买入价格；同时，你不能在买入前卖出股票。</code></pre><p>示例 2：</p><pre tabindex="0"><code>输入： prices = [7,6,4,3,1]
+输出： 0
+解释： 在这种情况下, 没有交易完成, 所以最大利润为 0。</code></pre><p>提示：</p><ul><li><code>1 &lt;= prices.length &lt;= 105</code></li><li><code>0 &lt;= prices[i] &lt;= 104</code></li></ul><h2 id="section-2">思路</h2><p>暴力双循环 O(n²) 会超时。关键观察：对于每一天，想知道&quot;今天卖出能赚多少&quot;，只需要知道<strong>之前的历史最低价</strong>。</p><p>所以只需一层循环，遍历过程中维护两个变量：</p><ul><li><code>low</code>：到目前为止的历史最低价</li><li><code>profit</code>：全局最大利润</li></ul><pre tabindex="0"><code>[7, 1, 5, 3, 6, 4]
+ 7  1  1  1  1  1   ← low
+ 0  0  4  2  5  3   ← p - low
+                ↑ 最大利润 = 5</code></pre><p>每天做两件事：更新历史最低价，算今天卖出的利润。</p><h2 id="section-3">代码实现</h2><pre tabindex="0"><code>class Solution:
+    def maxProfit(self, prices: List[int]) -&gt; int:
+        profit = 0
+        low = inf
+        for p in prices:
+            low = min(low, p)
+            profit = max(profit, p - low)
+        return profit</code></pre><ul><li>易错点：</li></ul><ol><li><strong>`low` 初始值用 `inf`</strong>：保证第一天一定能更新 low。用 <code>0</code> 的话永远不会被更新</li><li><strong>先更新 low 再算利润</strong>：顺序不能反，因为今天的价格既可能是新低价，也可能是卖出价（当天买当天卖利润为 0，不影响结果）</li><li><strong>不需要双指针</strong>：虽然直觉是&quot;找最低点和最高点的差&quot;，但最高点必须在最低点之后。维护历史最低价天然保证了时间顺序</li></ol><ul><li>复杂度：时间 O(n)，空间 O(1)</li></ul></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-295.html"><small>← 上一篇</small>第 76 题 数据流的中位数</a><a href="./lc-55.html"><small>下一篇 →</small>第 78 题 跳跃游戏</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

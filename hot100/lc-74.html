@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 64 题 搜索二维矩阵 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-74"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-11">← 二分查找目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-6" href="#section-3">坐标转换</a><a class="level-6" href="#section-4">和上一题的对比</a><a class="level-5" href="#section-5">代码实现</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 二分查找</div><h1>第 64 题 搜索二维矩阵</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 74  Search a 2D Matrix</p><p class="metadata"><strong>难度  中等</strong>    标签  二分查找  数组  矩阵    <a href="https://leetcode-cn.com/problems/search-a-2d-matrix/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>给你一个满足下述两条属性的 <code>m x n</code> 整数矩阵：</p><ul><li>每行中的整数从左到右按非严格递增顺序排列。</li><li>每行的第一个整数大于前一行的最后一个整数。</li></ul><p>给你一个整数 <code>target</code> ，如果 <code>target</code> 在矩阵中，返回 <code>true</code> ；否则，返回 <code>false</code> 。</p><p>示例 1：</p><figure><a href="./images/image63.png" target="_blank" rel="noopener" aria-label="查看原图"><img src="./images/image63.png" width="322" height="242" loading="lazy" alt="第 64 题 搜索二维矩阵 · 原笔记图示"></a><figcaption>原笔记图示 · 点击查看原图</figcaption></figure><pre tabindex="0"><code>输入： matrix = [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target = 3
+输出： true</code></pre><p>示例 2：</p><figure><a href="./images/image64.png" target="_blank" rel="noopener" aria-label="查看原图"><img src="./images/image64.png" width="322" height="242" loading="lazy" alt="第 64 题 搜索二维矩阵 · 原笔记图示"></a><figcaption>原笔记图示 · 点击查看原图</figcaption></figure><pre tabindex="0"><code>输入： matrix = [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target = 13
+输出： false</code></pre><p>提示：</p><ul><li><code>m == matrix.length</code></li><li><code>n == matrix[i].length</code></li><li><code>1 &lt;= m, n &lt;= 100</code></li><li><code>-104 &lt;= matrix[i][j], target &lt;= 104</code></li></ul><h2 id="section-2">思路</h2><ul><li>把 <code>m x n</code> 矩阵看成长度为 <code>m * n</code> 的一维有序数组，直接二分查找</li><li>和上一题（35. 搜索插入位置）完全一样的模板，只多了一步坐标转换</li></ul><h3 id="section-3">坐标转换</h3><p>把一维下标 <code>mid</code> 转换成二维坐标：</p><pre tabindex="0"><code>row = mid // n    # 第几行
+col = mid % n     # 第几列
+matrix = [[1, 3, 5, 7],       展平后：[1, 3, 5, 7, 10, 11, 16, 20, 23, 30, 34, 60]
+          [10,11,16,20],       下标：   0  1  2  3   4   5   6   7   8   9  10  11
+          [23,30,34,60]]
+
+mid = 5 → row = 5 // 4 = 1, col = 5 % 4 = 1 → matrix[1][1] = 11</code></pre><h3 id="section-4">和上一题的对比</h3><pre tabindex="0"><code># 上一题：一维数组直接比
+if nums[mid] &lt; target:
+
+# 本题：先转坐标再比
+row = mid // n
+col = mid % n
+if matrix[row][col] &lt; target:</code></pre><p>其余部分完全一样。</p><h2 id="section-5">代码实现</h2><pre tabindex="0"><code>class Solution:
+    def searchMatrix(self, matrix: List[List[int]], target: int) -&gt; bool:
+        m = len(matrix)
+        n = len(matrix[0])
+        flat_matrix = m * n
+        left, right = 0, flat_matrix - 1
+        while left &lt;= right:
+            mid = (left + right) // 2
+            row = mid // n
+            col = mid % n
+            if matrix[row][col] &lt; target:
+                left = mid + 1
+            elif matrix[row][col] &gt; target:
+                right = mid - 1
+            else:
+                return True
+        return False</code></pre><ul><li>易错点：</li></ul><ol><li><strong>除以 `n`（列数）不是 `m`（行数）</strong>：<code>mid // n</code> 得到行号，<code>mid % n</code> 得到列号</li><li><strong>`right = flat_matrix - 1` 不是 `flat_matrix`</strong>：下标从 0 开始，最大是 <code>m*n - 1</code></li><li><strong>返回 `False` 不是 `left`</strong>：本题只需要判断存不存在，不需要返回插入位置</li></ol><ul><li>复杂度：时间 O(log(m × n))，空间 O(1)</li></ul></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-35.html"><small>← 上一篇</small>第 63 题 搜索插入位置</a><a href="./lc-34.html"><small>下一篇 →</small>第 65 题 在排序数组中查找元素的第一个和最后一个位置</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

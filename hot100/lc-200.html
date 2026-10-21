@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 51 题 岛屿数量 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-200"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-9">← 图论目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-5" href="#section-3">代码实现</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 图论</div><h1>第 51 题 岛屿数量</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 200  Number of Islands</p><p class="metadata"><strong>难度  中等</strong>    标签  图论  深度优先搜索  广度优先搜索  并查集  数组  矩阵    <a href="https://leetcode-cn.com/problems/number-of-islands/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>给你一个由 <code>&#x27;1&#x27;</code>（陆地）和 <code>&#x27;0&#x27;</code>（水）组成的的二维网格，请你计算网格中岛屿的数量。</p><p>岛屿总是被水包围，并且每座岛屿只能由水平方向和/或竖直方向上相邻的陆地连接形成。</p><p>此外，你可以假设该网格的四条边均被水包围。</p><p>示例 1：</p><pre tabindex="0"><code>输入： grid = [
+  [&#x27;1&#x27;,&#x27;1&#x27;,&#x27;1&#x27;,&#x27;1&#x27;,&#x27;0&#x27;],
+  [&#x27;1&#x27;,&#x27;1&#x27;,&#x27;0&#x27;,&#x27;1&#x27;,&#x27;0&#x27;],
+  [&#x27;1&#x27;,&#x27;1&#x27;,&#x27;0&#x27;,&#x27;0&#x27;,&#x27;0&#x27;],
+  [&#x27;0&#x27;,&#x27;0&#x27;,&#x27;0&#x27;,&#x27;0&#x27;,&#x27;0&#x27;]
+]
+输出： 1</code></pre><p>示例 2：</p><pre tabindex="0"><code>输入： grid = [
+  [&#x27;1&#x27;,&#x27;1&#x27;,&#x27;0&#x27;,&#x27;0&#x27;,&#x27;0&#x27;],
+  [&#x27;1&#x27;,&#x27;1&#x27;,&#x27;0&#x27;,&#x27;0&#x27;,&#x27;0&#x27;],
+  [&#x27;0&#x27;,&#x27;0&#x27;,&#x27;1&#x27;,&#x27;0&#x27;,&#x27;0&#x27;],
+  [&#x27;0&#x27;,&#x27;0&#x27;,&#x27;0&#x27;,&#x27;1&#x27;,&#x27;1&#x27;]
+]
+输出： 3</code></pre><p>提示：</p><ul><li><code>m == grid.length</code></li><li><code>n == grid[i].length</code></li><li><code>1 &lt;= m, n &lt;= 300</code></li><li><code>grid[i][j]</code> 的值为 <code>&#x27;0&#x27;</code> 或 <code>&#x27;1&#x27;</code></li></ul><h2 id="section-2">思路</h2><ul><li>遍历整个网格，碰到一个 <code>&#x27;1&#x27;</code>（陆地）就说明发现了一个新岛屿，<strong>岛屿计数 +1</strong>，然后从这个 <code>&#x27;1&#x27;</code> 出发，用 DFS 把整个岛（所有相连的 <code>&#x27;1&#x27;</code>）都&quot;淹掉&quot;（标记为 <code>&#x27;0&#x27;</code>），后面遍历就不会重复数到同一个岛</li><li>DFS 的理解方式和二叉树一样：<strong>站在一个格子的视角，相信递归搞定其余的</strong></li><li>站在格子 <code>(i, j)</code>，我只做两件事：</li></ul><ol><li>把自己淹掉（<code>grid[i][j] = &#x27;0&#x27;</code>）</li><li>让上下左右四个邻居也去做同样的事</li></ol><ul><li>不需要关心邻居会怎么扩散、会走多远，剩下的交给递归</li><li>和二叉树唯一的区别：树是往左右两个方向递归，网格是往<strong>上下左右四个方向</strong>递归</li><li><strong>不需要 visited 数组</strong>：直接把 <code>&#x27;1&#x27;</code> 改成 <code>&#x27;0&#x27;</code> 就是标记已访问（原地修改，省空间）</li><li><strong>DFS 四个方向的调用顺序不影响结果</strong>：目的是把整个岛全部淹掉，不管先往哪个方向走，最终都会覆盖所有相连的 <code>&#x27;1&#x27;</code></li></ul><h2 id="section-3">代码实现</h2><pre tabindex="0"><code>class Solution:
+    def numIslands(self, grid: List[List[str]]) -&gt; int:
+        self.ans = 0
+        m = len(grid)
+        n = len(grid[0])
+        def dfs(i, j):
+            if i &lt; 0 or i &gt;= m or j &lt; 0 or j &gt;= n or grid[i][j] == &#x27;0&#x27;:
+                return
+            grid[i][j] = &#x27;0&#x27;
+            dfs(i - 1, j)
+            dfs(i + 1, j)
+            dfs(i, j - 1)
+            dfs(i, j + 1)
+        for i in range(m):
+            for j in range(n):
+                if grid[i][j] == &#x27;1&#x27;:
+                    self.ans += 1
+                    dfs(i, j)
+        return self.ans</code></pre><ul><li>易错点：</li></ul><ol><li><strong>`&#x27;0&#x27;` 不是 `0`！</strong> 题目网格的值是<strong>字符串</strong> <code>&#x27;1&#x27;</code> 和 <code>&#x27;0&#x27;</code>，不是数字。写成 <code>grid[i][j] == 0</code>（数字）会导致条件永远不成立，DFS 无限递归，<strong>超时</strong></li><li><strong>先淹掉自己再递归</strong>：<code>grid[i][j] = &#x27;0&#x27;</code> 必须在四个 dfs 调用之前，否则会重复访问自己导致死循环</li><li><strong>边界检查写在 DFS 开头</strong>：越界和是水的判断统一放在函数入口，比在调用前判断更简洁不容易漏</li></ol><ul><li>复杂度：时间 O(m × n)，空间 O(m × n)（最坏情况递归调用栈，全是陆地时）</li></ul></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-124.html"><small>← 上一篇</small>第 50 题 二叉树中的最大路径和</a><a href="./lc-994.html"><small>下一篇 →</small>第 52 题 腐烂的橘子</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

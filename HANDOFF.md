@@ -26,6 +26,7 @@ git clone https://github.com/pyq623/ai-study-notes.git ai-study-notes
 
 | 要修改的内容 | 文件或目录 |
 | --- | --- |
+| Hot100 目录、逐题正文、图片与复习标记 | `hot100/`；从用户 DOCX 用 `scripts/import-hot100.py` 导入，生成内容不手改；来源摘要见 `hot100/import-source.json` |
 | 首页文案、结构、资源版本参数 | `index.html` |
 | 首页分类、搜索、卡片渲染 | `home.js` |
 | 首页布局和卡片封面 | `home.css` |
@@ -223,3 +224,7 @@ TTL 为 10 分钟；`CNAME` 文件只有 `sideinn.ink`。HTTPS 由 GitHub Pages 
 > 请维护 https://sideinn.ink/。先阅读主仓库 https://github.com/pyq623/sideinn 中的 AGENTS.md 和 HANDOFF.md，并检查当前分支、远端与未提交改动。首页及研究笔记直接在 sideinn 修改；面试、基础和工程资料请在 https://github.com/pyq623/ai-study-notes 修改源码，构建与测试通过后，用主仓库 scripts/import-study.py 导入。保留题号、存储兼容和来源许可，不要把生成页面当成长期编辑源。根据本次需求完成手机/桌面验证，并在授权范围内发布，核对该提交的部署和正式网址。无需为普通页面修改更改 DNS、证书或购买服务。最后报告修改位置、两个仓库涉及的提交、验证结果及尚存限制。
 
 本次接手基准：合并资料的正式站提交 `5a8ff524096fb9f63cfb4787ffe02ef2ac641fa1`；对应资料源码提交 `01a64eaaf5d6839c46edc5d02ffc4b8f75dc4efb`。以后以远端最新状态和 `study/import-source.json` 为准。
+
+### Hot100 导入与核对
+
+2026-10-21 本地新增独立「算法与 Hot100」分类。原手册正文为 95 道编号题 + 1 道补充题，共 96 道题，另有 4 篇技巧总结；不是额外补写 100 道题。导入器跳过旧纸面目录，使用唯一 LeetCode 题号建立逐题页面，保留 68 张图片（72 次引用）、代码换行缩进和表格。更新时运行 `python scripts/import-hot100.py /path/to/Hot100算法题复习手册.docx`（依赖 lxml、Pillow），核对内容数量与内链，再检查首页分类、搜索、手机排版和复习标记持久化。复习记录使用独立键 `sideinn:hot100:review:v1`。首页以独立分类展示；正式入口为 `/hot100/`。

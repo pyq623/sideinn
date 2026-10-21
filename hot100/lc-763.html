@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 80 题 划分字母区间 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-763"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-14">← 贪心目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-5" href="#section-3">代码实现</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 贪心</div><h1>第 80 题 划分字母区间</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 763  Partition Labels</p><p class="metadata"><strong>难度  中等</strong>    标签  贪心算法  贪心  哈希表  双指针  字符串    <a href="https://leetcode-cn.com/problems/partition-labels/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>给你一个字符串 <code>s</code> 。我们要把这个字符串划分为尽可能多的片段，同一字母最多出现在一个片段中。例如，字符串 <code>&quot;ababcc&quot;</code> 能够被分为 <code>[&quot;abab&quot;, &quot;cc&quot;]</code>，但类似 <code>[&quot;aba&quot;, &quot;bcc&quot;]</code> 或 <code>[&quot;ab&quot;, &quot;ab&quot;, &quot;cc&quot;]</code> 的划分是非法的。</p><p>注意，划分结果需要满足：将所有划分结果按顺序连接，得到的字符串仍然是 <code>s</code> 。</p><p>返回一个表示每个字符串片段的长度的列表。</p><p>示例 1：</p><pre tabindex="0"><code>输入： s = &quot;ababcbacadefegdehijhklij&quot;
+输出：[9,7,8]
+解释：
+划分结果为 &quot;ababcbaca&quot;、&quot;defegde&quot;、&quot;hijhklij&quot; 。
+每个字母最多出现在一个片段中。
+像 &quot;ababcbacadefegde&quot;, &quot;hijhklij&quot; 这样的划分是错误的，因为划分的片段数较少。</code></pre><p>示例 2：</p><pre tabindex="0"><code>输入： s = &quot;eccbbbbdec&quot;
+输出：[10]</code></pre><p>提示：</p><ul><li><code>1 &lt;= s.length &lt;= 500</code></li><li><code>s</code> 仅由小写英文字母组成</li></ul><h2 id="section-2">思路</h2><p>和跳跃游戏 II（上一题）一模一样的模式！</p><div class="table-scroll" tabindex="0" aria-label="可横向滚动的表格"><table><tr><th scope="col"></th><th scope="col"><p><strong>跳跃游戏 II</strong></p></th><th scope="col"><p><strong>划分字母区间</strong></p></th></tr><tr><td><p>维护什么</p></td><td><p>当前这一跳的最远边界</p></td><td><p>当前片段的最远右边界</p></td></tr><tr><td><p>何时触发</p></td><td><p><code>i == cur_end</code> 时跳一步，step++</p></td><td><p><code>i == fur_dis</code> 时切一刀，记录长度</p></td></tr><tr><td><p>更新方式</p></td><td><p><code>max_reach = max(max_reach, i+nums[i])</code></p></td><td><p><code>fur_dis = max(fur_dis, last[s[i]])</code></p></td></tr><tr><td><p>&quot;范围&quot;来源</p></td><td><p>每个位置的跳跃距离 <code>nums[i]</code></p></td><td><p>每个字母最后出现的位置 <code>last[s[i]]</code></p></td></tr></table></div><p><strong>代码骨架完全一样</strong>：</p><pre tabindex="0"><code># 跳跃游戏 II
+for i in range(n - 1):
+    max_reach = max(max_reach, i + nums[i])
+    if i == cur_end:
+        step += 1
+        cur_end = max_reach
+
+# 划分字母区间
+for i in range(n):
+    fur_dis = max(fur_dis, hash_dis[s[i]])
+    if i == fur_dis:
+        results.append(i + 1 - prev)
+        prev = i + 1</code></pre><p>都是&quot;在遍历过程中不断推远边界，到达边界时做一次操作&quot;的贪心模板。</p><p><strong>两步走</strong>：</p><ol><li><strong>预处理</strong>：记录每个字母最后一次出现的位置</li><li><strong>扫描</strong>：从左到右遍历，每个字母都把右边界推到它最后出现的位置。当 <code>i == 右边界</code> 时，说明当前片段内所有字母都不会再后面出现了，切一刀</li></ol><pre tabindex="0"><code>s = &quot;ababcbacadefegdehijhklij&quot;
+
+i=0 &#x27;a&#x27;: a最后在8,  边界=8
+i=1 &#x27;b&#x27;: b最后在5,  边界=8
+i=2 &#x27;a&#x27;: 边界=8
+...
+i=8 &#x27;a&#x27;: i==边界8, 切！第一段长度=9
+
+i=9  &#x27;d&#x27;: d最后在14, 边界=14
+i=10 &#x27;e&#x27;: e最后在15, 边界=15
+...
+i=15 &#x27;e&#x27;: i==边界15, 切！第二段长度=7
+
+i=16 &#x27;h&#x27;: h最后在19, 边界=19
+...
+i=23 &#x27;j&#x27;: i==边界23, 切！第三段长度=8</code></pre><h2 id="section-3">代码实现</h2><pre tabindex="0"><code>class Solution:
+    def partitionLabels(self, s: str) -&gt; List[int]:
+        results = []
+        hash_dis = dict()
+        n = len(s)
+        fur_dis = 0
+        prev = 0
+        for i in range(n):
+            hash_dis[s[i]] = i
+        for i in range(n):
+            fur_dis = max(fur_dis, hash_dis[s[i]])
+            if i == fur_dis:
+                results.append(i + 1 - prev)
+                prev = i + 1
+        return results</code></pre><ul><li>易错点：</li></ul><ol><li><strong>`results[-1]` 是长度不是位置</strong>：算片段长度时不能用上一段的长度来减，要用 <code>prev</code> 记录当前片段的起始位置，长度 = <code>i + 1 - prev</code></li><li><strong>`s[i]` 不是 `n[i]`</strong>：<code>n</code> 是整数（<code>len(s)</code>），不能下标取值</li><li><strong>第一次遍历记录的是最后出现位置</strong>：<code>hash_dis[s[i]] = i</code> 会不断覆盖，最终保留的就是最后一次出现的下标</li><li><strong>切完后 `prev = i + 1`</strong>：下一段从 i+1 开始</li></ol><ul><li>复杂度：时间 O(n)（两次线性遍历），空间 O(1)（字母表大小固定 26）</li></ul></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-45.html"><small>← 上一篇</small>第 79 题 跳跃游戏 II</a><a href="./lc-70.html"><small>下一篇 →</small>第 81 题 爬楼梯</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

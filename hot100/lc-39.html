@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 58 题 组合总和 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-39"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-10">← 回溯目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-6" href="#section-3">和子集的对比</a><a class="level-6" href="#section-4">为什么用 start 不回头</a><a class="level-6" href="#section-5">决策树 candidates 2 3 6 7 target 7</a><a class="level-5" href="#section-6">代码实现</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 回溯</div><h1>第 58 题 组合总和</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 39  Combination Sum</p><p class="metadata"><strong>难度  中等</strong>    标签  回溯  数组    <a href="https://leetcode-cn.com/problems/combination-sum/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>给你一个 无重复元素 的整数数组 <code>candidates</code> 和一个目标整数 <code>target</code> ，找出 <code>candidates</code> 中可以使数字和为目标数 <code>target</code> 的 所有  不同组合 ，并以列表形式返回。你可以按 任意顺序 返回这些组合。</p><p><code>candidates</code> 中的 同一个 数字可以 无限制重复被选取 。如果至少一个数字的被选数量不同，则两种组合是不同的。</p><p>对于给定的输入，保证和为 <code>target</code> 的不同组合数少于 <code>150</code> 个。</p><p>示例 1：</p><pre tabindex="0"><code>输入： candidates = [2,3,6,7], target = 7
+输出：[[2,2,3],[7]]
+解释：
+2 和 3 可以形成一组候选，2 + 2 + 3 = 7 。注意 2 可以使用多次。
+7 也是一个候选， 7 = 7 。
+仅有这两种组合。</code></pre><p>示例 2：</p><pre tabindex="0"><code>输入: candidates = [2,3,5], target = 8
+输出:[[2,2,2,2],[2,3,3],[3,5]]</code></pre><p>示例 3：</p><pre tabindex="0"><code>输入: candidates = [2], target = 1
+输出:[]</code></pre><p>提示：</p><ul><li><code>1 &lt;= candidates.length &lt;= 30</code></li><li><code>2 &lt;= candidates[i] &lt;= 40</code></li><li><code>candidates</code> 的所有元素 互不相同</li><li><code>1 &lt;= target &lt;= 40</code></li></ul><h2 id="section-2">思路</h2><ul><li>本质是<strong>子集（第 56 题）的变体</strong>，不是前缀和。区别只有两点：允许重复选 + 加 sum 剪枝</li></ul><h3 id="section-3">和子集的对比</h3><pre tabindex="0"><code># 子集：每个元素最多选 1 次
+def dfs(start, path):
+    self.res.append(path[:])        # 每个节点都收集
+    for i in range(start, n):
+        path.append(nums[i])
+        dfs(i + 1, path)            # i+1：不能再选自己
+        path.pop()
+
+# 组合总和：每个元素可以重复选
+def dfs(start, path, cur_sum):
+    if cur_sum == target:           # 和为 target 才收集
+        self.res.append(path[:])
+        return
+    if cur_sum &gt; target:            # 剪枝：超了就不继续
+        return
+    for i in range(start, n):
+        path.append(candidates[i])
+        dfs(i, path, cur_sum + candidates[i])   # i：还能选自己
+        path.pop()</code></pre><div class="table-scroll" tabindex="0" aria-label="可横向滚动的表格"><table><tr><th scope="col"></th><th scope="col"><p><strong>子集（第 56 题）</strong></p></th><th scope="col"><p><strong>组合总和（本题）</strong></p></th></tr><tr><td><p>每个元素能选几次</p></td><td><p>最多 1 次</p></td><td><p><strong>无限次</strong></p></td></tr><tr><td><p>递归传什么</p></td><td><p><code>dfs(i + 1, ...)</code></p></td><td><p><code>dfs(i, ...)</code>（还能选自己）</p></td></tr><tr><td><p>收集时机</p></td><td><p>每个节点都收集</p></td><td><p><code>cur_sum == target</code> 时收集</p></td></tr><tr><td><p>终止条件</p></td><td><p>for 范围空自然返回</p></td><td><p><code>cur_sum &gt; target</code> 剪枝</p></td></tr></table></div><h3 id="section-4">为什么用 start 不回头</h3><p>和子集一样的道理：<code>[2,3]</code> 和 <code>[3,2]</code> 算同一个组合，用 <code>start</code> 保证只往后选，天然避免重复。</p><h3 id="section-5">决策树 candidates 2 3 6 7 target 7</h3><pre tabindex="0"><code>                         []  sum=0
+               /          |        \        \
+             [2]         [3]      [6]      [7] ✓
+            / | \        / \        |
+        [2,2] [2,3] [2,6]✗ [3,3] [3,6]✗  [6,6]✗
+        /  \     |          |
+   [2,2,2] [2,2,3]✓ [2,3,3]✗ [3,3,3]✗
+      |
+  [2,2,2,2]✗（sum=8&gt;7，剪枝）</code></pre><h2 id="section-6">代码实现</h2><pre tabindex="0"><code>class Solution:
+    def combinationSum(self, candidates: List[int], target: int) -&gt; List[List[int]]:
+        self.res = []
+        n = len(candidates)
+        def dfs(start, path, cur_sum):
+            if cur_sum == target:
+                self.res.append(path[:])
+                return
+            if cur_sum &gt; target:
+                return
+            for i in range(start, n):
+                path.append(candidates[i])
+                dfs(i, path, cur_sum + candidates[i])
+                path.pop()
+        path = []
+        dfs(0, path, 0)
+        return self.res</code></pre><ul><li>易错点：</li></ul><ol><li><strong>`dfs(i, ...)` 不是 `dfs(i + 1, ...)`</strong>：允许重复选同一个元素，传 <code>i</code> 而不是 <code>i + 1</code></li><li><strong>`self.res.append(path[:])` 不是 `append(path)`</strong>：list 是可变类型，不复制后续 pop 会改掉</li><li><strong>需要 `start` 参数</strong>：虽然可以重复选，但不能回头选前面的数（否则 <code>[2,3]</code> 和 <code>[3,2]</code> 重复）</li><li><strong>`cur_sum &gt; target` 要 return</strong>：剪枝，否则会无限递归下去（因为可以无限选）</li></ol><ul><li>复杂度：时间 O(n^T/M)（n 为候选数个数，T 为 target，M 为最小候选数），空间 O(T/M)（递归深度）</li></ul></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-17.html"><small>← 上一篇</small>第 57 题 电话号码的字母组合</a><a href="./lc-22.html"><small>下一篇 →</small>第 59 题 括号生成</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

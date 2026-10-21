@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 92 题 最小路径和 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-64"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-16">← 多维动态规划目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-5" href="#section-3">代码实现</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 多维动态规划</div><h1>第 92 题 最小路径和</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 64  Minimum Path Sum</p><p class="metadata"><strong>难度  中等</strong>    标签  多维动态规划  数组  动态规划  矩阵    <a href="https://leetcode-cn.com/problems/minimum-path-sum/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>给定一个包含非负整数的 <code>m x n</code> 网格 <code>grid</code> ，请找出一条从左上角到右下角的路径，使得路径上的数字总和为最小。</p><p>说明： 每次只能向下或者向右移动一步。</p><p>示例 1：</p><figure><a href="./images/image68.png" target="_blank" rel="noopener" aria-label="查看原图"><img src="./images/image68.png" width="242" height="242" loading="lazy" alt="第 92 题 最小路径和 · 原笔记图示"></a><figcaption>原笔记图示 · 点击查看原图</figcaption></figure><pre tabindex="0"><code>输入： grid = [[1,3,1],[1,5,1],[4,2,1]]
+输出： 7
+解释： 因为路径 1→3→1→1→1 的总和最小。</code></pre><p>示例 2：</p><pre tabindex="0"><code>输入： grid = [[1,2,3],[4,5,6]]
+输出： 12</code></pre><p>提示：</p><ul><li><code>m == grid.length</code></li><li><code>n == grid[i].length</code></li><li><code>1 &lt;= m, n &lt;= 200</code></li><li><code>0 &lt;= grid[i][j] &lt;= 200</code></li></ul><h2 id="section-2">思路</h2><p>和上一题（不同路径）结构几乎一样，只是把&quot;方案数加法&quot;换成了&quot;最小代价 min&quot;。</p><div class="table-scroll" tabindex="0" aria-label="可横向滚动的表格"><table><tr><th scope="col"></th><th scope="col"><p><strong>不同路径</strong></p></th><th scope="col"><p><strong>最小路径和</strong></p></th></tr><tr><td><p>求什么</p></td><td><p>方案数</p></td><td><p>最小代价</p></td></tr><tr><td><p>递推</p></td><td><p><code>dp[i-1][j] + dp[i][j-1]</code></p></td><td><p><code>min(dp[i-1][j], dp[i][j-1]) + grid[i][j]</code></p></td></tr><tr><td><p>运算</p></td><td><p>加法（累计方案）</p></td><td><p>min（选更优路径）+ 当前格子代价</p></td></tr><tr><td><p>边界</p></td><td><p>第一行/列 = 1</p></td><td><p>第一行/列 = 累加 grid</p></td></tr></table></div><p><code>dp[i][j]</code> 表示从左上角走到 <code>(i, j)</code> 的最小路径和。到达 <code>(i, j)</code> 只能从上方或左方来，选代价更小的那条路，再加上当前格子的值。</p><p>边界条件：</p><ul><li><code>dp[0][0] = grid[0][0]</code>：起点本身</li><li>第一行：<code>dp[0][j] = dp[0][j-1] + grid[0][j]</code>（只能从左边来，一路累加）</li><li>第一列：<code>dp[i][0] = dp[i-1][0] + grid[i][0]</code>（只能从上面来，一路累加）</li></ul><pre tabindex="0"><code>grid:               dp:
+[1, 3, 1]          [1, 4, 5]
+[1, 5, 1]    →     [2, 7, 6]
+[4, 2, 1]          [6, 8, 7]  ← 答案 7</code></pre><h2 id="section-3">代码实现</h2><pre tabindex="0"><code>class Solution:
+    def minPathSum(self, grid: List[List[int]]) -&gt; int:
+        m = len(grid)
+        n = len(grid[0])
+        dp = [[0] * n for _ in range(m)]
+        dp[0][0] = grid[0][0]
+        for i in range(1, m):
+            dp[i][0] = dp[i-1][0] + grid[i][0]
+        for j in range(1, n):
+            dp[0][j] = dp[0][j-1] + grid[0][j]
+        for i in range(1, m):
+            for j in range(1, n):
+                dp[i][j] = min(dp[i-1][j], dp[i][j-1]) + grid[i][j]
+        return dp[m-1][n-1]</code></pre><ul><li>易错点：</li></ul><ol><li><strong>必须先单独初始化 `dp[0][0] = grid[0][0]`，边界循环从 1 开始</strong>：如果从 0 开始，<code>dp[i-1][0]</code> 或 <code>dp[0][j-1]</code> 会触发 Python 负索引（<code>dp[-1][0]</code> 读到最后一行、<code>dp[0][-1]</code> 读到最后一列），导致结果错误。上一题边界是常数 1 不依赖 dp 值所以没暴露</li><li><strong>递推要加上 `grid[i][j]`</strong>：不像不同路径只算路径数，这题要累计路径上每个格子的值</li><li><strong>边界是累加不是常数</strong>：第一行/列只有唯一走法，值是 grid 的前缀和，不是全部填 1</li></ol><ul><li>复杂度：时间 O(m × n)，空间 O(m × n)</li></ul></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-62.html"><small>← 上一篇</small>第 91 题 不同路径</a><a href="./lc-5.html"><small>下一篇 →</small>第 93 题 最长回文子串</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

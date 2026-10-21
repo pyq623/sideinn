@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 68 题 寻找两个正序数组的中位数 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-4"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-11">← 二分查找目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-6" href="#section-3">核心思想</a><a class="level-6" href="#section-4">与普通二分的关键区别</a><a class="level-6" href="#section-5">为什么 n1leftmax 用 nums1 i 1</a><a class="level-6" href="#section-6">判断条件 交叉比较</a><a class="level-6" href="#section-7">边界处理</a><a class="level-6" href="#section-8">为什么要保证 nums1 是较短数组</a><a class="level-6" href="#section-9">返回值区分奇偶</a><a class="level-5" href="#section-10">代码实现</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 二分查找</div><h1>第 68 题 寻找两个正序数组的中位数</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 4  Median of Two Sorted Arrays</p><p class="metadata"><strong>难度  困难</strong>    标签  二分查找  数组  分治    <a href="https://leetcode-cn.com/problems/median-of-two-sorted-arrays/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>给定两个大小分别为 <code>m</code> 和 <code>n</code> 的正序（从小到大）数组 <code>nums1</code> 和 <code>nums2</code>。请你找出并返回这两个正序数组的 中位数 。</p><p>算法的时间复杂度应该为 <code>O(log (m+n))</code> 。</p><p>示例 1：</p><pre tabindex="0"><code>输入： nums1 = [1,3], nums2 = [2]
+输出： 2.00000
+解释： 合并数组 = [1,2,3] ，中位数 2</code></pre><p>示例 2：</p><pre tabindex="0"><code>输入： nums1 = [1,2], nums2 = [3,4]
+输出： 2.50000
+解释： 合并数组 = [1,2,3,4] ，中位数 (2 + 3) / 2 = 2.5</code></pre><p>提示：</p><ul><li><code>nums1.length == m</code></li><li><code>nums2.length == n</code></li><li><code>0 &lt;= m &lt;= 1000</code></li><li><code>0 &lt;= n &lt;= 1000</code></li><li><code>1 &lt;= m + n &lt;= 2000</code></li><li><code>-106 &lt;= nums1[i], nums2[i] &lt;= 106</code></li></ul><h2 id="section-2">思路</h2><h3 id="section-3">核心思想</h3><p>中位数本质上是把两个数组合在一起，切一刀，分成左右两半。只需要在较短的数组上二分，确定它贡献几个元素到左半部分，另一个数组的贡献数量自动确定。</p><h3 id="section-4">与普通二分的关键区别</h3><p><strong>这道题的 `left`、`right`、`i`、`j` 都不是索引，而是&quot;数量&quot;。</strong></p><ul><li><code>i</code> = nums1 贡献几个元素到左半部分，范围 <code>[0, m]</code></li><li><code>j = half - i</code> = nums2 贡献几个元素到左半部分</li><li><code>half = (m+n+1)//2</code> = 左半部分总共要几个元素（+1 是为了奇数时中位数归入左半）</li><li>因为是数量不是索引，所以 <code>right = m</code>（不是 <code>m-1</code>），代表 nums1 全部贡献的情况</li></ul><pre tabindex="0"><code>i=0:  [ | 1, 3, 5]     贡献 0 个
+i=1:  [1 | 3, 5]       贡献 1 个
+i=2:  [1, 3 | 5]       贡献 2 个
+i=3:  [1, 3, 5 | ]     贡献 3 个（全部）</code></pre><h3 id="section-5">为什么 n1leftmax 用 nums1 i 1</h3><p>因为 <code>i</code> 是数量，所以左半的最后一个元素下标是 <code>i-1</code>。同理右半第一个元素下标是 <code>i</code>。</p><h3 id="section-6">判断条件 交叉比较</h3><p>同数组内部天然有序不用比，只需检查交叉的两对：</p><ul><li><code>n1_left_max &gt; n2_right_min</code> → nums1 切多了，往左移（<code>right = i - 1</code>）</li><li><code>n2_left_max &gt; n1_right_min</code> → nums1 切少了，往右移（<code>left = i + 1</code>）</li><li>都满足 → 找到正确切割位置</li></ul><h3 id="section-7">边界处理</h3><p>当 <code>i=0</code>、<code>i=m</code>、<code>j=0</code>、<code>j=n</code> 时，某一侧不存在元素，用极值替代让比较条件自动成立：</p><ul><li>左边没元素 → <code>-inf</code>（不可能比任何数大）</li><li>右边没元素 → <code>inf</code>（不可能比任何数小）</li></ul><h3 id="section-8">为什么要保证 nums1 是较短数组</h3><p><code>j = half - i</code>，而 <code>j</code> 必须在 <code>[0, n]</code> 范围内：</p><ul><li>当 <code>i = 0</code> 时，<code>j = half</code>，需要 <code>half &lt;= n</code></li><li>当 <code>i = m</code> 时，<code>j = half - m</code>，需要 <code>half - m &gt;= 0</code></li></ul><p>只有 nums1 是较短的那个（<code>m &lt;= n</code>）时，这两个条件才一定满足。如果 nums1 更长，<code>i=0</code> 时 <code>j = half</code> 就可能超过 <code>n</code>，直接越界。</p><p>所以开头那个 swap 不是优化，是<strong>正确性保证</strong>。</p><h3 id="section-9">返回值区分奇偶</h3><ul><li>奇数：左半最大值 <code>max(n1_l_max, n2_l_max)</code></li><li>偶数：<code>(左半最大 + 右半最小) / 2</code></li></ul><h2 id="section-10">代码实现</h2><pre tabindex="0"><code>class Solution:
+    def findMedianSortedArrays(self, nums1: List[int], nums2: List[int]) -&gt; float:
+        m = len(nums1)
+        n = len(nums2)
+        if m &gt; n:
+            return self.findMedianSortedArrays(nums2, nums1)
+        left, right = 0, m # 这里的left 和 right不再是索引，而是数量
+        half = (m + n + 1) // 2
+        while left &lt;= right:
+            i = (left + right) // 2 # 这里的i 也是数量
+            j = half - i
+            n1_l_max = nums1[i-1] if i &gt; 0 else -inf
+            n1_r_min = nums1[i] if i &lt; m else inf
+            n2_l_max = nums2[j-1] if j &gt; 0 else -inf
+            n2_r_min = nums2[j] if j &lt; n else inf
+            if n1_l_max &gt; n2_r_min:
+                right = i - 1
+            elif n2_l_max &gt; n1_r_min:
+                left = i + 1
+            else:
+                if (m+n) % 2 == 0:
+                    res = (max(n1_l_max, n2_l_max) + min(n2_r_min, n1_r_min)) / 2
+                else:
+                    res = max(n1_l_max, n2_l_max)
+                return res</code></pre></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-153.html"><small>← 上一篇</small>第 67 题 寻找旋转排序数组中的最小值</a><a href="./lc-20.html"><small>下一篇 →</small>第 69 题 有效的括号</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

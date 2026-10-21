@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 94 题 最长公共子序列 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-1143"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-16">← 多维动态规划目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-6" href="#section-3">和最小路径和的代码对比</a><a class="level-5" href="#section-4">代码实现</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 多维动态规划</div><h1>第 94 题 最长公共子序列</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 1143  Longest Common Subsequence</p><p class="metadata"><strong>难度  中等</strong>    标签  多维动态规划  字符串  动态规划    <a href="https://leetcode-cn.com/problems/longest-common-subsequence/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>给定两个字符串 <code>text1</code> 和 <code>text2</code>，返回这两个字符串的最长 公共子序列 的长度。如果不存在 公共子序列 ，返回 <code>0</code> 。</p><p>一个字符串的 子序列 是指这样一个新的字符串：它是由原字符串在不改变字符的相对顺序的情况下删除某些字符（也可以不删除任何字符）后组成的新字符串。</p><ul><li>例如，<code>&quot;ace&quot;</code> 是 <code>&quot;abcde&quot;</code> 的子序列，但 <code>&quot;aec&quot;</code> 不是 <code>&quot;abcde&quot;</code> 的子序列。</li></ul><p>两个字符串的 公共子序列 是这两个字符串所共同拥有的子序列。</p><p>示例 1：</p><pre tabindex="0"><code>输入： text1 = &quot;abcde&quot;, text2 = &quot;ace&quot;
+输出： 3
+解释： 最长公共子序列是 &quot;ace&quot; ，它的长度为 3 。</code></pre><p>示例 2：</p><pre tabindex="0"><code>输入： text1 = &quot;abc&quot;, text2 = &quot;abc&quot;
+输出： 3
+解释： 最长公共子序列是 &quot;abc&quot; ，它的长度为 3 。</code></pre><p>示例 3：</p><pre tabindex="0"><code>输入： text1 = &quot;abc&quot;, text2 = &quot;def&quot;
+输出： 0
+解释： 两个字符串没有公共子序列，返回 0 。</code></pre><p>提示：</p><ul><li><code>1 &lt;= text1.length, text2.length &lt;= 1000</code></li><li><code>text1</code> 和 <code>text2</code> 仅由小写英文字符组成。</li></ul><h2 id="section-2">思路</h2><p><code>dp[i][j]</code> = text1 前 i 个字符和 text2 前 j 个字符的最长公共子序列长度。</p><p>两个字符当前位置比较：</p><ul><li><strong>相等</strong>：<code>text1[i-1] == text2[j-1]</code>，这个字符可以接到 LCS 后面 → <code>dp[i][j] = dp[i-1][j-1] + 1</code></li><li><strong>不等</strong>：跳过 text1 当前字符 或 跳过 text2 当前字符，取更优 → <code>dp[i][j] = max(dp[i-1][j], dp[i][j-1])</code></li></ul><pre tabindex="0"><code>text1 = &quot;abcde&quot;, text2 = &quot;ace&quot;
+
+    &quot;&quot;  a  c  e
+&quot;&quot;   0  0  0  0
+a    0  1  1  1
+b    0  1  1  1
+c    0  1  2  2
+d    0  1  2  2
+e    0  1  2  3  ← 答案 3，LCS = &quot;ace&quot;</code></pre><h3 id="section-3">和最小路径和的代码对比</h3><pre tabindex="0"><code># 最小路径和
+dp = [[0] * n for _ in range(m)]
+dp[0][0] = grid[0][0]
+for i in range(1, m):
+    dp[i][0] = dp[i-1][0] + grid[i][0]
+for j in range(1, n):
+    dp[0][j] = dp[0][j-1] + grid[0][j]
+for i in range(1, m):
+    for j in range(1, n):
+        dp[i][j] = min(dp[i-1][j], dp[i][j-1]) + grid[i][j]
+return dp[m-1][n-1]
+
+# 最长公共子序列
+dp = [[0] * (n + 1) for _ in range(m + 1)]
+for i in range(1, m + 1):
+    for j in range(1, n + 1):
+        if text1[i-1] == text2[j-1]:
+            dp[i][j] = dp[i-1][j-1] + 1
+        else:
+            dp[i][j] = max(dp[i][j-1], dp[i-1][j])
+return dp[m][n]</code></pre><div class="table-scroll" tabindex="0" aria-label="可横向滚动的表格"><table><tr><th scope="col"></th><th scope="col"><p><strong>最小路径和</strong></p></th><th scope="col"><p><strong>最长公共子序列</strong></p></th></tr><tr><td><p>数组大小</p></td><td><p><code>m × n</code>（和网格一样）</p></td><td><p><code>(m+1) × (n+1)</code>（多一行一列给空串）</p></td></tr><tr><td><p>边界初始化</p></td><td><p>手动累加第一行/列</p></td><td><p>全 0 就行（空串 LCS = 0）</p></td></tr><tr><td><p>递推逻辑</p></td><td><p>固定：<code>min(上, 左) + 格子值</code></p></td><td><p><strong>分两种情况</strong>：相等走左上角+1，不等取 max(上, 左)</p></td></tr><tr><td><p>依赖几个方向</p></td><td><p>2 个（上、左）</p></td><td><p>3 个（上、左、左上角）</p></td></tr></table></div><h2 id="section-4">代码实现</h2><pre tabindex="0"><code>class Solution:
+    def longestCommonSubsequence(self, text1: str, text2: str) -&gt; int:
+        m = len(text1)
+        n = len(text2)
+        dp =[[0] * (n + 1) for _ in range(m + 1)]
+        for i in range(1, m + 1):
+            for j in range(1, n + 1):
+                if text1[i-1] == text2[j-1]:
+                    dp[i][j] = dp[i-1][j-1] + 1
+                else:
+                    dp[i][j] = max(dp[i][j-1], dp[i-1][j])
+        return dp[m][n]</code></pre><ul><li>易错点：</li></ul><ol><li><strong>`text1[i-1]` 不是 `text1[i]`</strong>：dp 的 i 代表&quot;前 i 个字符&quot;（长度），对应下标是 i-1。dp 多开了一行一列给空串（dp[0][...] 和 dp[...][0]），所以 dp 的 i 和字符串下标差 1</li><li><strong>数组大小是 `(m+1) × (n+1)` 不能写反成 `(n+1) × (m+1)`</strong>：循环 i 到 m、j 到 n，行数必须是 m+1、列数必须是 n+1，写反会越界</li><li><strong>相等时走左上角 `dp[i-1][j-1]+1`，不是上方或左方</strong>：两个字符匹配成功 = 两个串各前进一步，对应的是左上角的状态</li><li><strong>边界不需要手动初始化</strong>：<code>dp[0][j] = dp[i][0] = 0</code> 就是默认值，空串和任何串的 LCS 长度都是 0</li></ol><ul><li>复杂度：时间 O(m × n)，空间 O(m × n)</li></ul></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-5.html"><small>← 上一篇</small>第 93 题 最长回文子串</a><a href="./lc-72.html"><small>下一篇 →</small>第 95 题 编辑距离</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

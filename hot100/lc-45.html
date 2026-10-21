@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 79 题 跳跃游戏 II · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-45"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-14">← 贪心目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-5" href="#section-3">代码实现</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 贪心</div><h1>第 79 题 跳跃游戏 II</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 45  Jump Game II</p><p class="metadata"><strong>难度  中等</strong>    标签  贪心算法  贪心  数组  动态规划    <a href="https://leetcode-cn.com/problems/jump-game-ii/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>给定一个长度为 <code>n</code> 的 0 索引 整数数组 <code>nums</code>。初始位置在下标 0。</p><p>每个元素 <code>nums[i]</code> 表示从索引 <code>i</code> 向后跳转的最大长度。换句话说，如果你在索引 <code>i</code> 处，你可以跳转到任意 <code>(i + j)</code> 处：</p><ul><li><code>0 &lt;= j &lt;= nums[i]</code> 且</li><li><code>i + j &lt; n</code></li></ul><p>返回到达 <code>n - 1</code> 的最小跳跃次数。测试用例保证可以到达 <code>n - 1</code>。</p><p>示例 1:</p><pre tabindex="0"><code>输入: nums = [2,3,1,1,4]
+输出: 2
+解释: 跳到最后一个位置的最小跳跃数是 2。
+     从下标为 0 跳到下标为 1 的位置，跳 1 步，然后跳 3 步到达数组的最后一个位置。</code></pre><p>示例 2:</p><pre tabindex="0"><code>输入: nums = [2,3,0,1,4]
+输出: 2</code></pre><p>提示:</p><ul><li><code>1 &lt;= nums.length &lt;= 104</code></li><li><code>0 &lt;= nums[i] &lt;= 1000</code></li><li>题目保证可以到达 <code>n - 1</code></li></ul><h2 id="section-2">思路</h2><p>和上一道跳跃游戏类似，但这次要求最小跳跃次数。</p><p>贪心策略：维护 <code>cur_end</code> 表示当前这一跳能到达的最远边界，<code>max_reach</code> 表示在遍历过程中能到的最远位置。当 <code>i</code> 走到 <code>cur_end</code> 时，说明当前这一跳的覆盖范围已经用完，必须再跳一步，同时把边界更新为 <code>max_reach</code>。</p><p>循环只遍历到 <code>n-2</code>，因为站在终点不需要再跳。</p><h2 id="section-3">代码实现</h2><pre tabindex="0"><code>class Solution:
+    def jump(self, nums: List[int]) -&gt; int:
+        step = 0
+        cur_end = 0
+        max_reach = 0
+        n = len(nums)
+        for i in range(n - 1):
+            max_reach = max(max_reach, i + nums[i])
+            if cur_end == i:
+                step += 1
+                cur_end = max_reach
+        return step</code></pre></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-55.html"><small>← 上一篇</small>第 78 题 跳跃游戏</a><a href="./lc-763.html"><small>下一篇 →</small>第 80 题 划分字母区间</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 39 题 对称二叉树 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-101"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-8">← 二叉树目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-5" href="#section-3">代码实现</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 二叉树</div><h1>第 39 题 对称二叉树</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 101  Symmetric Tree</p><p class="metadata"><strong>难度  简单</strong>    标签  二叉树  树  深度优先搜索  广度优先搜索    <a href="https://leetcode-cn.com/problems/symmetric-tree/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>给你一个二叉树的根节点 <code>root</code> ， 检查它是否轴对称。</p><p>示例 1：</p><figure><a href="./images/image39.png" target="_blank" rel="noopener" aria-label="查看原图"><img src="./images/image39.png" width="354" height="291" loading="lazy" alt="第 39 题 对称二叉树 · 原笔记图示"></a><figcaption>原笔记图示 · 点击查看原图</figcaption></figure><pre tabindex="0"><code>输入： root = [1,2,2,3,4,4,3]
+输出： true</code></pre><p>示例 2：</p><figure><a href="./images/image40.png" target="_blank" rel="noopener" aria-label="查看原图"><img src="./images/image40.png" width="308" height="258" loading="lazy" alt="第 39 题 对称二叉树 · 原笔记图示"></a><figcaption>原笔记图示 · 点击查看原图</figcaption></figure><pre tabindex="0"><code>输入： root = [1,2,2,null,3,null,3]
+输出： false</code></pre><p>提示：</p><ul><li>树中节点数目在范围 <code>[1, 1000]</code> 内</li><li><code>-100 &lt;= Node.val &lt;= 100</code></li></ul><p>进阶： 你可以运用递归和迭代两种方法解决这个问题吗？</p><h2 id="section-2">思路</h2><ul><li>同时传入<strong>两个节点</strong>进行镜像比较，检查外侧对外侧、内侧对内侧是否相等</li><li>终止条件有两种：</li></ul><ol><li><strong>都为空</strong>：镜像位置都没节点，对称，返回 True</li><li><strong>一个为空 / 值不等</strong>：不对称，返回 False</li></ol><ul><li>递归调用交叉配对：</li><li><code>recur(left.left, right.right)</code>：外侧对外侧</li><li><code>recur(left.right, right.left)</code>：内侧对内侧</li><li>两边都对称才返回 True</li><li>和翻转二叉树的对比：</li></ul><div class="table-scroll" tabindex="0" aria-label="可横向滚动的表格"><table><tr><th scope="col"></th><th scope="col"><p><strong>翻转二叉树</strong></p></th><th scope="col"><p><strong>对称二叉树</strong></p></th></tr><tr><td><p>传入参数</p></td><td><p><strong>一个</strong>节点</p></td><td><p><strong>两个</strong>节点同时比较</p></td></tr><tr><td><p>返回值</p></td><td><p>节点（修改后的树）</p></td><td><p>布尔值（是否对称）</p></td></tr><tr><td><p>终止条件</p></td><td><p>一种：空→return</p></td><td><p>两种：都空→True，一空或值不等→False</p></td></tr><tr><td><p>递归配对</p></td><td><p><code>(left)</code> 和 <code>(right)</code> 各自独立</p></td><td><p>交叉配对：<code>(L.left, R.right)</code> 和 <code>(L.right, R.left)</code></p></td></tr></table></div><pre tabindex="0"><code>有趣的联系：两题都涉及&quot;交叉&quot;——翻转是交叉赋值（left↔right），对称是交叉比较（外侧对外侧，内侧对内侧）。**一棵树是对称的，等价于它和自己的翻转相等**</code></pre><h2 id="section-3">代码实现</h2><pre tabindex="0"><code>class Solution:
+    def isSymmetric(self, root: Optional[TreeNode]) -&gt; bool:
+        def recur(left: Optional[TreeNode], right: Optional[TreeNode]):
+            if not left and not right:
+                return True
+            if not left or not right or left.val != right.val:
+                return False
+            l_flag = recur(left.left, right.right)
+            r_flag = recur(left.right, right.left)
+            return l_flag and r_flag
+        if not root:
+            return True
+        return recur(root.left, root.right)</code></pre><ul><li>复杂度：时间 O(n)，空间 O(n)（递归调用栈）</li></ul></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-226.html"><small>← 上一篇</small>第 38 题 翻转二叉树</a><a href="./lc-543.html"><small>下一篇 →</small>第 40 题 二叉树的直径</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

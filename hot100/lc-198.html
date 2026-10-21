@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 83 题 打家劫舍 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-198"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-15">← 动态规划目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-5" href="#section-3">代码实现</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 动态规划</div><h1>第 83 题 打家劫舍</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 198  House Robber</p><p class="metadata"><strong>难度  中等</strong>    标签  动态规划  数组    <a href="https://leetcode-cn.com/problems/house-robber/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>你是一个专业的小偷，计划偷窃沿街的房屋。每间房内都藏有一定的现金，影响你偷窃的唯一制约因素就是相邻的房屋装有相互连通的防盗系统，如果两间相邻的房屋在同一晚上被小偷闯入，系统会自动报警 。</p><p>给定一个代表每个房屋存放金额的非负整数数组，计算你不触动警报装置的情况下 ，一夜之内能够偷窃到的最高金额。</p><p>示例 1：</p><pre tabindex="0"><code>输入：[1,2,3,1]
+输出： 4
+解释： 偷窃 1 号房屋 (金额 = 1) ，然后偷窃 3 号房屋 (金额 = 3)。
+     偷窃到的最高金额 = 1 + 3 = 4 。</code></pre><p>示例 2：</p><pre tabindex="0"><code>输入：[2,7,9,3,1]
+输出： 12
+解释： 偷窃 1 号房屋 (金额 = 2), 偷窃 3 号房屋 (金额 = 9)，接着偷窃 5 号房屋 (金额 = 1)。
+     偷窃到的最高金额 = 2 + 9 + 1 = 12 。</code></pre><p>提示：</p><ul><li><code>1 &lt;= nums.length &lt;= 100</code></li><li><code>0 &lt;= nums[i] &lt;= 400</code></li></ul><h2 id="section-2">思路</h2><p>对每间房子只有两个选择：偷或不偷。</p><ul><li>偷第 i 间：第 i-1 间不能偷，收益 = <code>dp[i-2] + nums[i]</code></li><li>不偷第 i 间：收益 = <code>dp[i-1]</code></li></ul><p>取两者最大值：<code>dp[i] = max(dp[i-1], dp[i-2] + nums[i])</code></p><p>和爬楼梯的递推很像，都是 <code>dp[i]</code> 依赖 <code>dp[i-1]</code> 和 <code>dp[i-2]</code>，区别是爬楼梯求方案数用加法，这题求最大值用 max。</p><pre tabindex="0"><code>nums = [2, 7, 9, 3, 1]
+
+dp[0] = 2
+dp[1] = max(2, 7) = 7
+dp[2] = max(7, 2+9) = 11
+dp[3] = max(11, 7+3) = 11
+dp[4] = max(11, 11+1) = 12</code></pre><h2 id="section-3">代码实现</h2><pre tabindex="0"><code>class Solution:
+    def rob(self, nums: List[int]) -&gt; int:
+        n = len(nums)
+        if n == 1:
+            return nums[0]
+        dp = [0] * (n + 1)
+        dp[0] = nums[0]
+        dp[1] = max(nums[0], nums[1])
+        for i in range(2, n):
+            dp[i] = max(dp[i-1], dp[i-2] + nums[i])
+        return dp[n-1]</code></pre><ul><li>易错点：</li></ul><ol><li><strong>必须特判 `n == 1`</strong>：否则 <code>dp[1] = max(nums[0], nums[1])</code> 会越界报错（nums 只有一个元素）</li><li><strong>`dp[1] = max(nums[0], nums[1])` 不是 `dp[1] = nums[1]`</strong>：前两间房选收益更大的那间</li><li><strong>循环从 2 到 n-1</strong>：<code>range(2, n)</code>，返回 <code>dp[n-1]</code></li></ol><ul><li>复杂度：时间 O(n)，空间 O(n)（可优化到 O(1)，只保留前两个值）</li></ul></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-118.html"><small>← 上一篇</small>第 82 题 杨辉三角</a><a href="./lc-279.html"><small>下一篇 →</small>第 84 题 完全平方数</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

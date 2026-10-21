@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 86 题 单词拆分 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-139"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-15">← 动态规划目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-6" href="#section-3">为什么 i 是外层 j 是内层 很重要</a><a class="level-5" href="#section-4">代码实现</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 动态规划</div><h1>第 86 题 单词拆分</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 139  Word Break</p><p class="metadata"><strong>难度  中等</strong>    标签  动态规划  字典树  记忆化  数组  哈希表  字符串    <a href="https://leetcode-cn.com/problems/word-break/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>给你一个字符串 <code>s</code> 和一个字符串列表 <code>wordDict</code> 作为字典。如果可以利用字典中出现的一个或多个单词拼接出 <code>s</code> 则返回 <code>true</code>。</p><p>注意： 不要求字典中出现的单词全部都使用，并且字典中的单词可以重复使用。</p><p>示例 1：</p><pre tabindex="0"><code>输入: s = &quot;leetcode&quot;, wordDict = [&quot;leet&quot;, &quot;code&quot;]
+输出: true
+解释: 返回 true 因为 &quot;leetcode&quot; 可以由 &quot;leet&quot; 和 &quot;code&quot; 拼接成。</code></pre><p>示例 2：</p><pre tabindex="0"><code>输入: s = &quot;applepenapple&quot;, wordDict = [&quot;apple&quot;, &quot;pen&quot;]
+输出: true
+解释: 返回 true 因为 &quot;applepenapple&quot; 可以由 &quot;apple&quot; &quot;pen&quot; &quot;apple&quot; 拼接成。
+     注意，你可以重复使用字典中的单词。</code></pre><p>示例 3：</p><pre tabindex="0"><code>输入: s = &quot;catsandog&quot;, wordDict = [&quot;cats&quot;, &quot;dog&quot;, &quot;sand&quot;, &quot;and&quot;, &quot;cat&quot;]
+输出: false</code></pre><p>提示：</p><ul><li><code>1 &lt;= s.length &lt;= 300</code></li><li><code>1 &lt;= wordDict.length &lt;= 1000</code></li><li><code>1 &lt;= wordDict[i].length &lt;= 20</code></li><li><code>s</code> 和 <code>wordDict[i]</code> 仅由小写英文字母组成</li><li><code>wordDict</code> 中的所有字符串 互不相同</li></ul><h2 id="section-2">思路</h2><p>和前几题同一个 DP 模式：</p><div class="table-scroll" tabindex="0" aria-label="可横向滚动的表格"><table><tr><th scope="col"></th><th scope="col"><p><strong>爬楼梯</strong></p></th><th scope="col"><p><strong>零钱兑换</strong></p></th><th scope="col"><p><strong>单词拆分</strong></p></th></tr><tr><td><p>&quot;跳跃选项&quot;</p></td><td><p>1 步或 2 步</p></td><td><p>每种硬币面额</p></td><td><p>字典里每个单词长度</p></td></tr><tr><td><p>求什么</p></td><td><p>方案数</p></td><td><p>最少个数</p></td><td><p>能不能拼成</p></td></tr><tr><td><p>递推</p></td><td><p>加法</p></td><td><p>min</p></td><td><p>or</p></td></tr></table></div><p><code>dp[i]</code> 表示 <code>s[0:i]</code> 能否被字典里的单词拼成。对每个位置 i，枚举所有切割点 j：</p><pre tabindex="0"><code>如果 dp[j] == True 且 s[j:i] 在字典里 → dp[i] = True</code></pre><p>意思是：前 j 个字符能拼出来，且 <code>s[j:i]</code> 这一段在字典里，那前 i 个字符就能拼出来。</p><pre tabindex="0"><code>s = &quot;leetcode&quot;, words = {&quot;leet&quot;, &quot;code&quot;}
+
+dp[0] = True（空串）
+i=4: j=0, dp[0]=True, s[0:4]=&quot;leet&quot; in words → dp[4]=True
+i=8: j=4, dp[4]=True, s[4:8]=&quot;code&quot; in words → dp[8]=True
+
+return dp[8] = True</code></pre><h3 id="section-3">为什么 i 是外层 j 是内层 很重要</h3><p><strong>i 是终点（从左到右推进），j 是切割点（在 i 内部枚举）。</strong></p><p>j 作为起点，对于每个固定的 i，要把所有可能的 j 都试一遍，所以 j 是内层要先被循环完。而 i 是终点，从小到大逐步推进，作为外层。</p><p>算 <code>dp[i]</code> 时需要 <code>dp[j]</code>（j &lt; i）已经确定。i 从小到大做外层，就保证了算 dp[i] 时所有 dp[j] 都已经算好了：</p><pre tabindex="0"><code>i=1: dp[0] 已知 → 算 dp[1]
+i=2: dp[0], dp[1] 已知 → 算 dp[2]
+i=4: dp[0]~dp[3] 已知 → 算 dp[4]
+i=8: dp[0]~dp[7] 已知 → 算 dp[8]</code></pre><p>如果反过来让 j 做外层（先固定起点），算 dp[i] 时 dp[j] 可能还没算出来，就会漏掉合法的拆分。</p><p><strong>规律：DP 的递推方向一定是&quot;从已知推未知&quot;。dp[i] 依赖 dp[j]（j &lt; i），所以 i 从小到大做外层。</strong></p><h2 id="section-4">代码实现</h2><pre tabindex="0"><code>class Solution:
+    def wordBreak(self, s: str, wordDict: List[str]) -&gt; bool:
+        n = len(s)
+        set_w = set(wordDict)
+        dp = [False] * (n + 1)
+        dp[0] = True
+
+        for i in range(1, n + 1):
+            for j in range(i):
+                if dp[j] and s[j:i] in set_w:
+                    dp[i] = True
+        return dp[n]</code></pre><ul><li>易错点：</li></ul><ol><li><strong>wordDict 要转成 set</strong>：<code>s[j:i] in list</code> 是 O(n)，<code>in set</code> 是 O(1)，不转可能超时</li><li><strong>`dp[0] = True`</strong>：空串是 True，表示&quot;什么都不用拼&quot;这个起点存在。和前面题目的 <code>dp[0] = 0</code> 是一样的意义</li><li><strong>i 做外层不能反过来</strong>：dp[i] 依赖 dp[j]（j &lt; i），必须先算小的再算大的</li><li><strong>找到一种拆法就够了</strong>：可以加 <code>break</code> 提前退出内层循环，但不加也能通过</li></ol><ul><li>复杂度：时间 O(n²)（双层循环，<code>s[j:i]</code> 切片也是 O(n)，总共 O(n³)），空间 O(n)</li></ul></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-322.html"><small>← 上一篇</small>第 85 题 零钱兑换</a><a href="./lc-300.html"><small>下一篇 →</small>第 87 题 最长递增子序列</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

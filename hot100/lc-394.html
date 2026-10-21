@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 71 题 字符串解码 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-394"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-12">← 栈目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-6" href="#section-3">四种字符的处理</a><a class="level-6" href="#section-4">为什么栈里存 curstr curnum 配对</a><a class="level-6" href="#section-5">用 3 a2 c 走一遍</a><a class="level-5" href="#section-6">代码实现</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 栈</div><h1>第 71 题 字符串解码</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 394  Decode String</p><p class="metadata"><strong>难度  中等</strong>    标签  栈  递归  字符串    <a href="https://leetcode-cn.com/problems/decode-string/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>给定一个经过编码的字符串，返回它解码后的字符串。</p><p>编码规则为: <code>k[encodedstring]</code>，表示其中方括号内部的 <code>encodedstring</code> 正好重复 <code>k</code> 次。注意 <code>k</code> 保证为正整数。</p><p>你可以认为输入字符串总是有效的；输入字符串中没有额外的空格，且输入的方括号总是符合格式要求的。</p><p>此外，你可以认为原始数据不包含数字，所有的数字只表示重复的次数 <code>k</code> ，例如不会出现像 <code>3a</code> 或 <code>2[4]</code> 的输入。</p><p>测试用例保证输出的长度不会超过 <code>105</code>。</p><p>示例 1：</p><pre tabindex="0"><code>输入： s = &quot;3[a]2[bc]&quot;
+输出： &quot;aaabcbc&quot;</code></pre><p>示例 2：</p><pre tabindex="0"><code>输入： s = &quot;3[a2[c]]&quot;
+输出： &quot;accaccacc&quot;</code></pre><p>示例 3：</p><pre tabindex="0"><code>输入： s = &quot;2[abc]3[cd]ef&quot;
+输出： &quot;abcabccdcdcdef&quot;</code></pre><p>示例 4：</p><pre tabindex="0"><code>输入： s = &quot;abc3[cd]xyz&quot;
+输出： &quot;abccdcdcdxyz&quot;</code></pre><p>提示：</p><ul><li><code>1 &lt;= s.length &lt;= 30</code></li><li><code>s</code> 由小写英文字母、数字和方括号 <code>&#x27;[]&#x27;</code> 组成</li><li><code>s</code> 保证是一个 有效 的输入。</li><li><code>s</code> 中所有整数的取值范围为 <code>[1, 300]</code></li></ul><h2 id="section-2">思路</h2><ul><li>用<strong>栈</strong>来处理嵌套结构：遇到 <code>[</code> 就&quot;存档&quot;压栈，遇到 <code>]</code> 就&quot;读档&quot;弹出拼接</li><li>栈里存的是 <code>(之前的字符串, 重复次数)</code> 这个配对，两个信息缺一不可</li></ul><h3 id="section-3">四种字符的处理</h3><div class="table-scroll" tabindex="0" aria-label="可横向滚动的表格"><table><tr><th scope="col"><p><strong>字符</strong></p></th><th scope="col"><p><strong>动作</strong></p></th></tr><tr><td><p>数字</p></td><td><p><code>cur_num = cur_num * 10 + int(c)</code>（累积，处理多位数如 <code>12</code>）</p></td></tr><tr><td><p><code>[</code></p></td><td><p>把 <code>(cur_str, cur_num)</code> 压入栈，然后重置两者</p></td></tr><tr><td><p>字母</p></td><td><p><code>cur_str += c</code></p></td></tr><tr><td><p><code>]</code></p></td><td><p>弹出 <code>(prev_str, num)</code>，拼接 <code>cur_str = prev_str + num * cur_str</code></p></td></tr></table></div><h3 id="section-4">为什么栈里存 curstr curnum 配对</h3><p>遇到 <code>[</code> 时需要&quot;暂停&quot;两样东西：之前已经拼好的字符串（等内层解析完要接在后面）和当前的重复次数（等内层解析完要用它重复）。这两个信息必须配对保存，遇到 <code>]</code> 时一起取出才能正确拼接。</p><h3 id="section-5">用 3 a2 c 走一遍</h3><pre tabindex="0"><code>字符  动作                          栈                 cur_str    cur_num
+ 3   累积数字                       []                 &quot;&quot;         3
+ [   压栈(&quot;&quot;,3)，重置               [(&quot;&quot;,3)]           &quot;&quot;         0
+ a   拼到 cur_str                   [(&quot;&quot;,3)]           &quot;a&quot;        0
+ 2   累积数字                       [(&quot;&quot;,3)]           &quot;a&quot;        2
+ [   压栈(&quot;a&quot;,2)，重置              [(&quot;&quot;,3),(&quot;a&quot;,2)]   &quot;&quot;         0
+ c   拼到 cur_str                   [(&quot;&quot;,3),(&quot;a&quot;,2)]   &quot;c&quot;        0
+ ]   弹出(&quot;a&quot;,2) → &quot;a&quot;+&quot;c&quot;*2       [(&quot;&quot;,3)]           &quot;acc&quot;      0
+ ]   弹出(&quot;&quot;,3) → &quot;&quot;+&quot;acc&quot;*3       []                 &quot;accaccacc&quot; 0
+
+结果：&quot;accaccacc&quot; ✓</code></pre><h2 id="section-6">代码实现</h2><pre tabindex="0"><code>class Solution:
+    def decodeString(self, s: str) -&gt; str:
+        stack = []
+        cur_num = 0
+        cur_str = &quot;&quot;
+        for i in s:
+            if i.isdigit():
+                cur_num = cur_num * 10 + int(i)
+            elif i == &#x27;[&#x27;:
+                stack.append((cur_str, cur_num))
+                cur_num = 0
+                cur_str = &quot;&quot;
+            elif i.isalpha():
+                cur_str += i
+            elif i == &#x27;]&#x27;:
+                (prev_str, num) = stack.pop()
+                cur_str = prev_str + num * cur_str
+        return cur_str</code></pre><ul><li><strong>写代码技巧</strong>：这道题一定要对着题例（如 <code>3[a2[c]]</code>）一步步模拟着写代码，直接凭空写很容易搞混存档/读档的逻辑</li><li>易错点：</li></ul><ol><li><strong>多位数处理 `cur_num = cur_num * 10 + int(i)`</strong>：数字可能不是个位数（如 <code>12[a]</code>），不能直接 <code>cur_num = int(i)</code></li><li><strong>遇到 `[` 后必须重置 `cur_str` 和 `cur_num`</strong>：不重置的话内层结果会混入外层的状态</li><li><strong>拼接顺序是 `prev_str + num * cur_str`</strong>：是&quot;之前的字符串 + 重复后的当前字符串&quot;，不是反过来</li><li><strong>栈里存配对 `(cur_str, cur_num)`</strong>：只存一个会丢失另一个信息，导致无法正确拼接</li><li><strong>`isdigit()` 和 `isalpha()` 没有下划线</strong>：不是 <code>is_digit()</code> / <code>is_alpha()</code></li></ol><ul><li>复杂度：时间 O(n)（n 为解码后字符串长度），空间 O(n)（栈深度）</li></ul></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-155.html"><small>← 上一篇</small>第 70 题 最小栈</a><a href="./lc-739.html"><small>下一篇 →</small>第 72 题 每日温度</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

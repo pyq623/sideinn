@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 74 题 数组中的第K个最大元素 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-215"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-13">← 堆目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-6" href="#section-3">解法一 小顶堆 O n log k 能通过但不是最优</a><a class="level-6" href="#section-4">解法二 快速选择 O n</a><a class="level-6" href="#section-5">为什么不用双指针分区</a><a class="level-6" href="#section-6">双指针分区写法 能通过 44 46 用例 大量重复元素超时</a><a class="level-6" href="#section-7">判断第 k 大在哪一组</a><a class="level-5" href="#section-8">代码实现</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 堆</div><h1>第 74 题 数组中的第K个最大元素</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 215  Kth Largest Element in an Array</p><p class="metadata"><strong>难度  中等</strong>    标签  堆  数组  分治  快速选择  排序  堆（优先队列）    <a href="https://leetcode-cn.com/problems/kth-largest-element-in-an-array/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>给定整数数组 <code>nums</code> 和整数 <code>k</code>，请返回数组中第 <code>k</code> 个最大的元素。</p><p>请注意，你需要找的是数组排序后的第 <code>k</code> 个最大的元素，而不是第 <code>k</code> 个不同的元素。</p><p>你必须设计并实现时间复杂度为 <code>O(n)</code> 的算法解决此问题</p><p>示例 1:</p><pre tabindex="0"><code>输入: [3,2,1,5,6,4], k = 2
+输出: 5</code></pre><p>示例  2:</p><pre tabindex="0"><code>输入: [3,2,3,1,2,4,5,5,6], k = 4
+输出: 4</code></pre><p>提示：</p><ul><li><code>1 &lt;= k &lt;= nums.length &lt;= 105</code></li><li><code>-104 &lt;= nums[i] &lt;= 104</code></li></ul><h2 id="section-2">思路</h2><h3 id="section-3">解法一 小顶堆 O n log k 能通过但不是最优</h3><p>维护一个大小为 k 的小顶堆，遍历数组，堆超过 k 就弹出最小的。最后堆顶就是第 k 大。</p><pre tabindex="0"><code>import heapq
+heap = []
+for num in nums:
+    heapq.heappush(heap, num)
+    if len(heap) &gt; k:
+        heapq.heappop(heap)
+return heap[0]</code></pre><p>Python 的 <code>heapq</code> 是小顶堆（最小的在堆顶），要大顶堆就取负号存入。</p><h3 id="section-4">解法二 快速选择 O n</h3><p><strong>核心思路</strong>：第 k 大 = 从大到小排第 k 个。随机选一个 pivot，把数组分成三组：比 pivot 大的、等于 pivot 的、比 pivot 小的。然后看第 k 大落在哪一组，只对那一组递归。</p><pre tabindex="0"><code>nums = [3,2,1,5,6,4], k = 2, pivot = 3
+
+big   = [5, 6, 4]    （&gt; 3）
+equal = [3]           （== 3）
+small = [2, 1]        （&lt; 3）
+
+k=2 &lt;= len(big)=3 → 第2大在 big 里，递归 quick_select(big, 2)</code></pre><h3 id="section-5">为什么不用双指针分区</h3><p>最初的写法用双指针原地分区（只分成 <code>≤ pivot</code> 和 <code>≥ pivot</code> 两部分），遇到大量重复元素时（如测试用例全是 1），pivot 分区极不均匀，退化到 O(n²) 超时。</p><p>分成三组（big / equal / small）天然解决了这个问题：所有等于 pivot 的元素归入 equal，如果 target 落在 equal 里直接返回 pivot，不会反复递归。</p><h3 id="section-6">双指针分区写法 能通过 44 46 用例 大量重复元素超时</h3><pre tabindex="0"><code>class Solution:
+    def findKthLargest(self, nums: List[int], k: int) -&gt; int:
+        import random
+        n = len(nums)
+        target = n - k
+        def quickselect(left, right):
+            p_idx = random.randint(left, right)
+            nums[left], nums[p_idx] = nums[p_idx], nums[left]
+            i, j = left + 1, right
+            while i &lt;= j:
+                while i &lt;= j and nums[i] &lt;= nums[left]:
+                    i += 1
+                while i &lt;= j and nums[j] &gt;= nums[left]:
+                    j -= 1
+                if i &lt; j:
+                    nums[i], nums[j] = nums[j], nums[i]
+            nums[left], nums[j] = nums[j], nums[left]
+            if j &lt; target:
+                return quickselect(j + 1, right)
+            elif j &gt; target:
+                return quickselect(left, j - 1)
+            else:
+                return nums[j]
+        return quickselect(0, n - 1)</code></pre><p><strong>超时原因</strong>：只分成两组（<code>≤ pivot</code> 和 <code>≥ pivot</code>），当大量元素等于 pivot 时，pivot 几乎总落在一端，每轮只减少一个元素，退化到 O(n²)。</p><p><strong>分区过程</strong>：</p><ol><li>随机选 pivot，放到最左边</li><li><code>i</code> 从左往右找比 pivot 大的，<code>j</code> 从右往左找比 pivot 小的，交换</li><li>循环结束时 <code>i &gt; j</code>，把 pivot 和 <code>nums[j]</code> 交换归位（和 <code>j</code> 换不是 <code>i</code>，因为 <code>nums[j] ≤ pivot</code> 是安全的，<code>nums[i] ≥ pivot</code> 会破坏分区）</li><li>比较 <code>j</code> 和 <code>target = n - k</code> 的大小，只往一边递归</li></ol><h3 id="section-7">判断第 k 大在哪一组</h3><pre tabindex="0"><code>big:   [&gt; pivot]     len(big) 个
+equal: [== pivot]    len(equal) 个
+small: [&lt; pivot]     len(small) 个</code></pre><p>从大到小排列是 <code>big + equal + small</code>，所以：</p><ul><li><code>k &lt;= len(big)</code> → 第 k 大在 big 里，递归 <code>quick_select(big, k)</code></li><li><code>k &lt;= len(big) + len(equal)</code> → 第 k 大在 equal 里，直接返回 <code>pivot</code></li><li>否则 → 第 k 大在 small 里，递归 <code>quick_select(small, k - len(big) - len(equal))</code></li></ul><p>代码中 <code>len(nums) - len(small) &lt; k</code> 等价于 <code>k &gt; len(big) + len(equal)</code>。</p><h2 id="section-8">代码实现</h2><pre tabindex="0"><code>class Solution:
+    def findKthLargest(self, nums: List[int], k: int) -&gt; int:
+        import random
+        target = k
+        def quickselect(nums, target):
+            small, equal, big = [], [], []
+            pivot = random.choice(nums)
+            for num in nums:
+                if num &lt; pivot:
+                    small.append(num)
+                elif num &gt; pivot:
+                    big.append(num)
+                else:
+                    equal.append(num)
+            if target &lt;= len(big):
+                return quickselect(big, target)
+            elif len(nums) - len(small) &lt; target:
+                return quickselect(small, target - (len(nums) - len(small)))
+            else:
+                return equal[0]
+        result = quickselect(nums, k)
+        return result</code></pre><ul><li>易错点：</li></ul><ol><li><strong>必须分三组，不能只分两组</strong>：只分成 <code>≤ pivot</code> 和 <code>&gt; pivot</code> 两组，大量重复元素时分区不均匀，退化到 O(n²) 超时</li><li><strong>递归里全部用参数 `target`，不能用外层的 `k`</strong>：递归时 target 会调整，k 永远是最初的值，混用会导致判断错误、递归到空列表报错</li><li><strong>`random.choice(nums)` 不是 `random.randint(nums)`</strong>：<code>choice</code> 从列表随机选一个元素，<code>randint(a, b)</code> 需要两个整数参数</li><li><strong>递归 small 时 target 要调整</strong>：big 和 equal 的元素都比 small 大，已经排在前面了，所以 target 要减掉它们的数量：<code>target - (len(nums) - len(small))</code></li><li><strong>`heapq` 是小顶堆</strong>：Python 没有内置大顶堆，要大顶就取负号。找第 k 大用小顶堆就够</li></ol><ul><li>复杂度：快速选择平均 O(n)，空间 O(n)（三个列表）</li></ul><p><strong>为什么是 O(n)？</strong> 因为每轮只往一边递归，处理的数据量每轮大约砍半：</p><pre tabindex="0"><code>  第 1 轮：扫描 n 个元素做分区
+  第 2 轮：扫描 n/2 个元素（只看一半）
+  第 3 轮：扫描 n/4 个元素
+  ...
+
+  总共：n + n/2 + n/4 + n/8 + ... = 2n = O(n)</code></pre><p>对比快排（O(n log n)）：快排每轮要处理<strong>两边</strong>，总共 n × log n 层。快速选择只处理<strong>一边</strong>，所以更快。</p></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-84.html"><small>← 上一篇</small>第 73 题 柱状图中最大的矩形</a><a href="./lc-347.html"><small>下一篇 →</small>第 75 题 前 K 个高频元素</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

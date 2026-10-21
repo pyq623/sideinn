@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 75 题 前 K 个高频元素 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-347"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-13">← 堆目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-6" href="#section-3">三个分支的返回逻辑</a><a class="level-6" href="#section-4">解法一 小顶堆 O n log k</a><a class="level-6" href="#section-5">解法二 快速选择 O n</a><a class="level-5" href="#section-6">代码实现</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 堆</div><h1>第 75 题 前 K 个高频元素</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 347  Top K Frequent Elements</p><p class="metadata"><strong>难度  中等</strong>    标签  堆  数组  哈希表  分治  桶排序  计数  快速选择  排序  堆（优先队列）    <a href="https://leetcode-cn.com/problems/top-k-frequent-elements/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>给你一个整数数组 <code>nums</code> 和一个整数 <code>k</code> ，请你返回其中出现频率前 <code>k</code> 高的元素。你可以按 任意顺序 返回答案。</p><p>示例 1：</p><p>输入： nums = [1,1,1,2,2,3], k = 2</p><p>输出：[1,2]</p><p>示例 2：</p><p>输入： nums = [1], k = 1</p><p>输出：[1]</p><p>示例 3：</p><p>输入： nums = [1,2,1,2,1,2,3,1,3,2], k = 2</p><p>输出：[1,2]</p><p>提示：</p><ul><li><code>1 &lt;= nums.length &lt;= 105</code></li><li><code>-104 &lt;= nums[i] &lt;= 104</code></li><li><code>k</code> 的取值范围是 <code>[1, 数组中不相同的元素的个数]</code></li><li>题目数据保证答案唯一，换句话说，数组中前 <code>k</code> 个高频元素的集合是唯一的</li></ul><p>进阶： 你所设计算法的时间复杂度 必须 优于 <code>O(n log n)</code> ，其中 <code>n</code>   是数组大小</p><h2 id="section-2">思路</h2><p>和上一题（215. 第 K 大元素）一模一样的快速选择框架，只是：</p><div class="table-scroll" tabindex="0" aria-label="可横向滚动的表格"><table><tr><th scope="col"></th><th scope="col"><p><strong>上一题（第 k 大）</strong></p></th><th scope="col"><p><strong>这一题（前 k 高频）</strong></p></th></tr><tr><td><p>分区依据</p></td><td><p>元素值</p></td><td><p>元素出现频率</p></td></tr><tr><td><p>返回值</p></td><td><p><strong>一个数</strong>（第 k 大的值）</p></td><td><p><strong>一组数</strong>（前 k 高频的所有元素）</p></td></tr><tr><td><p>数据预处理</p></td><td><p>直接用 nums</p></td><td><p>先 <code>Counter(nums)</code> 得到 <code>(num, freq)</code> 对</p></td></tr></table></div><p><strong>核心区别在 return</strong>：</p><ul><li>上一题返回一个数，递归到底拿到就行，每层直接透传</li><li>这一题返回一组数，递归 small 时 big + equal <strong>已经确定是答案的一部分</strong>，不能丢，必须拼接起来</li></ul><h3 id="section-3">三个分支的返回逻辑</h3><pre tabindex="0"><code>big:   [频率 &gt; pivot]
+equal: [频率 == pivot]
+small: [频率 &lt; pivot]
+
+从高频到低频排列：big + equal + small</code></pre><div class="table-scroll" tabindex="0" aria-label="可横向滚动的表格"><table><tr><th scope="col"><p><strong>分支</strong></p></th><th scope="col"><p><strong>含义</strong></p></th><th scope="col"><p><strong>return</strong></p></th></tr><tr><td><p><code>k &lt;= len(big)</code></p></td><td><p>前 k 高频全在 big 里</p></td><td><p>只要 big 的递归结果</p></td></tr><tr><td><p>else（落在 equal）</p></td><td><p>big + equal 刚好 ≥ k 个</p></td><td><p><code>big + equal</code> 全收</p></td></tr><tr><td><p><code>elif</code> 递归 small</p></td><td><p>big + equal 不够 k 个</p></td><td><p><code>big + equal</code> 全收 <strong>+</strong> 从 small 里再补</p></td></tr></table></div><h3 id="section-4">解法一 小顶堆 O n log k</h3><p>和上一题一样，维护一个大小为 k 的小顶堆。区别是上一题存元素值，这一题存 <code>(频率, 元素)</code> —— <code>heapq</code> 按元组第一个值排序，所以频率放前面。</p><pre tabindex="0"><code>class Solution:
+    def topKFrequent(self, nums: List[int], k: int) -&gt; List[int]:
+        from collections import Counter
+        import heapq
+        cnt = Counter(nums)
+        heap = []
+        for num, freq in cnt.items():
+            heapq.heappush(heap, (freq, num))
+            if len(heap) &gt; k:
+                heapq.heappop(heap)
+        return [num for freq, num in heap]</code></pre><p>堆始终只保留频率最高的 k 个，每次弹出的是频率最小的那个。</p><h3 id="section-5">解法二 快速选择 O n</h3><h2 id="section-6">代码实现</h2><pre tabindex="0"><code>class Solution:
+    def topKFrequent(self, nums: List[int], k: int) -&gt; List[int]:
+        from collections import Counter
+        import random
+        cnt = Counter(nums)
+        items = list(cnt.items())
+        def quickselect(items, k):
+            small, equal, big = [], [], []
+            pivot = random.choice(items)[1] # 随机选一个的频率
+            for num, freq in items:
+                if freq &lt; pivot:
+                    small.append((num, freq))
+                elif freq &gt; pivot:
+                    big.append((num, freq))
+                else:
+                    equal.append((num, freq))
+            if k &lt;= len(big):
+                rest = quickselect(big, k)
+                return rest
+            elif len(items) - len(small) &lt; k:
+                rest = quickselect(small, k - (len(items) - len(small)))
+                return [n for n, f in big + equal] + rest
+            else:
+                result = [n for n, f in big + equal]
+                return result
+        result = quickselect(items, k)
+        return result</code></pre><ul><li>易错点：</li></ul><ol><li><strong>`random.choice(items)[1]`，不是 `random.randint(items)`</strong>：<code>choice</code> 从列表随机选一个元素，选出来是 <code>(num, freq)</code> 元组，取 <code>[1]</code> 拿频率作为 pivot</li><li><strong>递归里全部用参数 `k`，不能用外层的 `k`</strong>：和上一题一样的坑，递归时 k 会调整，混用外层变量会导致递归进空列表报错</li><li><strong>递归 small 时不能只返回递归结果</strong>：big + equal 里的元素已经确认是前 k 高频的一部分，必须 <code>[n for n, f in big + equal] + rest</code> 拼起来。上一题不需要是因为只返回一个数</li><li><strong>else 分支要返回 `big + equal`，不能只返回 `equal`</strong>：big 里的元素频率比 equal 更高，当然也是前 k 高频的一部分</li><li><strong>`len(items)` 不能写成 `len(nums)`</strong>：递归时 <code>items</code> 是当前层的列表，<code>nums</code> 是最外层的原始数组，长度完全不同。用 <code>len(nums)</code> 算 k 的偏移量会算错，导致递归进空列表报 <code>IndexError: Cannot choose from an empty sequence</code></li><li><strong>`for num in cnt` 只能拿到 key</strong>：要同时拿 key 和 value，用 <code>cnt.items()</code>，或者 <code>cnt[num]</code> 取 value</li></ol><ul><li>复杂度：平均 O(n)，空间 O(n)（Counter + 三个列表），和上一题相同</li></ul></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-215.html"><small>← 上一篇</small>第 74 题 数组中的第K个最大元素</a><a href="./lc-295.html"><small>下一篇 →</small>第 76 题 数据流的中位数</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

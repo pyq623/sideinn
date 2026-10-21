@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 11 题 滑动窗口最大值 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-239"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-4">← 子串目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-5" href="#section-3">代码实现</a><a class="level-5" href="#section-4">deque 的语法知识</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 子串</div><h1>第 11 题 滑动窗口最大值</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 239  Sliding Window Maximum</p><p class="metadata"><strong>难度  困难</strong>    标签  子串  队列  数组  滑动窗口  单调队列  堆（优先队列）    <a href="https://leetcode-cn.com/problems/sliding-window-maximum/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>给你一个整数数组 <code>nums</code>，有一个大小为 <code>k</code>   的滑动窗口从数组的最左侧移动到数组的最右侧。你只可以看到在滑动窗口内的 <code>k</code> 个数字。滑动窗口每次只向右移动一位。</p><p>返回 滑动窗口中的最大值 。</p><p>示例 1：</p><pre tabindex="0"><code>输入： nums = [1,3,-1,-3,5,3,6,7], k = 3
+输出：[3,3,5,5,6,7]
+解释：
+滑动窗口的位置                最大值
+---------------               -----
+[1  3  -1] -3  5  3  6  7       3
+ 1 [3  -1  -3] 5  3  6  7       3
+ 1  3 [-1  -3  5] 3  6  7      5
+ 1  3  -1 [-3  5  3] 6  7       5
+ 1  3  -1  -3 [5  3  6] 7       6
+ 1  3  -1  -3  5 [3  6  7]      7</code></pre><p>示例 2：</p><pre tabindex="0"><code>输入： nums = [1], k = 1
+输出：[1]</code></pre><p>提示：</p><ul><li><code>1 &lt;= nums.length &lt;= 105</code></li><li><code>-104 &lt;= nums[i] &lt;= 104</code></li><li><code>1 &lt;= k &lt;= nums.length</code></li></ul><h2 id="section-2">思路</h2><ul><li>暴力法：每次窗口滑动后遍历窗口内所有元素取最大值，复杂度 O((n-k+1) × k) ≈ O(nk)</li><li>单调队列优化：</li><li>维护一个<strong>单调递减的双端队列</strong> <code>deque</code>，队首始终是当前窗口的最大值</li><li>核心操作（每次右指针 <code>j</code> 前进一步）：</li></ul><ol><li><strong>删除过期元素</strong>：如果队首元素恰好是即将离开窗口的 <code>nums[i-1]</code>，弹出队首</li><li><strong>维护单调性</strong>：从队尾弹出所有比 <code>nums[j]</code> 小的元素（它们不可能再成为最大值了）</li><li><strong>加入新元素</strong>：将 <code>nums[j]</code> 加入队尾</li><li><strong>记录结果</strong>：窗口满了（<code>i &gt;= 0</code>）时，队首就是最大值</li></ol><ul><li>为什么队首等于 <code>nums[i-1]</code> 就能判断是要删除的那个元素？</li><li>如果离开的元素不是最大值，它早就在更大元素入队时被弹出了，不在 deque 里</li><li>如果离开的元素是最大值，它一定在队首</li><li>如果有重复的最大值，deque 保留了所有相等的值（非严格递减），<code>popleft</code> 只弹一个，剩下的对应窗口内还存在的元素</li><li><code>i</code> 的含义：窗口左边界，从 <code>1-k</code> 开始。<code>i &lt; 0</code> 表示窗口未满，<code>i &gt;= 0</code> 表示窗口已满开始输出结果</li><li>易错点：</li></ul><ol><li><strong>`i` 的范围</strong>：<code>range(1 - k, n + 1 - k)</code>，终点是 <code>n + 1 - k</code> 不是 <code>n - k - 1</code>，差 2 会导致漏掉最后的窗口</li><li><strong>while 条件</strong>：<code>while deque and ...</code>，不是 <code>while not deque and ...</code>（后者在 deque 为空时进入循环，访问 <code>deque[-1]</code> 会报错）</li><li><strong>删除对比的是 `nums[i-1]`</strong>：是刚离开窗口的元素，不是 <code>nums[i]</code>（<code>nums[i]</code> 还在窗口内）</li><li><strong>删除条件是 `i &gt; 0`</strong>：不是 <code>i &gt;= 0</code>。<code>i = 0</code> 时没有元素离开（窗口刚满），<code>i &gt; 0</code> 才开始有元素离开</li></ol><h2 id="section-3">代码实现</h2><pre tabindex="0"><code>import collections
+class Solution:
+    def maxSlidingWindow(self, nums: List[int], k: int) -&gt; List[int]:
+        res = []
+        if not nums and k == 0:
+            return res
+
+        n = len(nums)
+        deque = collections.deque()
+        for i, j in zip(range(1-k, n+1-k), range(n)):
+            if i &gt; 0 and deque[0] == nums[i-1]:
+                deque.popleft()
+
+            while deque and nums[j] &gt; deque[-1]:
+                deque.pop()  # 从末尾开始，头部永远是最大，先进入的在右边。
+
+            deque.append(nums[j])
+
+            if i &gt;= 0:
+                res.append(deque[0])
+        return res</code></pre><ul><li>复杂度：时间 O(N)（每个元素最多进出队列各一次），空间 O(k)（队列最多存 k 个元素）</li></ul><h2 id="section-4">deque 的语法知识</h2><p>deque：双端队列</p><p>两端添加、删除都是 O(1)，适合 BFS、层序遍历、滑动窗口最大值。</p><pre tabindex="0"><code>from collections import deque
+q = deque([1, 2])
+q.append(3)        # 右端加入
+x = q.popleft()   # 左端取出：1
+q.appendleft(0)   # 左端加入
+x = q.pop()       # 右端取出：3</code></pre></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-560.html"><small>← 上一篇</small>第 10 题 和为 K 的子数组</a><a href="./lc-76.html"><small>下一篇 →</small>第 12 题 最小覆盖子串</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

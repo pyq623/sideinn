@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 84 题 完全平方数 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-279"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-15">← 动态规划目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-5" href="#section-3">代码实现</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 动态规划</div><h1>第 84 题 完全平方数</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 279  Perfect Squares</p><p class="metadata"><strong>难度  中等</strong>    标签  动态规划  广度优先搜索  数学    <a href="https://leetcode-cn.com/problems/perfect-squares/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>给你一个整数 <code>n</code> ，返回 和为<code>n</code> 的完全平方数的最少数量 。</p><p>完全平方数 是一个整数，其值等于另一个整数的平方；换句话说，其值等于一个整数自乘的积。例如，<code>1</code>、<code>4</code>、<code>9</code> 和 <code>16</code> 都是完全平方数，而 <code>3</code> 和 <code>11</code> 不是。</p><p>示例  1：</p><pre tabindex="0"><code>输入： n = 12
+输出： 3
+解释：12 = 4 + 4 + 4</code></pre><p>示例 2：</p><pre tabindex="0"><code>输入： n = 13
+输出： 2
+解释：13 = 4 + 9</code></pre><p>提示：</p><ul><li><code>1 &lt;= n &lt;= 104</code></li></ul><h2 id="section-2">思路</h2><p>和爬楼梯一模一样的思路！</p><div class="table-scroll" tabindex="0" aria-label="可横向滚动的表格"><table><tr><th scope="col"></th><th scope="col"><p><strong>爬楼梯</strong></p></th><th scope="col"><p><strong>完全平方数</strong></p></th></tr><tr><td><p>每次可以跳</p></td><td><p>1 或 2 步</p></td><td><p>1, 4, 9, 16, ... 步（完全平方数）</p></td></tr><tr><td><p>求什么</p></td><td><p>方案数（加法）</p></td><td><p>最少跳几次（min）</p></td></tr><tr><td><p>递推</p></td><td><p><code>dp[i] = dp[i-1] + dp[i-2]</code></p></td><td><p><code>dp[i] = min(dp[i-j*j] + 1)</code>，对所有 <code>j*j &lt;= i</code></p></td></tr></table></div><pre tabindex="0"><code>dp[i] = min(
+    dp[i-1]  + 1,   # 用一个 1²
+    dp[i-4]  + 1,   # 用一个 2²
+    dp[i-9]  + 1,   # 用一个 3²
+    ...              # 对所有 j*j &lt;= i
+)</code></pre><p>走个例子：</p><pre tabindex="0"><code>dp[0] = 0
+dp[1] = dp[0] + 1 = 1          （1）
+dp[2] = dp[1] + 1 = 2          （1+1）
+dp[3] = dp[2] + 1 = 3          （1+1+1）
+dp[4] = min(dp[3]+1, dp[0]+1) = 1  （直接用 4）
+dp[5] = min(dp[4]+1, dp[1]+1) = 2  （4+1）
+...
+dp[12] = min(dp[11]+1, dp[8]+1, dp[3]+1) = 3  （4+4+4）</code></pre><h2 id="section-3">代码实现</h2><pre tabindex="0"><code>class Solution:
+    def numSquares(self, n: int) -&gt; int:
+        dp = [inf] * (n + 1)
+        dp[1] = 1
+        dp[0] = 0
+        for i in range(2, n + 1):
+            j = 1
+            cur = 0
+            while j * j &lt;= i:
+                cur = dp[i - j * j] + 1
+                dp[i] = min(cur, dp[i])
+                j = j + 1
+        return dp[n]</code></pre><ul><li>易错点：</li></ul><ol><li><strong>`dp[0] = 0` 不是 1</strong>：凑出 0 需要 0 个数。如果设为 1，<code>dp[4] = dp[0]+1 = 2</code>，但 4 本身就是完全平方数，应该只需要 1 个</li><li><strong>初始化用 `inf`</strong>：因为求最小值，初始要设成无穷大，否则 min 会取到 0</li><li><strong>内层是 `while j*j &lt;= i` 不是 `while j &lt;= i`</strong>：遍历的是所有平方数不超过 i 的 j</li></ol><ul><li>复杂度：时间 O(n\sqrtn)（外层 n，内层 \sqrtn），空间 O(n)</li></ul></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-198.html"><small>← 上一篇</small>第 83 题 打家劫舍</a><a href="./lc-322.html"><small>下一篇 →</small>第 85 题 零钱兑换</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 52 题 腐烂的橘子 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-994"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-9">← 图论目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-6" href="#section-3">BFS 与 DFS 什么时候用哪个</a><a class="level-6" href="#section-4">多源 BFS</a><a class="level-6" href="#section-5">本题思路</a><a class="level-6" href="#section-6">做法</a><a class="level-6" href="#section-7">感染的传播范围</a><a class="level-6" href="#section-8">time 加 1 的时机</a><a class="level-5" href="#section-9">代码实现</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 图论</div><h1>第 52 题 腐烂的橘子</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 994  Rotting Oranges</p><p class="metadata"><strong>难度  中等</strong>    标签  图论  广度优先搜索  数组  矩阵    <a href="https://leetcode-cn.com/problems/rotting-oranges/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>在给定的 <code>m x n</code> 网格 <code>grid</code> 中，每个单元格可以有以下三个值之一：</p><ul><li>值 <code>0</code> 代表空单元格；</li><li>值 <code>1</code> 代表新鲜橘子；</li><li>值 <code>2</code> 代表腐烂的橘子。</li></ul><p>每分钟，腐烂的橘子 周围  4 个方向上相邻 的新鲜橘子都会腐烂。</p><p>返回 直到单元格中没有新鲜橘子为止所必须经过的最小分钟数。如果不可能，返回  <code>-1</code> 。</p><p>示例 1：</p><figure><a href="./images/image57.png" target="_blank" rel="noopener" aria-label="查看原图"><img src="./images/image57.png" width="1306" height="275" loading="lazy" alt="第 52 题 腐烂的橘子 · 原笔记图示"></a><figcaption>原笔记图示 · 点击查看原图</figcaption></figure><pre tabindex="0"><code>输入： grid = [[2,1,1],[1,1,0],[0,1,1]]
+输出： 4</code></pre><p>示例 2：</p><pre tabindex="0"><code>输入： grid = [[2,1,1],[0,1,1],[1,0,1]]
+输出： -1
+解释： 左下角的橘子（第 2 行， 第 0 列）永远不会腐烂，因为腐烂只会发生在 4 个方向上。</code></pre><p>示例 3：</p><pre tabindex="0"><code>输入： grid = [[0,2]]
+输出： 0
+解释： 因为 0 分钟时已经没有新鲜橘子了，所以答案就是 0 。</code></pre><p>提示：</p><ul><li><code>m == grid.length</code></li><li><code>n == grid[i].length</code></li><li><code>1 &lt;= m, n &lt;= 10</code></li><li><code>grid[i][j]</code> 仅为 <code>0</code>、<code>1</code> 或 <code>2</code></li></ul><h2 id="section-2">思路</h2><h3 id="section-3">BFS 与 DFS 什么时候用哪个</h3><div class="table-scroll" tabindex="0" aria-label="可横向滚动的表格"><table><tr><th scope="col"></th><th scope="col"><p><strong>BFS（广度优先）</strong></p></th><th scope="col"><p><strong>DFS（深度优先）</strong></p></th></tr><tr><td><p>扩散方式</p></td><td><p>一圈一圈往外扩</p></td><td><p>一条路走到底</p></td></tr><tr><td><p>典型场景</p></td><td><p>求最短距离/最少步数、逐层处理、多源同时扩散</p></td><td><p>找连通块、遍历所有路径、递归建树/分治</p></td></tr><tr><td><p>保证最短</p></td><td><p>✅ 先到的距离最短</p></td><td><p>❌ 不保证顺序</p></td></tr><tr><td><p>典型题目</p></td><td><p>腐烂橘子、层序遍历、右视图</p></td><td><p>岛屿数量、前缀和路径(437)、前序+中序建树(105)</p></td></tr></table></div><p><strong>一句话：需要&quot;一层一层扩散&quot;或&quot;求最短距离&quot;用 BFS，需要&quot;一条路走到底&quot;或&quot;把一整块走遍&quot;用 DFS。</strong></p><h3 id="section-4">多源 BFS</h3><ul><li>本题是<strong>多源 BFS</strong>：多个腐烂橘子<strong>同时</strong>开始扩散，不是从一个起点出发</li><li>和普通 BFS 唯一的区别就是初始化时入队几个起点：</li></ul><pre tabindex="0"><code>    # 普通 BFS（层序遍历）：一个起点
+    queue = [root]
+
+    # 多源 BFS（腐烂橘子）：所有腐烂橘子同时入队
+    for i in range(m):
+        for j in range(n):
+            if grid[i][j] == 2:
+                queue.append((i, j))   # 多个起点</code></pre><ul><li>后面的逐层扩散框架完全一样。多个起点放进去，第一轮它们<strong>同时</strong>向外扩一圈，就像往池塘里同时扔好几颗石子，涟漪同时扩散</li></ul><h3 id="section-5">本题思路</h3><div class="table-scroll" tabindex="0" aria-label="可横向滚动的表格"><table><tr><th scope="col"></th><th scope="col"><p><strong>层序遍历（第 41 题）</strong></p></th><th scope="col"><p><strong>本题（腐烂橘子）</strong></p></th></tr><tr><td><p>数据结构</p></td><td><p>二叉树</p></td><td><p>二维网格</p></td></tr><tr><td><p>起点</p></td><td><p>1 个（根节点）</p></td><td><p><strong>多个</strong>（所有腐烂橘子）</p></td></tr><tr><td><p>扩散方向</p></td><td><p>左右子节点</p></td><td><p>上下左右四个方向</p></td></tr><tr><td><p>每层含义</p></td><td><p>树的一层</p></td><td><p>一分钟的扩散</p></td></tr><tr><td><p>框架</p></td><td><p>queue + tmp 逐层替换</p></td><td><p>完全一样</p></td></tr></table></div><h3 id="section-6">做法</h3><ol><li><strong>初始化</strong>：遍历网格，所有腐烂橘子 <code>2</code> 入队，同时统计新鲜橘子数量 <code>fresh</code></li><li><strong>BFS 逐层扩散</strong>：每一轮取出队列里所有腐烂橘子，向四个方向感染相邻的新鲜橘子（<code>1</code> → <code>2</code>），加入 <code>tmp</code>，<code>fresh -= 1</code></li><li><strong>计时</strong>：只有 <code>tmp</code> 不为空（本轮有新感染）才 <code>time += 1</code></li><li><strong>结束判断</strong>：<code>fresh == 0</code> → 返回 <code>time</code>；<code>fresh &gt; 0</code> → 有橘子被 <code>0</code> 隔开永远感染不到，返回 <code>-1</code></li></ol><h3 id="section-7">感染的传播范围</h3><ul><li>感染只能通过相邻的 <code>1</code> 一个传一个，<strong>中间隔着 `0`（空格）就传不过去</strong></li><li>新被感染的橘子下一轮也会继续感染它的邻居，所以能传播很远，但必须有连续的 <code>1</code> 相连</li><li>这就是为什么最后要判断 <code>fresh &gt; 0</code> 返回 <code>-1</code>：被 <code>0</code> 隔开的新鲜橘子永远感染不到</li></ul><h3 id="section-8">time 加 1 的时机</h3><ul><li><strong>只有 `tmp` 不为空时才 +1</strong>：如果这轮没感染任何橘子（<code>tmp</code> 为空），说明要么全部感染完了，要么被隔开了。这轮不算一分钟</li><li>如果不判断直接 +1，最后一轮会多算一分钟</li></ul><h2 id="section-9">代码实现</h2><pre tabindex="0"><code>class Solution:
+    def orangesRotting(self, grid: List[List[int]]) -&gt; int:
+        m = len(grid)
+        n = len(grid[0])
+        self.fresh = 0
+        queue = []
+        self.time = 0
+        for i in range(m):
+            for j in range(n):
+                if grid[i][j] == 2:
+                    queue.append((i, j))
+                if grid[i][j] == 1:
+                    self.fresh += 1
+        while queue:
+            tmp = []
+            for (ni, nj) in queue:
+                for (n_i, n_j) in [(ni - 1, nj), (ni + 1, nj), (ni, nj - 1), (ni, nj + 1)]:
+                    if 0 &lt;= n_i and n_i &lt; m and 0 &lt;= n_j and n_j &lt; n:
+                        if grid[n_i][n_j] == 1:
+                            tmp.append((n_i, n_j))
+                            grid[n_i][n_j] = 2
+                            self.fresh -= 1
+            if tmp:
+                self.time += 1
+            queue = tmp
+        return self.time if self.fresh == 0 else -1</code></pre><ul><li>易错点：</li></ul><ol><li><strong>所有腐烂橘子都要入队，不是只找第一个</strong>：多个腐烂橘子同时扩散，漏了任何一个都会导致答案偏大</li><li><strong>只感染 `== 1` 的，不是 `!= 0` 的</strong>：<code>!= 0</code> 会把已经腐烂的 <code>2</code> 也加进去，重复处理</li><li><strong>`if tmp: time += 1`</strong>：最后一轮队列里的橘子四周都没有新鲜的了，<code>tmp</code> 为空，不该 +1，否则多算一分钟</li><li><strong>感染后立即标记 `grid[n_i][n_j] = 2`</strong>：不标记的话同一轮中其他橘子可能重复感染同一个格子，导致 <code>fresh</code> 多减</li><li><strong>注意本题网格值是数字 `0/1/2`，不是字符串</strong>：和上一题（岛屿数量）不同，这题不需要加引号</li></ol><ul><li>复杂度：时间 O(m × n)，空间 O(m × n)（队列最多存所有格子）</li></ul></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-200.html"><small>← 上一篇</small>第 51 题 岛屿数量</a><a href="./lc-207.html"><small>下一篇 →</small>第 53 题 课程表</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

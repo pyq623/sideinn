@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 89 题 分割等和子集 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-416"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-15">← 动态规划目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-6" href="#section-3">为什么要从大到小遍历 j 非常重要</a><a class="level-6" href="#section-4">range target num 1 1 的含义</a><a class="level-5" href="#section-5">代码实现</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 动态规划</div><h1>第 89 题 分割等和子集</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 416  Partition Equal Subset Sum</p><p class="metadata"><strong>难度  中等</strong>    标签  动态规划  数组    <a href="https://leetcode-cn.com/problems/partition-equal-subset-sum/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>给你一个 只包含正整数 的 非空 数组 <code>nums</code> 。请你判断是否可以将这个数组分割成两个子集，使得两个子集的元素和相等。</p><p>示例 1：</p><pre tabindex="0"><code>输入： nums = [1,5,11,5]
+输出： true
+解释： 数组可以分割成 [1, 5, 5] 和 [11] 。</code></pre><p>示例 2：</p><pre tabindex="0"><code>输入： nums = [1,2,3,5]
+输出： false
+解释： 数组不能分割成两个元素和相等的子集。</code></pre><p>提示：</p><ul><li><code>1 &lt;= nums.length &lt;= 200</code></li><li><code>1 &lt;= nums[i] &lt;= 100</code></li></ul><h2 id="section-2">思路</h2><p>关键转化：把数组分成两个等和子集 = <strong>从数组中选一些数，使它们的和恰好等于 sum/2</strong>。</p><p>和零钱兑换很像！</p><div class="table-scroll" tabindex="0" aria-label="可横向滚动的表格"><table><tr><th scope="col"></th><th scope="col"><p><strong>零钱兑换</strong></p></th><th scope="col"><p><strong>分割等和子集</strong></p></th></tr><tr><td><p>&quot;硬币&quot;</p></td><td><p>coins 数组</p></td><td><p>nums 数组</p></td></tr><tr><td><p>目标</p></td><td><p>凑出 amount</p></td><td><p>凑出 sum/2</p></td></tr><tr><td><p>每个能用几次</p></td><td><p>无限次（从小到大）</p></td><td><p><strong>只能用一次（从大到小）</strong></p></td></tr><tr><td><p>求什么</p></td><td><p>最少几个（min）</p></td><td><p>能不能凑出（or）</p></td></tr></table></div><p><code>dp[j]</code> 表示：能不能从数组中选一些数，使得和恰好等于 j。</p><p>递推：<code>dp[j] = dp[j] or dp[j - num]</code></p><ul><li><code>dp[j]</code>：不选当前 num，之前就能凑出 j</li><li><code>dp[j - num]</code>：选当前 num，之前能凑出 j-num</li></ul><h3 id="section-3">为什么要从大到小遍历 j 非常重要</h3><p><strong>从大到小 = 每个数只用一次（01背包），从小到大 = 每个数可以无限用（完全背包）。</strong></p><p>用例子看 <code>nums = [1, 2, 5], target = 4</code>：</p><p><strong>从小到大（错误）：</strong></p><pre tabindex="0"><code>num = 1:
+  j=1: dp[1] = dp[1] or dp[0] = True   ← 用了一次 1
+  j=2: dp[2] = dp[2] or dp[1] = True   ← dp[1] 刚更新过！等于用了两次 1
+  j=3: dp[3] = dp[3] or dp[2] = True   ← 等于用了三次 1</code></pre><p>1 只有一个，但从小到大让它被&quot;重复利用&quot;了。</p><p><strong>从大到小（正确）：</strong></p><pre tabindex="0"><code>num = 1:
+  j=4: dp[4] = dp[4] or dp[3] = False  ← dp[3] 还是旧值 False
+  j=3: dp[3] = dp[3] or dp[2] = False  ← dp[2] 还是旧值 False
+  j=2: dp[2] = dp[2] or dp[1] = False  ← dp[1] 还是旧值 False
+  j=1: dp[1] = dp[1] or dp[0] = True   ← 最后才更新</code></pre><p>从大到小保证了：算 dp[j] 时，dp[j-num] 读到的是<strong>上一轮的旧值</strong>，不会被本轮污染。每个数只用一次。</p><h3 id="section-4">range target num 1 1 的含义</h3><pre tabindex="0"><code>range(起点, 终点, 步长)
+range(target, num - 1, -1) → 从 target 倒着数到 num（含 num）</code></pre><p>为什么最小到 num？因为 <code>dp[j - num]</code> 需要 <code>j &gt;= num</code>，比 num 小的 j 没法选这个数，不用更新。</p><h2 id="section-5">代码实现</h2><pre tabindex="0"><code>class Solution:
+    def canPartition(self, nums: List[int]) -&gt; bool:
+        n = len(nums)
+        sum_n = sum(nums)
+        if sum_n % 2 == 1:
+            return False
+        target = sum_n // 2
+        dp = [False] * (target + 1)
+        dp[0] = True
+        for num in nums:
+            for j in range(target, num - 1, -1):  # 从大到小
+                dp[j] = dp[j] or dp[j - num]
+        return dp[target]</code></pre><ul><li>易错点：</li></ul><ol><li><strong>内层循环必须从大到小</strong>：从小到大会让同一个数被重复使用（变成完全背包）。01背包 = 从大到小，完全背包 = 从小到大</li><li><strong>dp 长度是 `target + 1` 不是 `n + 1`</strong>：dp[j] 表示能否凑出和为 j，j 的范围是 0~target</li><li><strong>总和为奇数直接返回 False</strong>：奇数不可能平分成两个相等的整数</li><li><strong>`dp[0] = True`</strong>：和为 0 什么都不选就行，是合法的起点</li></ol><ul><li>复杂度：时间 O(n × target)，空间 O(target)</li></ul></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-152.html"><small>← 上一篇</small>第 88 题 乘积最大子数组</a><a href="./lc-32.html"><small>下一篇 →</small>第 90 题 最长有效括号</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

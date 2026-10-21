@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 95 题 编辑距离 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-72"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-16">← 多维动态规划目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-6" href="#section-3">递推逻辑</a><a class="level-6" href="#section-4">和 LCS 的代码对比</a><a class="level-6" href="#section-5">边界条件</a><a class="level-6" href="#section-6">举例</a><a class="level-5" href="#section-7">代码实现</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 多维动态规划</div><h1>第 95 题 编辑距离</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 72  Edit Distance</p><p class="metadata"><strong>难度  中等</strong>    标签  多维动态规划  字符串  动态规划    <a href="https://leetcode-cn.com/problems/edit-distance/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>给你两个单词 <code>word1</code> 和 <code>word2</code>， 请返回将 <code>word1</code> 转换成 <code>word2</code> 所使用的最少操作数。</p><p>你可以对一个单词进行如下三种操作：</p><ul><li>插入一个字符</li><li>删除一个字符</li><li>替换一个字符</li></ul><p>示例 1：</p><pre tabindex="0"><code>输入： word1 = &quot;horse&quot;, word2 = &quot;ros&quot;
+输出： 3
+解释：
+horse -&gt; rorse (将 &#x27;h&#x27; 替换为 &#x27;r&#x27;)
+rorse -&gt; rose (删除 &#x27;r&#x27;)
+rose -&gt; ros (删除 &#x27;e&#x27;)</code></pre><p>示例 2：</p><pre tabindex="0"><code>输入： word1 = &quot;intention&quot;, word2 = &quot;execution&quot;
+输出： 5
+解释：
+intention -&gt; inention (删除 &#x27;t&#x27;)
+inention -&gt; enention (将 &#x27;i&#x27; 替换为 &#x27;e&#x27;)
+enention -&gt; exention (将 &#x27;n&#x27; 替换为 &#x27;x&#x27;)
+exention -&gt; exection (将 &#x27;n&#x27; 替换为 &#x27;c&#x27;)
+exection -&gt; execution (插入 &#x27;u&#x27;)</code></pre><p>提示：</p><ul><li><code>0 &lt;= word1.length, word2.length &lt;= 500</code></li><li><code>word1</code> 和 <code>word2</code> 由小写英文字母组成</li></ul><h2 id="section-2">思路</h2><p>和上一题（最长公共子序列）结构非常像，几乎同一个骨架。</p><p><code>dp[i][j]</code> = word1 前 i 个字符变成 word2 前 j 个字符的最少操作数。</p><h3 id="section-3">递推逻辑</h3><p><strong>相等时</strong>：<code>word1[i-1] == word2[j-1]</code>，不需要操作</p><pre tabindex="0"><code>dp[i][j] = dp[i-1][j-1]</code></pre><p><strong>不等时</strong>：三种操作选最少的</p><pre tabindex="0"><code>dp[i][j] = min(dp[i-1][j-1], dp[i-1][j], dp[i][j-1]) + 1</code></pre><ul><li><code>dp[i-1][j-1] + 1</code>：<strong>替换</strong> word1[i-1] 为 word2[j-1]</li><li><code>dp[i-1][j] + 1</code>：<strong>删除</strong> word1[i-1]（word1 少看一个字符）</li><li><code>dp[i][j-1] + 1</code>：<strong>插入</strong> word2[j-1] 到 word1（word2 少看一个字符）</li></ul><h3 id="section-4">和 LCS 的代码对比</h3><pre tabindex="0"><code># 最长公共子序列
+if text1[i-1] == text2[j-1]:
+    dp[i][j] = dp[i-1][j-1] + 1        # 匹配，LCS 长度 +1
+else:
+    dp[i][j] = max(dp[i-1][j], dp[i][j-1])  # 跳过一个
+
+# 编辑距离
+if word1[i-1] == word2[j-1]:
+    dp[i][j] = dp[i-1][j-1]            # 相等，不操作
+else:
+    dp[i][j] = min(dp[i-1][j-1], dp[i-1][j], dp[i][j-1]) + 1  # 三选一</code></pre><div class="table-scroll" tabindex="0" aria-label="可横向滚动的表格"><table><tr><th scope="col"></th><th scope="col"><p><strong>最长公共子序列</strong></p></th><th scope="col"><p><strong>编辑距离</strong></p></th></tr><tr><td><p>相等时</p></td><td><p><code>dp[i-1][j-1] + 1</code>（找到公共字符）</p></td><td><p><code>dp[i-1][j-1]</code>（不需要操作）</p></td></tr><tr><td><p>不等时</p></td><td><p><code>max(上, 左)</code> 2 个方向</p></td><td><p><code>min(左上, 上, 左) + 1</code> 3 个方向</p></td></tr><tr><td><p>边界</p></td><td><p>全 0（空串 LCS=0）</p></td><td><p><code>dp[i][0]=i, dp[0][j]=j</code>（删/插）</p></td></tr></table></div><h3 id="section-5">边界条件</h3><ul><li><code>dp[i][0] = i</code>：word1 前 i 个字符变成空串，需要删除 i 次</li><li><code>dp[0][j] = j</code>：空串变成 word2 前 j 个字符，需要插入 j 次</li></ul><h3 id="section-6">举例</h3><pre tabindex="0"><code>word1 = &quot;horse&quot;, word2 = &quot;ros&quot;
+
+    &quot;&quot;  r  o  s
+&quot;&quot;   0  1  2  3
+h    1  1  2  3
+o    2  2  1  2
+r    3  2  2  2
+s    4  3  3  2
+e    5  4  4  3  ← 答案 3</code></pre><h2 id="section-7">代码实现</h2><pre tabindex="0"><code>class Solution:
+    def minDistance(self, word1: str, word2: str) -&gt; int:
+        m = len(word1)
+        n = len(word2)
+        dp = [[0] * (n + 1) for _ in range(m+1)]
+
+        for i in range(m+1):
+            dp[i][0] = i
+        for j in range(n+1):
+            dp[0][j] = j
+        for i in range(1, m+1):
+            for j in range(1, n+1):
+                if word1[i-1] == word2[j-1]:
+                    dp[i][j] = dp[i-1][j-1]
+                else:
+                    dp[i][j] = min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]) + 1
+        return dp[m][n]</code></pre><ul><li>易错点：</li></ul><ol><li><strong>边界是 `dp[i][0]=i` 和 `dp[0][j]=j`，不是全 0</strong>：变成空串需要删 i 次，空串变成目标需要插 j 次。和 LCS 不同</li><li><strong>相等时不加 1</strong>：字符相等不需要操作，直接继承 <code>dp[i-1][j-1]</code>。容易和 LCS 搞混（LCS 相等时要 +1）</li><li><strong>不等时是 3 个方向取 min</strong>：替换（左上）、删除（上）、插入（左），都要 +1。LCS 不等时只看 2 个方向且不 +1</li><li><strong>`word1[i-1]` 不是 `word1[i]`</strong>：和 LCS 一样，dp 的 i 代表&quot;前 i 个字符&quot;（长度），对应下标要 -1</li></ol><ul><li>复杂度：时间 O(m × n)，空间 O(m × n)</li></ul></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-1143.html"><small>← 上一篇</small>第 94 题 最长公共子序列</a><a href="./tip-1.html"><small>下一篇 →</small>附录一 控制流结构 if elif 与 if if</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 24 题 回文链表 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-234"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-7">← 链表目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-5" href="#section-3">代码实现</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 链表</div><h1>第 24 题 回文链表</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 234  Palindrome Linked List</p><p class="metadata"><strong>难度  简单</strong>    标签  链表  栈  递归    <a href="https://leetcode-cn.com/problems/palindrome-linked-list/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>给你一个单链表的头节点 <code>head</code> ，请你判断该链表是否为回文链表。如果是，返回 <code>true</code> ；否则，返回 <code>false</code> 。</p><p>示例 1：</p><figure><a href="./images/image16.png" target="_blank" rel="noopener" aria-label="查看原图"><img src="./images/image16.png" width="422" height="62" loading="lazy" alt="第 24 题 回文链表 · 原笔记图示"></a><figcaption>原笔记图示 · 点击查看原图</figcaption></figure><pre tabindex="0"><code>输入： head = [1,2,2,1]
+输出： true</code></pre><p>示例 2：</p><figure><a href="./images/image17.png" target="_blank" rel="noopener" aria-label="查看原图"><img src="./images/image17.png" width="182" height="62" loading="lazy" alt="第 24 题 回文链表 · 原笔记图示"></a><figcaption>原笔记图示 · 点击查看原图</figcaption></figure><pre tabindex="0"><code>输入： head = [1,2]
+输出： false</code></pre><p>提示：</p><ul><li>链表中节点数目在范围 <code>[1, 105]</code> 内</li><li><code>0 &lt;= Node.val &lt;= 9</code></li></ul><p>进阶： 你能否用 <code>O(n)</code> 时间复杂度和 <code>O(1)</code> 空间复杂度解决此题？</p><h2 id="section-2">思路</h2><ul><li>三步走：找中点 → 反转后半段 → 逐个比较</li></ul><ol><li><strong>快慢指针找中点</strong>：slow 走 1 步，fast 走 2 步，fast 到终点时 slow 在中间（偶数长度返回偏右的中点）</li><li><strong>反转后半段链表</strong>：从中点开始反转</li><li><strong>双指针比较</strong>：<code>l</code> 从头走，<code>r</code> 从反转后的后半段走，逐个比较值是否相等。用 <code>while r</code> 控制（后半段更短或等长）</li></ol><ul><li>易错点：</li></ul><ol><li><strong>嵌套函数不需要 `self` 参数</strong>：<code>middle</code> 和 <code>rever</code> 是定义在方法内部的嵌套函数，不是类方法。如果写了 <code>self</code>，调用 <code>middle(head)</code> 时 <code>head</code> 会被传给 <code>self</code>，真正的 <code>head</code> 参数缺失，报错 <code>TypeError: missing 1 required positional argument</code></li><li><strong>快慢指针的终止条件是 `while fast and fast.next`</strong>：两个条件缺一不可，分别处理偶数（fast 走到 None）和奇数（fast 走到最后一个节点）的情况</li></ol><h2 id="section-3">代码实现</h2><pre tabindex="0"><code>class Solution:
+    def isPalindrome(self, head: Optional[ListNode]) -&gt; bool:
+        def middle(head):
+            fast, slow = head, head
+            while fast and fast.next:
+                slow = slow.next
+                fast = fast.next.next
+            return slow
+
+        def rever(head):
+            pre, cur = None, head
+            while cur:
+                tmp = cur.next
+                cur.next = pre
+                pre = cur
+                cur = tmp
+            return pre
+
+        mid_node = middle(head)
+        head2 = rever(mid_node)
+
+        l = head
+        r = head2
+        while r:
+            if l.val != r.val:
+                return False
+            l = l.next
+            r = r.next
+        return True</code></pre><ul><li>复杂度：时间 O(n)，空间 O(1)（只用了指针变量，原地反转）</li></ul></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-206.html"><small>← 上一篇</small>第 23 题 反转链表</a><a href="./lc-141.html"><small>下一篇 →</small>第 25 题 环形链表</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

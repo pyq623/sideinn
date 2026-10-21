@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 07 题 接雨水 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-42"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-2">← 双指针目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">分析</a><a class="level-5" href="#section-3">竖着计算 相向双指针</a><a class="level-5" href="#section-4">横着计算 单调栈</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 双指针</div><h1>第 07 题 接雨水</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 42  Trapping Rain Water</p><p class="metadata"><strong>难度  困难</strong>    标签  双指针  栈  数组  动态规划  单调栈    <a href="https://leetcode-cn.com/problems/trapping-rain-water/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>给定 <code>n</code> 个非负整数表示每个宽度为 <code>1</code> 的柱子的高度图，计算按此排列的柱子，下雨之后能接多少雨水。</p><p>示例 1：</p><figure><a href="./images/image1.png" target="_blank" rel="noopener" aria-label="查看原图"><img src="./images/image1.png" width="412" height="161" loading="lazy" alt="第 07 题 接雨水 · 原笔记图示"></a><figcaption>原笔记图示 · 点击查看原图</figcaption></figure><pre tabindex="0"><code>输入： height = [0,1,0,2,1,0,1,3,2,1,2,1]
+输出： 6
+解释： 上面是由数组 [0,1,0,2,1,0,1,3,2,1,2,1] 表示的高度图，在这种情况下，可以接 6 个单位的雨水（蓝色部分表示雨水）。</code></pre><p>示例 2：</p><pre tabindex="0"><code>输入： height = [4,2,0,3,2,5]
+输出： 9</code></pre><p>提示：</p><ul><li><code>n == height.length</code></li></ul><pre tabindex="0"><code>  `1 &lt;= n &lt;= 2  104`</code></pre><ul><li><code>0 &lt;= height[i] &lt;= 105</code></li></ul><h2 id="section-2">分析</h2><ul><li>横向角度</li><li>求第 <code>i</code> 层的水，遍历每个位置，如果当前的高度小于 <code>i</code>，并且两边有高度大于等于 <code>i</code> 的，说明这个地方一定有水，水就可以加 1</li><li>如果求高度为 <code>i</code> 的水，首先用一个变量 <code>temp</code> 保存当前累积的水，初始化为 0。从左到右遍历墙的高度，遇到高度大于等于 <code>i</code> 的时候，开始更新 <code>temp</code>。更新原则是遇到高度小于 <code>i</code> 的就把 <code>temp</code> 加 1，遇到高度大于等于 <code>i</code> 的，就把 <code>temp</code> 加到最终的答案 <code>ans</code> 里，并且 <code>temp</code> 置零，然后继续循环</li><li>纵向角度</li><li>对于每个位置，它能装多少雨水，由左右两边的高度决定。左边就是前缀最大值，右边就是后缀最大值</li><li>每个位置自身宽度为 1，所以能装多少水 = min(前缀最大值, 后缀最大值) - 自身高度</li></ul><h2 id="section-3">竖着计算 相向双指针</h2><ul><li>思路</li><li>对于这个装雨水的问题，每个位置能装多少雨水，由左右两边的高度决定。左边就是前缀最大值（preMax），右边就是后缀最大值（sufMax），每个位置自身宽度为 1，所以能装的水量 = min(preMax, sufMax) - height[i]</li><li>关键问题：能否不用两遍遍历求出所有前后缀，而是一次遍历就确定每个位置的接水量？</li><li>设现在算出了前缀 <code>[0, left]</code> 的最大高度 <code>preMax[left]</code>，以及后缀 <code>[right, n-1]</code> 的最大高度 <code>sufMax[right]</code>。中间的柱子 <code>[left+1, right-1]</code> 尚未遍历，不知道有多高。在这种情况下，我们能否直接确定 <code>left</code> 或者 <code>right</code> 处的接水量？</li><li>分类讨论：</li><li>如果 <code>preMax[left] &lt;= sufMax[right]</code>，由于 <code>sufMax[right] &lt;= sufMax[left]</code>（包含的数越多，最大值越大），所以 <code>preMax[left] &lt;= sufMax[right] &lt;= sufMax[left]</code>，因此 <code>min(preMax[left], sufMax[left]) = preMax[left]</code>，<code>left</code> 处的接水量就是 <code>preMax[left] - height[left]</code></li><li>如果 <code>preMax[left] &gt; sufMax[right]</code>，由于 <code>preMax[left] &lt;= preMax[right]</code>（包含的数越多，最大值越大），所以 <code>sufMax[right] &lt; preMax[left] &lt;= preMax[right]</code>，因此 <code>min(preMax[right], sufMax[right]) = sufMax[right]</code>，<code>right</code> 处的接水量就是 <code>sufMax[right] - height[right]</code></li><li>代码实现</li></ul><pre tabindex="0"><code>    class Solution:
+        def trap(self, height: List[int]) -&gt; int:
+            ans = 0
+            n = len(height)
+            l = 0
+            r = n - 1
+            pre_l, suf_r = 0, 0
+            while l &lt; r:
+                pre_l = max(pre_l, height[l])
+                suf_r = max(suf_r, height[r])
+                if pre_l &lt;= suf_r: # 现在l的pre &lt; suf，所以可以算出他的面积
+                    ans = ans + (pre_l - height[l])
+                    l = l + 1 # 这个小格的算完了，算下一个
+                elif pre_l &gt; suf_r:
+                    ans = ans + (suf_r - height[r])
+                    r = r - 1
+                # 这个精妙的思路，每次l和r的更新，pre和suf都在变化，就像是逐渐了解中间的高度
+            return ans</code></pre><ul><li>复杂度：时间 O(n)，空间 O(1)</li></ul><h2 id="section-4">横着计算 单调栈</h2><ul><li>思路</li><li>与竖着逐列计算不同，单调栈是横着一层一层算水的面积</li><li>维护一个单调递减栈，每次 pop 出一个&quot;谷底&quot;，以它为底，用左右两堵墙围出一个横向矩形</li><li>层层叠加，最终填满所有水</li><li>代码实现</li></ul><pre tabindex="0"><code>    # TODO: 待补充</code></pre></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-15.html"><small>← 上一篇</small>第 06 题 三数之和</a><a href="./lc-3.html"><small>下一篇 →</small>第 08 题 无重复字符的最长子串</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

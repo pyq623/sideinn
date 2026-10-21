@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 46 题 二叉树展开为链表 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-114"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-8">← 二叉树目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-5" href="#section-3">解法一 递归先序遍历</a><a class="level-5" href="#section-4">解法二 颜色法 迭代先序遍历</a><a class="level-5" href="#section-5">解法三 头插法 逆先序遍历 O 1 空间</a><a class="level-6" href="#section-6">思路</a><a class="level-6" href="#section-7">代码实现</a><a class="level-5" href="#section-8">解法四 迭代寻找前驱节点 真正 O 1 空间</a><a class="level-6" href="#section-9">思路</a><a class="level-6" href="#section-10">完整图解</a><a class="level-6" href="#section-11">Q&amp;A</a><a class="level-6" href="#section-12">代码实现</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 二叉树</div><h1>第 46 题 二叉树展开为链表</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 114  Flatten Binary Tree to Linked List</p><p class="metadata"><strong>难度  中等</strong>    标签  二叉树  栈  树  深度优先搜索  链表    <a href="https://leetcode-cn.com/problems/flatten-binary-tree-to-linked-list/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>给你二叉树的根结点 <code>root</code> ，请你将它展开为一个单链表：</p><ul><li>展开后的单链表应该同样使用 <code>TreeNode</code> ，其中 <code>right</code> 子指针指向链表中下一个结点，而左子指针始终为 <code>null</code> 。</li><li>展开后的单链表应该与二叉树 <a href="https://baike.baidu.com/item/%E5%85%88%E5%BA%8F%E9%81%8D%E5%8E%86/6442839?fr=aladdin" target="_blank" rel="noopener noreferrer">先序遍历</a> 顺序相同。</li></ul><p>示例 1：</p><figure><a href="./images/image51.png" target="_blank" rel="noopener" aria-label="查看原图"><img src="./images/image51.png" width="1021" height="461" loading="lazy" alt="第 46 题 二叉树展开为链表 · 原笔记图示"></a><figcaption>原笔记图示 · 点击查看原图</figcaption></figure><pre tabindex="0"><code>输入： root = [1,2,5,3,4,null,6]
+输出：[1,null,2,null,3,null,4,null,5,null,6]</code></pre><p>示例 2：</p><pre tabindex="0"><code>输入： root = []
+输出：[]</code></pre><p>示例 3：</p><pre tabindex="0"><code>输入： root = [0]
+输出：[0]</code></pre><p>提示：</p><ul><li>树中结点数在范围 <code>[0, 2000]</code> 内</li><li><code>-100 &lt;= Node.val &lt;= 100</code></li></ul><p>进阶： 你可以使用原地算法（<code>O(1)</code> 额外空间）展开这棵树吗？</p><h2 id="section-2">思路</h2><ul><li>展开后的链表顺序就是<strong>先序遍历</strong>的顺序。所以分两步：</li></ul><ol><li><strong>先序遍历</strong>收集所有节点到列表</li><li><strong>遍历列表</strong>，逐个修改指针：<code>left = None</code>，<code>right = 下一个节点</code></li></ol><ul><li>&quot;原地修改&quot;的意思是修改已有的节点（不创建新节点），列表里存的是节点对象的引用，改了它们的 <code>left</code>/<code>right</code> 就是改了原来的树</li><li>先序遍历回顾：根 → 左 → 右</li><li>递归版：<code>append(node)</code> → <code>dfs(left)</code> → <code>dfs(right)</code></li><li>颜色法入栈顺序（反着推）：右(WHITE), 左(WHITE), 根(GRAY)</li><li>三种遍历的颜色法入栈顺序对比：</li></ul><div class="table-scroll" tabindex="0" aria-label="可横向滚动的表格"><table><tr><th scope="col"><p><strong>遍历方式</strong></p></th><th scope="col"><p><strong>期望顺序</strong></p></th><th scope="col"><p><strong>入栈顺序（反）</strong></p></th></tr><tr><td><p>中序（左→根→右）</p></td><td><p>右(WHITE), 根(GRAY), 左(WHITE)</p></td><td></td></tr><tr><td><p><strong>先序（根→左→右）</strong></p></td><td><p><strong>右(WHITE), 左(WHITE), 根(GRAY)</strong></p></td><td></td></tr><tr><td><p>后序（左→右→根）</p></td><td><p>根(GRAY), 右(WHITE), 左(WHITE)</p></td><td></td></tr></table></div><h2 id="section-3">解法一 递归先序遍历</h2><pre tabindex="0"><code>class Solution:
+    def flatten(self, root: Optional[TreeNode]) -&gt; None:
+        self.nodes = []
+        def dfs(node: Optional[TreeNode]):
+            if not node:
+                return
+            self.nodes.append(node)
+            dfs(node.left)
+            dfs(node.right)
+
+        dfs(root)
+        dum = root
+        for node in self.nodes:
+            if root == node:
+                continue
+            root.left = None
+            root.right = node
+            root = root.right
+
+        return dum</code></pre><h2 id="section-4">解法二 颜色法 迭代先序遍历</h2><pre tabindex="0"><code>class Solution:
+    def flatten(self, root: Optional[TreeNode]) -&gt; None:
+        if not root: return
+        WHITE, GRAY = 0, 1
+        nodes = []
+        stack = [(WHITE, root)]
+        while stack:
+            color, node = stack.pop()
+            if node is None: continue
+            if color == WHITE:
+                stack.append((WHITE, node.right))
+                stack.append((WHITE, node.left))
+                stack.append((GRAY, node))
+            else:
+                nodes.append(node)
+
+        dum = root
+        for node in nodes:
+            if root == node:
+                continue
+            root.left = None
+            root.right = node
+            root = root.right
+
+        return dum</code></pre><ul><li>复杂度：时间 O(n)，空间 O(n)（存储所有节点的列表）</li></ul><h2 id="section-5">解法三 头插法 逆先序遍历 O 1 空间</h2><h3 id="section-6">思路</h3><ul><li>解法一和二都需要一个列表存所有节点，空间 O(n)。能不能<strong>边遍历边改指针</strong>，不用额外存储？</li><li>关键洞察：如果我们按<strong>先序的逆序</strong>（右→左→根）处理节点，每处理一个节点时，它后面的链表已经接好了，只需把当前节点的 <code>right</code> 指向已经接好的那段链表头部（<code>self.prev</code>）</li><li><strong>为什么叫&quot;头插法&quot;</strong>：每次处理一个节点，都是把它插到已建好的链表头部。类似链表的头插法建表——最后处理的节点变成链表头</li><li><strong>逆先序遍历顺序</strong>：先序是 根→左→右，逆过来就是 <strong>右→左→根</strong></li><li>以 <code>[1,2,5,3,4,null,6]</code> 为例，逆先序访问顺序是：6 → 5 → 4 → 3 → 2 → 1</li><li>最终链表顺序是：1 → 2 → 3 → 4 → 5 → 6（正好反过来）</li><li>所以从尾部往前建，每次把当前节点接到链表头部</li><li><strong>为什么 6 是第一个被处理的？</strong> 因为遍历顺序是 右→左→根：</li></ul><ol><li>从根 1 出发，先递归右子树 5</li><li>到了 5，先递归它的右子树 6</li><li>6 没有子节点，递归返回，6 是第一个执行 <code>node.right = self.prev</code> 的节点</li></ol><ul><li><strong>逆先序 vs 后序的区别</strong>：</li></ul><div class="table-scroll" tabindex="0" aria-label="可横向滚动的表格"><table><tr><th scope="col"></th><th scope="col"><p><strong>逆先序</strong></p></th><th scope="col"><p><strong>后序</strong></p></th></tr><tr><td><p>顺序</p></td><td><p><strong>右→左→根</strong></p></td><td><p><strong>左→右→根</strong></p></td></tr><tr><td><p>对本题</p></td><td><p>✅ 正确（先序的完美逆序）</p></td><td><p>❌ 错误（不是先序的逆序）</p></td></tr></table></div><pre tabindex="0"><code>后序是 左→右→根，逆先序是 右→左→根，它们只是&quot;根&quot;的位置一样（最后），但左右的顺序是反的！</code></pre><ul><li><strong>执行过程</strong>（以 <code>[1,2,5,3,4,null,6]</code> 为例）：</li></ul><div class="table-scroll" tabindex="0" aria-label="可横向滚动的表格"><table><tr><th scope="col"><p><strong>步骤</strong></p></th><th scope="col"><p><strong>当前节点</strong></p></th><th scope="col"><p><strong>操作</strong></p></th><th scope="col"><p><strong>self.prev</strong></p></th></tr><tr><td><p>1</p></td><td><p>6</p></td><td><p>right=None, prev=6</p></td><td><p>6</p></td></tr><tr><td><p>2</p></td><td><p>5</p></td><td><p>right=6, prev=5</p></td><td><p>5→6</p></td></tr><tr><td><p>3</p></td><td><p>4</p></td><td><p>right=5, prev=4</p></td><td><p>4→5→6</p></td></tr><tr><td><p>4</p></td><td><p>3</p></td><td><p>right=4, prev=3</p></td><td><p>3→4→5→6</p></td></tr><tr><td><p>5</p></td><td><p>2</p></td><td><p>right=3, prev=2</p></td><td><p>2→3→4→5→6</p></td></tr><tr><td><p>6</p></td><td><p>1</p></td><td><p>right=2, prev=1</p></td><td><p>1→2→3→4→5→6 ✅</p></td></tr></table></div><ul><li><strong>核心心法：站在一个节点的视角，相信递归搞定其余的</strong></li><li>当代码执行到 <code>node.right = self.prev</code> 时，我不需要关心 <code>self.prev</code> 指向的那条链表是怎么建出来的</li><li>我只需要相信：递归已经把我右边和左边的节点都处理完了，<code>self.prev</code> 就是我在最终链表中的下一个节点</li><li>我只管把自己接上去，然后更新 <code>self.prev = node</code>（我变成新的链表头）</li></ul><h3 id="section-7">代码实现</h3><pre tabindex="0"><code>class Solution:
+    def flatten(self, root: Optional[TreeNode]) -&gt; None:
+        self.prev = None
+        def dfs(node: Optional[TreeNode]):
+            if not node:
+                return
+            dfs(node.right)
+            dfs(node.left)
+            node.left = None
+            node.right = self.prev
+            self.prev = node
+        dfs(root)
+        return root</code></pre><ul><li>易错点：</li></ul><ol><li><strong>遍历顺序是 右→左→根，不是左→右→根（后序）</strong>：写反了链表顺序就全错</li><li><strong>`node.left = None` 别忘</strong>：题目要求左指针全部置空</li><li><strong>`self.prev` 初始为 `None`</strong>：最后一个节点（6）的 <code>right</code> 应该指向 <code>None</code>，正好对应初始值</li></ol><ul><li>复杂度：时间 O(n)，空间 O(h)（h 为树高，平衡树 O(log n)，最坏 O(n)）</li><li><strong>比解法一/二好在哪</strong>：省掉了那个 O(n) 的列表，只剩递归调用栈的开销</li><li><strong>递归调用栈是什么</strong>：每次调用 <code>dfs(node)</code> 系统会在内存栈上压入一帧（保存局部变量、返回地址），递归多深就压多深帧。树高 h 层，栈就占 O(h) 空间</li><li><strong>不是 O(1)</strong>：真正 O(1) 见解法四（Morris 遍历思路），彻底消除递归栈。但面试中头插法已经够用</li></ul><h2 id="section-8">解法四 迭代寻找前驱节点 真正 O 1 空间</h2><h3 id="section-9">思路</h3><ul><li>核心洞察：<strong>先序遍历中，右子树的所有节点都在左子树后面，而且紧跟在左子树的最右节点后面</strong></li><li>所以对每个节点：把右子树&quot;寄存&quot;到左子树最右节点后面，然后把左子树搬到右边。循环执行直到走完</li><li>具体步骤（如果当前节点有左子树）：</li></ul><ol><li>找到左子树的<strong>最右节点</strong> <code>pre</code>（<code>while pre.right</code> 一直往右走到底）</li><li><code>pre.right = cur.right</code>（把右子树寄存到左子树最右节点后面）</li><li><code>cur.right = cur.left</code>（左子树搬到右边）</li><li><code>cur.left = None</code>（左指针置空）</li><li><code>cur = cur.right</code>（往下走一步）</li></ol><ul><li>如果没有左子树：直接 <code>cur = cur.right</code> 跳过</li></ul><h3 id="section-10">完整图解</h3><p>以 <code>[1,2,5,3,4,null,6]</code> 为例，逐步展示：</p><pre tabindex="0"><code>初始：
+        1
+       / \
+      2   5
+     / \   \
+    3   4   6</code></pre><p><strong>第一轮</strong>：cur=1，有左子树。找左子树(2)的最右节点 → 4</p><pre tabindex="0"><code>    4.right = 5（右子树 5→6 寄存到 4 后面）
+    1.right = 2（左子树搬到右边）
+    1.left = None
+
+        1
+         \
+          2
+         / \
+        3   4
+             \
+              5
+               \
+                6</code></pre><p><strong>第二轮</strong>：cur=2，有左子树。找左子树(3)的最右节点 → 3</p><pre tabindex="0"><code>    3.right = 4（右子树 4→5→6 寄存到 3 后面）
+    2.right = 3（左子树搬到右边）
+    2.left = None
+
+        1
+         \
+          2
+           \
+            3
+             \
+              4
+               \
+                5
+                 \
+                  6    ✅ 完成！</code></pre><p><strong>后续轮</strong>：cur=3, 4, 5, 6 都没有左子树，直接 <code>cur = cur.right</code> 跳过</p><h3 id="section-11">Q&amp;A</h3><ul><li><strong>为什么不会丢失右子树？</strong> 因为在覆盖 <code>cur.right</code> 之前，已经用 <code>pre.right = cur.right</code> 把原来的右子树&quot;寄存&quot;到了左子树的最右节点后面</li><li><strong>`while pre.right` 为什么不是 `while pre`？</strong> <code>pre</code> 从 <code>cur.left</code> 开始，它本身就是一个存在的节点。我们要找的是它往右走到底的那个<strong>节点</strong>，不是走到 <code>None</code>。如果写 <code>while pre</code>，pre 会走到 <code>None</code>，你就拿不到最右节点了</li><li><strong>如果只有右子树没有左子树呢？</strong> <code>if cur.left</code> 判断覆盖了：没有左子树就跳过，直接 <code>cur = cur.right</code> 往右走</li><li><strong>为什么是 O(1) 空间</strong>：不用递归（无调用栈），不用列表，只用 <code>cur</code> 和 <code>pre</code> 两个指针</li><li><strong>为什么时间还是 O(n)</strong>：虽然有内层 while 找最右节点，但每条边最多被访问两次（一次找前驱，一次被 cur 走过），总操作数还是线性的</li></ul><h3 id="section-12">代码实现</h3><pre tabindex="0"><code>class Solution:
+    def flatten(self, root: Optional[TreeNode]) -&gt; None:
+        cur = root
+        while cur:
+            if cur.left:
+                pre = cur.left
+                # 左子树的最右节点就是右子树的先驱节点
+                while pre.right:
+                    pre = pre.right
+                pre.right = cur.right
+                cur.right = cur.left
+                cur.left = None
+            cur = cur.right
+        return root</code></pre><ul><li>易错点：</li></ul><ol><li><strong>`pre` 的起点是 `cur.left`</strong>：不是 <code>cur</code>，不是 <code>cur.right</code>。从左子节点开始往右走</li><li><strong>`while pre.right` 不是 `while pre`</strong>：要停在最右节点上，不是走到 None</li><li><strong>操作顺序不能乱</strong>：先 <code>pre.right = cur.right</code>（寄存），再 <code>cur.right = cur.left</code>（搬移），再 <code>cur.left = None</code>（清空）。如果先搬移再寄存，原来的 <code>cur.right</code> 就丢了</li><li><strong>`if cur.left` 判断不能省</strong>：没有左子树时不需要操作，直接往右走</li></ol><ul><li>复杂度：时间 O(n)，空间 O(1)（只用两个指针，无递归、无栈、无列表）</li></ul></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-199.html"><small>← 上一篇</small>第 45 题 二叉树的右视图</a><a href="./lc-105.html"><small>下一篇 →</small>第 47 题 从前序与中序遍历序列构造二叉树</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

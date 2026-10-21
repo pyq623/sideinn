@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 81 题 爬楼梯 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-70"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-15">← 动态规划目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-6" href="#section-3">为什么 dp 0 1</a><a class="level-6" href="#section-4">为什么是加法不是 max</a><a class="level-5" href="#section-5">代码实现</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 动态规划</div><h1>第 81 题 爬楼梯</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 70  Climbing Stairs</p><p class="metadata"><strong>难度  简单</strong>    标签  动态规划  记忆化  数学    <a href="https://leetcode-cn.com/problems/climbing-stairs/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>假设你正在爬楼梯。需要 <code>n</code> 阶你才能到达楼顶。</p><p>每次你可以爬 <code>1</code> 或 <code>2</code> 个台阶。你有多少种不同的方法可以爬到楼顶呢？</p><p>示例 1：</p><pre tabindex="0"><code>输入： n = 2
+输出： 2
+解释： 有两种方法可以爬到楼顶。
+1. 1 阶 + 1 阶
+2. 2 阶</code></pre><p>示例 2：</p><pre tabindex="0"><code>输入： n = 3
+输出： 3
+解释： 有三种方法可以爬到楼顶。
+1. 1 阶 + 1 阶 + 1 阶
+2. 1 阶 + 2 阶
+3. 2 阶 + 1 阶</code></pre><p>提示：</p><ul><li><code>1 &lt;= n &lt;= 45</code></li></ul><h2 id="section-2">思路</h2><p>到第 i 阶只有两种来法：</p><ul><li>从第 i-1 阶跳 1 步上来</li><li>从第 i-2 阶跳 2 步上来</li></ul><p>所以：<code>dp[i] = dp[i-1] + dp[i-2]</code>（两拨方案互不重叠，加起来就是总方案数）</p><pre tabindex="0"><code>dp[0] = 1, dp[1] = 1
+
+dp[2] = dp[1] + dp[0] = 1 + 1 = 2  （跳1+1 或 直接跳2）
+dp[3] = dp[2] + dp[1] = 2 + 1 = 3  （1+1+1, 1+2, 2+1）
+dp[4] = dp[3] + dp[2] = 3 + 2 = 5</code></pre><p>本质就是斐波那契数列。</p><h3 id="section-3">为什么 dp 0 1</h3><p>因为 <code>dp[2] = dp[1] + dp[0]</code>，而到第 2 阶明确有 2 种方法（1+1 和直接跳 2）。<code>dp[1] = 1</code>，所以 <code>dp[0]</code> 必须等于 1 才能让 <code>dp[2] = 2</code> 算对。<code>dp[0] = 1</code> 的含义是&quot;直接从地面跳 2 步到第 2 阶&quot;这条路径存在。如果 <code>dp[0] = 0</code>，就丢掉了&quot;直接跳 2 步&quot;这种方法。</p><h3 id="section-4">为什么是加法不是 max</h3><p>这题求的是<strong>方案数</strong>（有多少种走法），不是最大值。两种来法（从 i-1 跳 1 步、从 i-2 跳 2 步）的方案互不重叠，所以加起来就是总数。</p><h2 id="section-5">代码实现</h2><pre tabindex="0"><code>class Solution:
+    def climbStairs(self, n: int) -&gt; int:
+        dp = [0] * (n + 1)
+        dp[0] = 1
+        dp[1] = 1
+        for i in range(2, n + 1):
+            dp[i] = dp[i - 1] + dp[i - 2]
+        return dp[n]</code></pre><ul><li>易错点：</li></ul><ol><li><strong>用加法不是 max</strong>：求方案数是累加，不是取最大值。<code>max(dp[i-1]+1, dp[i-2]+2)</code> 完全错误</li><li><strong>`dp[0] = 1` 不是 0</strong>：地面是起点，算 1 种方式。设为 0 会导致 dp[2] 少算&quot;直接跳 2 步&quot;的路径</li><li><strong>循环从 2 开始到 n（含）</strong>：<code>range(2, n+1)</code>，别漏了 n</li></ol><ul><li>复杂度：时间 O(n)，空间 O(n)（可优化到 O(1)，只保留前两个值）</li></ul></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-763.html"><small>← 上一篇</small>第 80 题 划分字母区间</a><a href="./lc-118.html"><small>下一篇 →</small>第 82 题 杨辉三角</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

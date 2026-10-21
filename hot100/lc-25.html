@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 31 题 K 个一组翻转链表 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-25"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-7">← 链表目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-5" href="#section-3">代码实现</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 链表</div><h1>第 31 题 K 个一组翻转链表</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 25  Reverse Nodes in k-Group</p><p class="metadata"><strong>难度  困难</strong>    标签  链表  递归    <a href="https://leetcode-cn.com/problems/reverse-nodes-in-k-group/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>给你链表的头节点 <code>head</code> ，每 <code>k</code> 个节点一组进行翻转，请你返回修改后的链表。</p><p><code>k</code> 是一个正整数，它的值小于或等于链表的长度。如果节点总数不是 <code>k</code> 的整数倍，那么请将最后剩余的节点保持原有顺序。</p><p>你不能只是单纯的改变节点内部的值，而是需要实际进行节点交换。</p><p>示例 1：</p><figure><a href="./images/image27.png" target="_blank" rel="noopener" aria-label="查看原图"><img src="./images/image27.png" width="542" height="222" loading="lazy" alt="第 31 题 K 个一组翻转链表 · 原笔记图示"></a><figcaption>原笔记图示 · 点击查看原图</figcaption></figure><pre tabindex="0"><code>输入： head = [1,2,3,4,5], k = 2
+输出：[2,1,4,3,5]</code></pre><p>示例 2：</p><figure><a href="./images/image28.png" target="_blank" rel="noopener" aria-label="查看原图"><img src="./images/image28.png" width="542" height="222" loading="lazy" alt="第 31 题 K 个一组翻转链表 · 原笔记图示"></a><figcaption>原笔记图示 · 点击查看原图</figcaption></figure><pre tabindex="0"><code>输入： head = [1,2,3,4,5], k = 3
+输出：[3,2,1,4,5]</code></pre><p>提示：</p><ul><li>链表中的节点数目为 <code>n</code></li><li><code>1 &lt;= k &lt;= n &lt;= 5000</code></li><li><code>0 &lt;= Node.val &lt;= 1000</code></li></ul><p>进阶： 你可以设计一个只用 <code>O(1)</code> 额外内存空间的算法解决此问题吗？</p><h2 id="section-2">思路</h2><ul><li>前置题目：92. 反转链表 II-92-reverse-linked-list-ii)，先掌握局部反转的操作</li><li>整体流程：</li></ul><ol><li><strong>遍历链表得到长度 n</strong></li><li><strong>`while n &gt;= k`</strong>：每轮反转 k 个节点，反转操作和反转整个链表完全一样（pre/cur/tmp 三指针循环 k 次）</li><li><strong>每轮反转后的收尾连接</strong>（和 92 题一样的四步）：</li></ol><ul><li><code>new_next = p0.next</code>：抓住反转前这组的第一个节点（反转后变成组的最后一个）</li><li><code>p0.next.next = cur</code>：让组尾接上后面的节点</li><li><code>p0.next = pre</code>：让 p0 指向反转后的组头</li><li><code>p0 = new_next</code>：p0 跳到组尾（= 下一组的前驱），<strong>不是只前进一步</strong>——这个节点反转前是组头，反转后变成了组尾，实际前进了 k 步</li><li><code>pre</code> 和 <code>cur</code> 不需要在每轮 while 循环开始时重置：</li><li><code>cur</code>：反转 for 循环结束后，<code>cur</code> 已经自动指向下一组的第一个节点</li><li><code>pre</code>：虽然带着上一轮的残留值，但收尾阶段的 <code>p0.next.next = cur</code> 会覆盖掉错误的链接，不影响最终结果</li><li>易错点：</li></ul><ol><li><strong>循环条件必须是 `while n &gt;= k`，不是 `while n`</strong>：剩余节点不足 k 个时不应反转，否则 <code>cur</code> 会变 None 导致 <code>cur.next</code> 崩溃</li><li><strong>收尾的两行顺序不能反</strong>：<code>p0.next.next = cur</code> 必须在 <code>p0.next = pre</code> 之前，否则 <code>p0.next</code> 被覆盖后找不到原来的组头了</li></ol><h2 id="section-3">代码实现</h2><pre tabindex="0"><code>class Solution:
+    def reverseKGroup(self, head: Optional[ListNode], k: int) -&gt; Optional[ListNode]:
+        cur = head
+        dum = p0 = ListNode(0, head)
+        n = 0
+        while cur:
+            n += 1
+            cur = cur.next
+
+        pre = None
+        cur = head
+        while n &gt;= k:
+            n -= k
+            for _ in range(k):
+                tmp = cur.next
+                cur.next = pre
+                pre = cur
+                cur = tmp
+            # pre/cur 会随着每次反转变化，用 p0 记录每次反转的前驱节点
+            new_next = p0.next
+            p0.next.next = cur
+            p0.next = pre
+            p0 = new_next
+
+        return dum.next</code></pre><ul><li>复杂度：时间 O(n)，空间 O(1)</li></ul></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-92.html"><small>← 上一篇</small>第 31 补充题 反转链表 II</a><a href="./lc-138.html"><small>下一篇 →</small>第 32 题 随机链表的复制</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

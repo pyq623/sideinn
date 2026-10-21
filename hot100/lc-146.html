@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 35 题 LRU 缓存 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-146"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-7">← 链表目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-6" href="#section-3">数据结构选择</a><a class="level-6" href="#section-4">设计要点</a><a class="level-6" href="#section-5">三个操作的逻辑</a><a class="level-6" href="#section-6">指针操作的顺序原则</a><a class="level-6" href="#section-7">易错点总结</a><a class="level-5" href="#section-8">代码实现</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 链表</div><h1>第 35 题 LRU 缓存</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 146  LRU Cache</p><p class="metadata"><strong>难度  中等</strong>    标签  链表  设计  哈希表    <a href="https://leetcode-cn.com/problems/lru-cache/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>请你设计并实现一个满足 <a href="https://baike.baidu.com/item/LRU" target="_blank" rel="noopener noreferrer">LRU (最近最少使用) 缓存</a> 约束的数据结构。</p><p>实现 <code>LRUCache</code> 类：</p><ul><li><code>LRUCache(int capacity)</code> 以 正整数 作为容量 <code>capacity</code> 初始化 LRU 缓存</li><li><code>int get(int key)</code> 如果关键字 <code>key</code> 存在于缓存中，则返回关键字的值，否则返回 <code>-1</code> 。</li><li><code>void put(int key, int value)</code> 如果关键字 <code>key</code> 已经存在，则变更其数据值 <code>value</code> ；如果不存在，则向缓存中插入该组 <code>key-value</code> 。如果插入操作导致关键字数量超过 <code>capacity</code> ，则应该 逐出 最久未使用的关键字。</li></ul><p>函数 <code>get</code> 和 <code>put</code> 必须以 <code>O(1)</code> 的平均时间复杂度运行。</p><p>示例：</p><pre tabindex="0"><code>输入
+[&quot;LRUCache&quot;, &quot;put&quot;, &quot;put&quot;, &quot;get&quot;, &quot;put&quot;, &quot;get&quot;, &quot;put&quot;, &quot;get&quot;, &quot;get&quot;, &quot;get&quot;]
+[[2], [1, 1], [2, 2], [1], [3, 3], [2], [4, 4], [1], [3], [4]]
+输出
+[null, null, null, 1, null, -1, null, -1, 3, 4]
+
+解释
+LRUCache lRUCache = new LRUCache(2);
+lRUCache.put(1, 1); // 缓存是 {1=1}
+lRUCache.put(2, 2); // 缓存是 {1=1, 2=2}
+lRUCache.get(1);    // 返回 1
+lRUCache.put(3, 3); // 该操作会使得关键字 2 作废，缓存是 {1=1, 3=3}
+lRUCache.get(2);    // 返回 -1 (未找到)
+lRUCache.put(4, 4); // 该操作会使得关键字 1 作废，缓存是 {4=4, 3=3}
+lRUCache.get(1);    // 返回 -1 (未找到)
+lRUCache.get(3);    // 返回 3
+lRUCache.get(4);    // 返回 4</code></pre><p>提示：</p><ul><li><code>1 &lt;= capacity &lt;= 3000</code></li><li><code>0 &lt;= key &lt;= 10000</code></li><li><code>0 &lt;= value &lt;= 105</code></li><li>最多调用 <code>2 * 105</code> 次 <code>get</code> 和 <code>put</code></li></ul><h2 id="section-2">思路</h2><h3 id="section-3">数据结构选择</h3><ul><li><strong>哈希表 + 双向链表</strong>：哈希表实现 O(1) 查找，双向链表维护使用顺序（越靠近尾部越新，头部是最久未使用的）</li><li>为什么是<strong>双向</strong>链表而不是单向？因为核心操作是&quot;把一个节点从中间摘出来移到尾部&quot;。摘出需要修改前驱的 next，单向链表只能 O(n) 遍历找前驱，双向链表通过 <code>node.prev</code> 直接 O(1) 拿到</li></ul><h3 id="section-4">设计要点</h3><ul><li><strong>自定义 ListNode</strong>：需要同时存 <code>key</code> 和 <code>val</code>。存 key 是因为淘汰时需要从 dict 中 pop 对应的 key</li><li><strong>哨兵节点 head/tail</strong>：避免处理边界情况（空链表、只有一个节点等），所有操作都可以统一处理</li><li><strong>初始化时 head 和 tail 必须互连</strong>：<code>head.next = tail</code>，<code>tail.prev = head</code>，否则初始状态下 tail.prev 是 None，插入第一个节点时会崩</li></ul><h3 id="section-5">三个操作的逻辑</h3><ol><li><strong>move_to_tail(key)</strong>：先从当前位置摘出，再插到 tail 前面</li><li><strong>get(key)</strong>：dict 中找到就移到尾部并返回 val，找不到返回 -1</li><li><strong>put(key, value)</strong>：</li></ol><ul><li>key 已存在：更新 val + move_to_tail</li><li>key 不存在：如果满了先淘汰 head.next，然后<strong>无论是否淘汰都要新增节点</strong></li></ul><h3 id="section-6">指针操作的顺序原则</h3><p>这道题最容易出错的地方就是<strong>指针赋值顺序</strong>。核心原则：<strong>先用旧值做完所有事，再改变它</strong></p><ul><li><strong>插入到 tail 前面</strong>（move_to_tail 和 put 新增都用到）：</li></ul><pre tabindex="0"><code>    node.prev = self.tail.prev      # 先设置 node 的指针
+    node.next = self.tail
+    self.tail.prev.next = node      # 先让旧的 tail.prev 指向 node
+    self.tail.prev = node           # 最后才改 tail.prev
+如果先写 `self.tail.prev = node`，则 `self.tail.prev.next` 变成 `node.next`，改错了</code></pre><ul><li><strong>淘汰 head.next</strong>：</li></ul><pre tabindex="0"><code>    self.head.next = self.head.next.next  # 先跳过被删节点
+    self.head.next.prev = self.head       # 再让新的 head.next 指回 head
+如果先写 `self.head.next.prev = self.head`——这没意义，因为 head.next.prev 本来就是 head</code></pre><h3 id="section-7">易错点总结</h3><ol><li><strong>ListNode 的 `__init__` 需要默认参数</strong>：head/tail 创建时不传参，没有默认值会报错</li><li><strong>`self.capacity = capacity`</strong>：别写成 <code>= 0</code></li><li><strong>head/tail 必须初始连接</strong>：否则第一次插入时 <code>self.tail.prev.next</code> 会对 None 操作</li><li><strong>get 用 `dict.get(key)` 不是 `dict[key]`</strong>：key 不存在时前者返回 None，后者 KeyError</li><li><strong>put 已有 key 时别忘了 move_to_tail</strong>：只更新 val 不移动会导致 LRU 顺序错误</li><li><strong>put 新增节点不能放在 else 里</strong>：淘汰和新增是先后关系，不是互斥关系。淘汰后也要新增</li><li><strong>淘汰时别忘了 `dict.pop`</strong>：光断链表不清 dict，后续查找会找到野节点</li><li><strong>`dict.pop(key)` 不是 `dict[key].pop()`</strong>：前者是从字典删 key，后者是在 ListNode 上调 pop（报错）</li><li><strong>`append` ≠ `heappush`</strong>（如果用堆的话）：append 不维护堆序</li></ol><h2 id="section-8">代码实现</h2><pre tabindex="0"><code>class ListNode:
+    def __init__(self, key=0, val=0):
+        self.val = val
+        self.key = key
+        self.prev = None
+        self.next = None
+
+class LRUCache:
+
+    def __init__(self, capacity: int):
+        self.capacity = capacity
+        self.hast_dict = dict()
+        self.head = ListNode()
+        self.tail = ListNode()
+        self.head.next = self.tail
+        self.tail.prev = self.head
+
+    def move_to_tail(self, key):
+        node = self.hast_dict[key]
+        # 从当前位置摘出
+        node.prev.next = node.next
+        node.next.prev = node.prev
+        # 插到 tail 前面
+        node.prev = self.tail.prev
+        node.next = self.tail
+        # 要先写这个长的，不然先写 self.tail.prev = node的话，tail.prev已经改变了
+        self.tail.prev.next = node
+        self.tail.prev = node
+
+    def get(self, key: int) -&gt; int:
+        node = self.hast_dict.get(key)
+        if node:
+            self.move_to_tail(node.key)
+            return node.val
+        else:
+            return -1
+
+    def put(self, key: int, value: int) -&gt; None:
+        if key in self.hast_dict:
+            self.hast_dict[key].val = value
+            self.move_to_tail(key)
+        else:
+            if len(self.hast_dict) == self.capacity:
+                # 弹出头部的节点
+                self.hast_dict.pop(self.head.next.key)
+                # 先将下一个节点更新
+                self.head.next = self.head.next.next
+                # 此时再将下一个节点指向head节点
+                self.head.next.prev = self.head
+                # 如果先 self.head.next.prev =  self.head 这就没意义，因为此时本来就是head
+
+            self.hast_dict[key] = ListNode(key=key, val=value)
+            node = self.hast_dict[key]
+            node.prev = self.tail.prev
+            node.next = self.tail
+            self.tail.prev.next = node
+            self.tail.prev = node</code></pre><ul><li>复杂度：时间 get/put 均 O(1)，空间 O(capacity)</li></ul></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-23.html"><small>← 上一篇</small>第 34 题 合并 K 个升序链表</a><a href="./lc-94.html"><small>下一篇 →</small>第 36 题 二叉树的中序遍历</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

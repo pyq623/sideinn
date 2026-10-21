@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 55 题 全排列 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-46"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-10">← 回溯目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-6" href="#section-3">回溯是什么</a><a class="level-6" href="#section-4">决策树</a><a class="level-6" href="#section-5">和第 48 题 437. 路径总和 III 的对比</a><a class="level-6" href="#section-6">为什么全排列的 DFS 里有 for 循环</a><a class="level-6" href="#section-7">为什么要 path 而不是 path</a><a class="level-5" href="#section-8">代码实现</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 回溯</div><h1>第 55 题 全排列</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 46  Permutations</p><p class="metadata"><strong>难度  中等</strong>    标签  回溯  数组    <a href="https://leetcode-cn.com/problems/permutations/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>给定一个不含重复数字的数组 <code>nums</code> ，返回其 所有可能的全排列 。你可以 按任意顺序 返回答案。</p><p>示例 1：</p><pre tabindex="0"><code>输入： nums = [1,2,3]
+输出：[[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]</code></pre><p>示例 2：</p><pre tabindex="0"><code>输入： nums = [0,1]
+输出：[[0,1],[1,0]]</code></pre><p>示例 3：</p><pre tabindex="0"><code>输入： nums = [1]
+输出：[[1]]</code></pre><p>提示：</p><ul><li><code>1 &lt;= nums.length &lt;= 6</code></li><li><code>-10 &lt;= nums[i] &lt;= 10</code></li><li><code>nums</code> 中的所有整数 互不相同</li></ul><h2 id="section-2">思路</h2><h3 id="section-3">回溯是什么</h3><p>之前在第 48 题（437. 路径总和 III）已经见过回溯了——<strong>共享的可变对象，用完必须撤回</strong>。全排列就是把&quot;撤回 dict&quot;换成&quot;撤回 list&quot;。</p><h3 id="section-4">决策树</h3><p>手动列 <code>[1,2,3]</code> 的全排列，就是在画一棵决策树：</p><pre tabindex="0"><code>第一个位置选谁？→ 第二个位置选谁？→ 第三个位置选谁？
+
+                    []
+          /          |          \
+        [1]         [2]         [3]        ← 第一个位置：3种选择
+       /   \       /   \       /   \
+    [1,2] [1,3] [2,1] [2,3] [3,1] [3,2]   ← 第二个位置：剩下2种
+      |     |     |     |     |     |
+  [1,2,3][1,3,2][2,1,3][2,3,1][3,1,2][3,2,1]  ← 第三个位置：剩1种</code></pre><p>DFS 就是沿着这棵树从上往下走，每个叶子节点就是一个全排列。</p><h3 id="section-5">和第 48 题 437. 路径总和 III 的对比</h3><p>两题都是 DFS + 回溯，核心模式一模一样：</p><pre tabindex="0"><code># 第 48 题（437. 路径总和 III）
+def dfs(node, cur_sum):
+    if not node:
+        return
+    cur_sum += node.val
+    self.res += cnt[cur_sum - targetSum]
+    cnt[cur_sum] += 1              # 存（改了共享的 dict）
+
+    for child in [node.left, node.right]:
+        dfs(child, cur_sum)
+
+    cnt[cur_sum] -= 1              # 回溯在 for 外面（左右子树都需要看到我）
+
+# 第 55 题（46. 全排列）
+def dfs(path):
+    if len(path) == len(nums):
+        self.res.append(path[:])
+        return
+
+    for i in nums:                 # 每个数都是一种可能
+        if i in path:
+            continue
+        path.append(i)             # 选（改了共享的 list）
+        dfs(path)
+        path.pop()                 # 回溯在 for 里面（每个分支独立）</code></pre><div class="table-scroll" tabindex="0" aria-label="可横向滚动的表格"><table><tr><th scope="col"></th><th scope="col"><p><strong>第 48 题（路径总和）</strong></p></th><th scope="col"><p><strong>本题（全排列）</strong></p></th></tr><tr><td><p>共享的可变对象</p></td><td><p><code>cnt</code>（dict）</p></td><td><p><code>path</code>（list）</p></td></tr><tr><td><p>进入前修改</p></td><td><p><code>cnt[cur_sum] += 1</code></p></td><td><p><code>path.append(i)</code></p></td></tr><tr><td><p>离开后撤销</p></td><td><p><code>cnt[cur_sum] -= 1</code></p></td><td><p><code>path.pop()</code></p></td></tr><tr><td><p>回溯位置</p></td><td><p>for 循环<strong>外面</strong></p></td><td><p>for 循环<strong>里面</strong></p></td></tr><tr><td><p>为什么</p></td><td><p>左右子树都需要看到我的前缀和，走完再撤</p></td><td><p>每个分支是独立选择，选完立刻撤</p></td></tr></table></div><h3 id="section-6">为什么全排列的 DFS 里有 for 循环</h3><p>二叉树每个节点只有左右两个方向，写死就行。全排列是&quot;每个位置可以填任何一个还没用过的数&quot;，候选数量不固定，所以用 for 循环遍历所有候选：</p><pre tabindex="0"><code># 二叉树：分支固定（左、右），回溯在 for 外面
+for child in [node.left, node.right]:
+    dfs(child)
+cnt[cur_sum] -= 1    # 左右都走完了再撤销
+
+# 全排列：分支动态（所有没用过的数），回溯在 for 里面
+for i in nums:
+    if i in path:    # 跳过已用过的
+        continue
+    path.append(i)
+    dfs(path)
+    path.pop()       # 每个分支走完立刻撤销</code></pre><h3 id="section-7">为什么要 path 而不是 path</h3><p><code>path</code> 是同一个 list 对象，后面会被 <code>pop()</code> 改掉。如果不复制，最后 <code>res</code> 里全是空列表。<code>path[:]</code> 是复制一份当前快照存进去。</p><h2 id="section-8">代码实现</h2><pre tabindex="0"><code>class Solution:
+    def permute(self, nums: List[int]) -&gt; List[List[int]]:
+        self.res = []
+        def dfs(path):
+            if len(path) == len(nums):
+                self.res.append(path[:])
+                return
+
+            # 每个数都是一种可能
+            for i in nums:
+                if i in path:
+                    continue
+                path.append(i)
+                dfs(path)
+                path.pop()
+        path = []
+        dfs(path)
+        return self.res</code></pre><ul><li>易错点：</li></ul><ol><li><strong>`self.res.append(path[:])` 不是 `append(path)`</strong>：不复制的话 path 后续会被 pop 改掉，最终 res 里全是空列表</li><li><strong>`path.pop()` 别忘</strong>：这是回溯的核心，不撤销的话 path 会越来越长，所有分支混在一起</li><li><strong>`if i in path: continue`</strong>：跳过已经选过的数，否则同一个数会被重复选</li><li><strong>回溯在 for 循环里面</strong>：和第 48 题不同，每个分支是独立选择，选完必须立刻撤销再试下一个</li></ol><ul><li>复杂度：时间 O(n × n!)（n! 个排列，每个复制 n 长度），空间 O(n)（递归深度 + path）</li></ul></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-208.html"><small>← 上一篇</small>第 54 题 实现 Trie (前缀树)</a><a href="./lc-78.html"><small>下一篇 →</small>第 56 题 子集</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

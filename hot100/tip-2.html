@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>附录二 可变与不可变类型的回溯 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="tip-2"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-17">← 附录 技巧总结目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">核心区别 需不需要手动回溯</a><a class="level-5" href="#section-2">不可变类型 str int</a><a class="level-5" href="#section-3">可变类型 list</a><a class="level-5" href="#section-4">为什么 list 需要 path</a><a class="level-5" href="#section-5">dict 同理</a><a class="level-5" href="#section-6">相关题目</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 附录 技巧总结</div><h1>附录二 可变与不可变类型的回溯</h1><article><h2 id="section-1">核心区别 需不需要手动回溯</h2><div class="table-scroll" tabindex="0" aria-label="可横向滚动的表格"><table><tr><th scope="col"><p><strong>类型</strong></p></th><th scope="col"><p><strong>例子</strong></p></th><th scope="col"><p><strong>回溯方式</strong></p></th><th scope="col"><p><strong>需要 </strong><code><strong>path[:]</strong></code><strong> 收集？</strong></p></th></tr><tr><td><p>不可变类型</p></td><td><p><code>str</code>, <code>int</code>, <code>tuple</code></p></td><td><p>天然回溯（<code>path + &#x27;(&#x27;</code> 创建新对象）</p></td><td><p>不需要（直接 append）</p></td></tr><tr><td><p>可变类型</p></td><td><p><code>list</code>, <code>dict</code></p></td><td><p>必须手动回溯（<code>path.pop()</code>）</p></td><td><p><strong>需要 `path[:]`</strong>（深拷贝）</p></td></tr></table></div><h2 id="section-2">不可变类型 str int</h2><pre tabindex="0"><code># 字符串天然回溯，不需要 pop
+def dfs(path, opens, closes):
+    if len(path) == 2 * n:
+        self.res.append(path)    # 直接 append，不需要 [:]
+        return
+    if opens &lt; n:
+        dfs(path + &#x27;(&#x27;, opens + 1, closes)  # path + &#x27;(&#x27; 创建新字符串
+    # 上层的 path 没变，不需要回溯</code></pre><h2 id="section-3">可变类型 list</h2><pre tabindex="0"><code># 列表必须手动回溯
+def dfs(path, start):
+    if condition:
+        self.res.append(path[:])  # 必须 path[:]，否则所有结果指向同一个列表
+        return
+    for i in range(start, n):
+        path.append(nums[i])      # 做选择
+        dfs(path, i + 1)
+        path.pop()                # 撤销选择（手动回溯）</code></pre><h2 id="section-4">为什么 list 需要 path</h2><p><code>path</code> 是一个引用。如果直接 <code>self.res.append(path)</code>，res 里存的是同一个列表的引用。后续 <code>path.pop()</code> 和 <code>path.append()</code> 会改变这个列表，导致 res 里所有&quot;结果&quot;跟着变。</p><p><code>path[:]</code> 创建一个快照副本，和原 path 脱钩。</p><h2 id="section-5">dict 同理</h2><p>如果用 dict 记录状态，收集结果时也要 <code>dict.copy()</code> 或 <code>dict(path)</code>。</p><h2 id="section-6">相关题目</h2><ul><li>括号生成（第 22 题）— str 天然回溯，直接 append</li><li>组合总和（第 39 题）— list 手动 pop + path[:] 收集</li><li>全排列（第 46 题）— list 手动 pop + path[:] 收集</li></ul></article><nav class="neighbors" aria-label="前后篇"><a href="./tip-1.html"><small>← 上一篇</small>附录一 控制流结构 if elif 与 if if</a><a href="./tip-3.html"><small>下一篇 →</small>附录三 滑动窗口适用条件</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

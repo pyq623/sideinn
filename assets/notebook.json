@@ -1,5 +1,25 @@
 [
   {
+    "id": "hot100",
+    "coverLabel": "HOT100",
+    "href": "./hot100/",
+    "title": "Hot100 算法题复习手册",
+    "english": "Python Algorithms · Problem-by-Problem Review",
+    "category": "算法与 Hot100",
+    "tags": [
+      "Hot100",
+      "Python",
+      "算法",
+      "数据结构",
+      "刷题复习"
+    ],
+    "summary": "按 16 个专题复习题面、思路、Python 代码和易错点，保留原笔记配图与 4 篇技巧总结。题名与 LeetCode 题号可搜索，目录直接跳转正文，支持标记待巩固与已掌握。",
+    "updated": "2026-10-21",
+    "details": "96 道题（含 1 道补充题）· 16 个专题 · 4 篇技巧总结",
+    "coverFooter": "ALGORITHM PRACTICE",
+    "readLabel": "开始复习"
+  },
+  {
     "id": "rsi",
     "href": "./notes/rsi.html",
     "title": "RSI 递归自我改进",

@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>附录四 while 循环终止条件 left 小于 right 与 left 小于等于 right · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="tip-4"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-17">← 附录 技巧总结目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">两种写法的区别</a><a class="level-5" href="#section-2">while left 小于等于 right</a><a class="level-5" href="#section-3">while left 小于 right</a><a class="level-5" href="#section-4">关键点</a><a class="level-5" href="#section-5">二分法中 left right 的含义</a><a class="level-5" href="#section-6">相关题目</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 附录 技巧总结</div><h1>附录四 while 循环终止条件 left 小于 right 与 left 小于等于 right</h1><article><h2 id="section-1">两种写法的区别</h2><div class="table-scroll" tabindex="0" aria-label="可横向滚动的表格"><table><tr><th scope="col"><p><strong>写法</strong></p></th><th scope="col"><p><strong>终止时状态</strong></p></th><th scope="col"><p><strong>适用场景</strong></p></th></tr><tr><td><p><code>while left &lt;= right</code></p></td><td><p><code>left &gt; right</code>（区间为空）</p></td><td><p>找 target，可能提前 return</p></td></tr><tr><td><p><code>while left &lt; right</code></p></td><td><p><code>left == right</code>（区间收敛到一个点）</p></td><td><p>找一定存在的值，收敛后就是答案</p></td></tr></table></div><h2 id="section-2">while left 小于等于 right</h2><p>用于<strong>找 target</strong> 的标准二分：找到就提前 return mid，找不到返回 -1。</p><pre tabindex="0"><code>while left &lt;= right:
+    mid = (left + right) // 2
+    if nums[mid] == target:
+        return mid          # 提前退出
+    elif target &lt; nums[mid]:
+        right = mid - 1
+    else:
+        left = mid + 1
+return -1                    # 没找到</code></pre><h2 id="section-3">while left 小于 right</h2><p>用于<strong>找一定存在的值</strong>（比如最小值）：不断缩小区间，最终 left == right 就是答案。</p><pre tabindex="0"><code>while left &lt; right:
+    mid = (left + right) // 2
+    if nums[mid] &lt;= nums[right]:
+        right = mid         # mid 可能是答案，不能跳过
+    else:
+        left = mid + 1      # mid 肯定不是答案，可以跳过
+return nums[left]            # left == right，就是最小值</code></pre><h2 id="section-4">关键点</h2><ul><li><code>right = mid</code>（不是 <code>mid - 1</code>）：因为 mid 本身可能是答案</li><li><code>left = mid + 1</code>：因为能确定 mid 不是答案</li><li>这种搭配保证每轮区间严格缩小，不会死循环</li></ul><h2 id="section-5">二分法中 left right 的含义</h2><p>通常是索引（指向数组位置），但也有例外：</p><ul><li>两个有序数组的中位数：left/right 表示<strong>数量</strong>（贡献几个元素到左半），所以 <code>right = m</code>（不是 <code>m-1</code>）</li></ul><h2 id="section-6">相关题目</h2><ul><li>搜索旋转排序数组（第 33 题）— <code>while left &lt;= right</code>，找 target</li><li>寻找旋转排序数组中的最小值（第 153 题）— <code>while left &lt; right</code>，收敛到最小值</li><li>寻找两个正序数组的中位数（第 4 题）— <code>while left &lt;= right</code>，但 left/right 是数量不是索引</li></ul></article><nav class="neighbors" aria-label="前后篇"><a href="./tip-3.html"><small>← 上一篇</small>附录三 滑动窗口适用条件</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

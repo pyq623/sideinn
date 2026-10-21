@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>附录一 控制流结构 if elif 与 if if · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="tip-1"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-17">← 附录 技巧总结目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">核心原则 这一步要做几个动作</a><a class="level-5" href="#section-2">总结</a><a class="level-5" href="#section-3">为什么逼近类不能用 if if</a><a class="level-5" href="#section-4">DFS 的两个 if 本质是 for 循环</a><a class="level-5" href="#section-5">相关题目</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 附录 技巧总结</div><h1>附录一 控制流结构 if elif 与 if if</h1><article><h2 id="section-1">核心原则 这一步要做几个动作</h2><div class="table-scroll" tabindex="0" aria-label="可横向滚动的表格"><table><tr><th scope="col"><p><strong>模式</strong></p></th><th scope="col"><p><strong>结构</strong></p></th><th scope="col"><p><strong>原因</strong></p></th></tr><tr><td><p>二分 / 双指针</p></td><td><p><code>if/elif/else</code></p></td><td><p>每一步只走一个方向，缩小范围</p></td></tr><tr><td><p>DFS 递归</p></td><td><p><code>if</code> + <code>if</code>（或 for 循环）</p></td><td><p>每个节点要探索所有合法分支</p></td></tr><tr><td><p>BFS 迭代</p></td><td><p>for 循环 + <code>if</code> 过滤</p></td><td><p>每个节点也要把所有合法邻居加入队列</p></td></tr></table></div><h2 id="section-2">总结</h2><ul><li><strong>逼近类</strong>（二分、双指针）：一步只走<strong>一条路</strong> → <code>if/elif/else</code></li><li><strong>搜索/遍历类</strong>（DFS、BFS）：一步要走<strong>多条路</strong> → <code>if</code>+<code>if</code> 或 for 循环</li></ul><h2 id="section-3">为什么逼近类不能用 if if</h2><p>while 循环里每轮做一个决策、移动一步，然后让下一轮循环自然处理后续。两个 <code>if</code> 连着写意味着一轮里做了两次决策，容易互相干扰（比如第一个 if 改了 left，第二个 if 基于改过的值又动了 right）。</p><h2 id="section-4">DFS 的两个 if 本质是 for 循环</h2><p>括号生成为例，两个 <code>if</code> 等价于遍历两个候选：</p><pre tabindex="0"><code># 两个 if 写法
+if opens &lt; n:
+    dfs(path + &#x27;(&#x27;, opens + 1, closes)
+if closes &lt; opens:
+    dfs(path + &#x27;)&#x27;, opens, closes + 1)
+
+# 等价的 for 循环写法
+for c in [&#x27;(&#x27;, &#x27;)&#x27;]:
+    if c == &#x27;(&#x27; and opens &gt;= n: continue
+    if c == &#x27;)&#x27; and closes &gt;= opens: continue
+    dfs(path + c, ...)</code></pre><p>候选只有两个时 for 循环退化成两个 if，所以看起来不同，本质一样。</p><h2 id="section-5">相关题目</h2><ul><li>二分查找（搜索旋转排序数组）— if/elif 每轮只缩小一次区间</li><li>括号生成（第 22 题）— if + if 探索所有合法分支</li><li>BFS 层序遍历 — for 循环遍历所有邻居</li></ul></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-72.html"><small>← 上一篇</small>第 95 题 编辑距离</a><a href="./tip-2.html"><small>下一篇 →</small>附录二 可变与不可变类型的回溯</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

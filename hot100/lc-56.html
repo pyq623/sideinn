@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第 14 题 合并区间 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021"><script defer src="./hot100.js?v=20261021"></script></head>
+<body data-problem-id="lc-56"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../">栈 <span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-5">← 数组目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-5" href="#section-3">代码实现</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 数组</div><h1>第 14 题 合并区间</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><p class="metadata">LeetCode 56  Merge Intervals</p><p class="metadata"><strong>难度  中等</strong>    标签  普通数组  数组  排序    <a href="https://leetcode-cn.com/problems/merge-intervals/" target="_blank" rel="noopener noreferrer">原题链接</a></p><h2 id="section-1">题面</h2><p>以数组 <code>intervals</code> 表示若干个区间的集合，其中单个区间为 <code>intervals[i] = [starti, endi]</code> 。请你合并所有重叠的区间，并返回 一个不重叠的区间数组，该数组需恰好覆盖输入中的所有区间  。</p><p>示例 1：</p><pre tabindex="0"><code>输入： intervals = [[1,3],[2,6],[8,10],[15,18]]
+输出：[[1,6],[8,10],[15,18]]
+解释： 区间 [1,3] 和 [2,6] 重叠, 将它们合并为 [1,6].</code></pre><p>示例  2：</p><pre tabindex="0"><code>输入： intervals = [[1,4],[4,5]]
+输出：[[1,5]]
+解释： 区间 [1,4] 和 [4,5] 可被视为重叠区间。</code></pre><p>示例 3：</p><pre tabindex="0"><code>输入： intervals = [[4,7],[1,4]]
+输出：[[1,7]]
+解释： 区间 [1,4] 和 [4,7] 可被视为重叠区间。</code></pre><p>提示：</p><ul><li><code>1 &lt;= intervals.length &lt;= 104</code></li><li><code>intervals[i].length == 2</code></li><li><code>0 &lt;= starti &lt;= endi &lt;= 104</code></li></ul><h2 id="section-2">思路</h2><ul><li>关键第一步：<strong>按左端点排序</strong>。排序后，能合并的区间一定是相邻的，不会出现跳跃合并的情况</li><li>排序后，遍历每个区间，只需要和 <code>ans</code> 中最后一个区间比较：</li><li>如果当前区间的左端点 <code>v[0]</code> &lt;= 上一个区间的右端点 <code>ans[-1][1]</code>，说明有重叠，<strong>合并</strong>：只需要更新右边界为两者的较大值（左边界不用动，因为排过序，当前左端点一定 &gt;= 上一个左端点）</li><li>否则没有重叠，当前区间作为新的独立区间加入 <code>ans</code></li><li>精妙之处：</li><li>排序将问题简化为<strong>只和前一个比较</strong>，不需要和所有已有区间比较</li><li>合并时只改右边界（<code>max(ans[-1][1], v[1])</code>），因为左边界在排序后已经保证有序</li><li><code>ans</code> 始终维护着合并后的结果，每个区间只看一次，整体 O(N)</li><li>易错点：第一次循环时 <code>ans</code> 为空，<code>ans[-1]</code> 会越界，需要先判断 <code>ans</code> 非空</li><li>能不能按右端点排序？</li><li>可以，但需要<strong>倒着遍历</strong> intervals 数组</li><li>如果按右端点排序后正着遍历，比如 <code>[1,2], [4,5], [1,6]</code> 这三个区间，正确答案应合并成 <code>[1,6]</code>，但正着遍历到 <code>[4,5]</code> 时，无法知道它能否和 <code>[1,2]</code> 彻底断开（后面还有 <code>[1,6]</code> 会把它们连起来）</li><li>按左端点排序就不会有这个问题：左端点有序保证了能合并的区间一定相邻，遍历到当前区间时，只看前一个就够了</li></ul><h2 id="section-3">代码实现</h2><pre tabindex="0"><code>class Solution:
+    def merge(self, intervals: List[List[int]]) -&gt; List[List[int]]:
+        intervals.sort(key=lambda p: p[0])
+        ans = []
+
+        for v in intervals:
+            if ans and v[0] &lt;= ans[-1][1]:  # 新的value的左边比上一个的右边小，纳入范围
+                ans[-1][1] = max(ans[-1][1], v[1])  # 只变化右边界
+            else:  # 未能融入
+                ans.append(v)
+        return ans</code></pre><ul><li>复杂度：时间 O(N log N)（排序），空间 O(N)（结果数组）</li></ul></article><nav class="neighbors" aria-label="前后篇"><a href="./lc-53.html"><small>← 上一篇</small>第 13 题 最大子数组和</a><a href="./lc-189.html"><small>下一篇 →</small>第 15 题 轮转数组</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>
