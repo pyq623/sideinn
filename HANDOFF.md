@@ -31,7 +31,8 @@ git clone https://github.com/pyq623/ai-study-notes.git ai-study-notes
 | 首页分类、搜索、卡片渲染 | `home.js` |
 | 首页布局和卡片封面 | `home.css` |
 | 首页目录数据：标题、分类、标签、简介、入口、更新时间 | `assets/notebook.json` |
-| 研究笔记共用颜色变量 | `theme.css` |
+| 全站阅读器共用颜色变量 | `theme.css` |
+| 面试、笔试及工程笔记的本站阅读器外观与目录交互 | `study-reader.css`、`study-reader.js`；由导入器注入，保留上游练习逻辑 |
 | 研究笔记阅读器布局 | `styles.css` |
 | 研究笔记渲染、搜索、目录、下载、草稿 | `app.js`、`paragraph-core.js` |
 | RSI 正文 | `notes.md` |
@@ -48,7 +49,7 @@ git clone https://github.com/pyq623/ai-study-notes.git ai-study-notes
 
 这是普通 HTML/CSS/JavaScript 静态网站，正式站根目录没有 `package.json`，不需要 `npm install` 或前端构建。Marked 和 MathJax 随站点放在 `assets/vendor/`。
 
-`study/` 使用自己的 `study/assets/course.css` 和预渲染的 KaTeX。修改根目录的 `theme.css`、`styles.css` 不会统一改变这些页面。
+`study/` 保留上游 `study/assets/course.css`、预渲染 KaTeX 和练习脚本；导入器在其后加载本站 `theme.css`、`study-reader.css`、`study-reader.js`，统一纸面布局、侧栏、配色和手机目录。研究笔记布局仍由 `styles.css` 控制。修改本站外观优先调整阅读器适配层，不手工修改生成页面。
 
 ### 资料源码仓库 `ai-study-notes`
 
@@ -113,7 +114,7 @@ python3 scripts/import-study.py ../ai-study-notes
 
 上游 `main` 的推送会发布原来的 `https://pyq623.github.io/ai-study-notes/`；正式站的 `main` 推送才会发布 `https://sideinn.ink/`。修改两个站点时，应记录两个仓库对应的提交。
 
-导入器保留题目、题号、图示、公式和练习逻辑，调整站名、返回首页导航、页脚说明及旧 404 基础路径。本站专用适配应写进导入器，避免手工改 `study/` 后丢失。
+导入器保留题目、题号、图示、公式和练习逻辑，调整站名、阅读器布局、章节侧栏、返回首页导航、页脚说明及旧 404 基础路径。本站专用适配应写进导入器，避免手工改 `study/` 后丢失。
 
 **导入器的现有限制：**
 

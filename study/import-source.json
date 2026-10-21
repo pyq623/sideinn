@@ -1,5 +1,5 @@
 {
   "repository": "https://github.com/pyq623/ai-study-notes",
-  "commit": "0193d97dfb5a1bdc053c14280c3a065f96758dd1",
-  "changes": "Site title, navigation, migration notice and 404 base path only; educational content and exercise IDs preserved."
+  "commit": "fc9f00102a228cad33f0723b149d3fa0fc4e92df",
+  "changes": "Sideinn reader shell, branding, navigation, migration notice and 404 base path; educational content, exercise IDs and storage scripts preserved."
 }
