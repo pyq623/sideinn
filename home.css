@@ -32,3 +32,11 @@
 .note-card[data-note-id="occamy"] .note-cover:after{border-color:#b5cdc3;box-shadow:0 0 0 17px #e9f0ed,0 0 0 18px #c8d9d0}
 .note-card[data-note-id="occamy"] .note-cover strong{font-size:27px;letter-spacing:-1px}
 @media(max-width:760px){.note-card[data-note-id="occamy"] .note-cover strong{font-size:18px;letter-spacing:-.5px}}
+
+/* Related training papers share the shelf, with short readable cover labels. */
+.note-card[data-note-id="sao"] .note-cover{background:#edf2f7;border-color:#cbd8e5;border-left-color:#6786a5;color:#3f5c78}
+.note-card[data-note-id="sao"] .note-cover:after{border-color:#bdcedf;box-shadow:0 0 0 17px #edf2f7,0 0 0 18px #cbd8e5}
+.note-card[data-note-id="compactionrl"] .note-cover{background:#f1edf6;border-color:#d6cce3;border-left-color:#8a70a6;color:#67527f}
+.note-card[data-note-id="compactionrl"] .note-cover:after{border-color:#cabbd9;box-shadow:0 0 0 17px #f1edf6,0 0 0 18px #d6cce3}
+.note-card[data-note-id="compactionrl"] .note-cover strong{font-size:27px;letter-spacing:-1px}
+@media(max-width:760px){.note-card[data-note-id="compactionrl"] .note-cover strong{font-size:18px;letter-spacing:-.5px}}

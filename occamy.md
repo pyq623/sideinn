@@ -52,6 +52,8 @@ Occamy 更适合被理解为一套数据、系统和后训练配方。面试时�
 | 工具与转移规则 | 查库存、查报价、建草稿、读回 | 工具存在但权限不足，任务仍不可解 |
 | 私有评分契约 | 核验数量、供应商、状态及未提交 | 只检查回复文字，可能奖励“声称完成” |
 
+**对应到代码：沙箱承载环境，交互则发生在初始化之后。** 以 Dressage 的黑盒执行路径为例，`paddock.init()` 准备沙箱，`before_agent` 命令可进一步初始化文件、数据与服务；Agent 开始行动前的这些内容对应“初始状态”。随后 `paddock.call_agent()` 启动脚手架交互，具体工具实现决定如何读取和改变状态：例如查库存返回观察，创建采购草稿改变业务状态，这就是“工具与状态转移规则”的落点。[初始化与调用代码](https://github.com/Accio-Lab/Dressage/blob/3e3142fe8ea07e4504c3b20a936a4c201a3de44c/dressage/rollout/generate/blackbox_dispatch.py#L220-L266)
+
 任务还需要身份、版本、预算等编排信息，以便复现和审计。**评分器可以私有，但评分要求不能凭空超出用户请求和可达证据。**
 
 ### 2.2 环境优先与能力优先
@@ -70,13 +72,18 @@ Occamy 更适合被理解为一套数据、系统和后训练配方。面试时�
 
 **任务准入、SFT 示范筛选、RL 轨迹准入要分开。** 任务必须可执行、可评分；普通 SFT 需要可靠监督；RL 中真实的低分动作也可能有价值。平台故障、证据缺失和任务失败不能不加区分地混成 reward=0。[报告 §3、附录 A](https://arxiv.org/html/2609.11977v1#S3)
 
+
+**从构造到训练：任务构造 → 执行验证 → 筛选 SFT 示范或采集 RL 轨迹 → 按覆盖与难度混合。** SFT 对不可靠轨迹可整条丢弃、保留正确前缀、mask 局部错误，或在验证后修复；RL 则可保留结果可验证的失败轨迹。混合时兼顾能力与环境覆盖、难度、稳定性及训练 token 占比，避免只收最难任务或让单一长轨迹来源占满预算。任务包、SFT 示范与 RL 轨迹分别统计；论文未公开完整 RL 数值配比。[数据筛选 §7.2](https://arxiv.org/html/2609.11977v1#S7.S2) · [混合原则附录 A.7](https://arxiv.org/html/2609.11977v1#A1.S7)
+
 ## 第 3 章 执行系统：统一记录，保留真实语义
 
 ### 3.1 Policy、harness、环境、learner 怎样协作
 
 Policy 生成动作；harness 组织模型调用、工具格式、上下文、压缩、重试及运行生命周期；环境保存文件和服务状态；learner 根据交互记录更新参数。换一个更强的 harness，可能使分数上涨，却不等于模型参数已经学会新能力。
 
-Occamy 涉及 OpenClaw、Hermes 与 Accio Work 等运行框架。适配器统一 episode 生命周期及训练记录，但保留各框架的提示、工具边界、超时与压缩行为。若只把不同框架的日志拼成普通文本，就可能丢掉实际决策条件。
+Occamy 使用 OpenClaw、Hermes 与 Accio Work 等运行框架。**这里 episode 是一次完整任务尝试，最终得到一个任务级结果，不是某一轮交互。** 一次尝试可包含多轮交互；若调用子 Agent，根 run 与子 run 各有自己的 trajectory，因此 episode 也不一定只对应一条轨迹。压缩历史只开启新 segment，不结束 episode。[论文 §2](https://arxiv.org/html/2609.11977v1#S2)
+
+**对应到 Dressage 的公开代码，以 OpenClaw 为例：** 框架作为沙箱中的独立进程运行，BlackboxServer 通过 `BackendAdapter` 提供统一的初始化、发消息和中止接口；`OpenClawAdapter.initialize()` 准备工作目录、启动模型请求代理及 `openclaw gateway run`，`send_message()` 再把统一调用转给 OpenClaw。工具执行和上下文管理仍由 OpenClaw 组织，模型请求接入 Dressage 的采样与记录链路。这就是“适配”：统一外部接口，同时保留实际决策上下文，不能只把日志拼成普通文本。当前核对的代码版本未见 Hermes、Accio Work 的对应适配器，不能据此认定三者实现相同。[适配接口](https://github.com/Accio-Lab/Dressage/blob/3e3142fe8ea07e4504c3b20a936a4c201a3de44c/blackbox_server/adapters/base.py#L171) · [OpenClaw 实现](https://github.com/Accio-Lab/Dressage/blob/3e3142fe8ea07e4504c3b20a936a4c201a3de44c/blackbox_server/adapters/openclaw.py#L162)
 
 ![图 4 · 真实执行到 learner-ready 记录 | 论文 Figure 4 原图。左侧是多 harness 执行，中间记录 token、事件与环境状态，右侧把可验证记录转换成训练视图。](./assets/occamy-figures/04-paper-infrastructure.webp)
 
@@ -91,7 +98,15 @@ Occamy 涉及 OpenClaw、Hermes 与 Accio Work 等运行框架。适配器统一
 
 一次 episode 可以包含父子运行和多个片段。**上下文压缩不是新任务，不能每压缩一次就独立结算一次成功。** 子 Agent 的结果可以作为父 Agent 的观察返回；子 Agent 的内部轨迹仍应单独保留，不能默认全部拼进父 Agent 的上下文。
 
-报告当前优化配置只对选定轨迹的策略 token 计算直接策略损失；子 Agent 的其他轨迹保留在 episode 的关联记录中，并不自动全部参加更新。
+**子 Agent 通常由脚手架实际创建和调度。** 例如父模型通过委派工具提出“调查供应商”，脚手架创建子 run，配置任务、上下文与工具，记录父子关系；子 Agent 执行后，脚手架把最终答复或摘要作为工具结果返回父 Agent。也可以由预设工作流直接发起委派。创建子 Agent 不等于新建沙箱，是否共享环境由框架和任务配置决定。
+
+当前配置只训练选定轨迹上的有效策略输出；子 Agent 的其他轨迹保留用于追踪，但不计算直接策略损失。子 Agent 返回的结果作为父 Agent 的上下文，其执行效果则通过整个任务的最终奖励影响训练。
+
+| 内容 | 是否计算直接策略 loss |
+| --- | --- |
+| 父 Agent 发起委派、依据调查结果做决策等输出（假设父轨迹是选定的训练轨迹） | 是，按训练 mask 计算 |
+| 子 Agent 内部的思考、工具调用等输出 | 否，保留记录但不直接训练 |
+| 返回给父 Agent 的调查结果 | 作为上下文读取，不作为父模型的生成目标 |
 
 报告 §4.4 的个别标识措辞容易引起歧义，理解层级时应结合 §2、§4.2 和附录 E；这里讲的是任务结果与记录的逻辑边界，不规定所有代码库必须采用同名字段。
 
@@ -107,13 +122,29 @@ Dressage 是这条核心训练路径的开源实现入口。阅读代码时可�
 
 ### 4.1 Token-exact replay 重建什么
 
-训练会对原动作重新算概率，必须还原生成它时的真实前缀。精确 token 记录可以避免解码、重拼模板、再编码造成的不一致；log-prob 与策略版本则帮助追踪实际采样分布。
+**Token-exact replay 是为了恢复正确的训练输入，让原动作的 log-prob 和策略 loss 算在正确的上下文上。** 训练时用当前模型重新 forward 保存的上下文与动作 token，计算原动作的概率，不重新生成动作或执行工具。
 
-这里的 replay 指**保真重建**。它不自动授权把任意陈旧轨迹当作当前策略的 on-policy 数据；能否用于更新，还取决于算法如何处理策略差异。
+**这里保存的 token 是 token ID（整数序列），模型 forward 直接使用这些 ID。** 文本可另外保留供阅读和排查；训练使用原始 ID，避免“解码成文本 → 重拼模板 → 再编码”改变输入序列。log-prob 和 loss mask 分别对应 token ID 序列中的各个位置。
+
+以 PPO／GRPO 的 token 级裁剪目标为例：**算概率 → 算 ρ → clip → loss → 参数更新。** 核心计算可简化为：
+
+```python
+ratio = exp(new_logp - old_logp)
+loss = maximum(
+    -ratio * advantage,
+    -clip(ratio, 1-eps, 1+eps) * advantage
+)
+```
+
+这里 `new_logp`、`old_logp` 是同一上下文、同一动作 token 在新旧策略下的 log-prob，`ratio` 即概率比 ρ，`eps` 是裁剪范围参数，`advantage` 是优势。上面得到的是逐 token 的策略损失，之后按训练 mask 聚合并反向传播、更新参数。
+
+**为什么必须保真？** 例如动作是在压缩后的摘要上生成的，训练时却把压缩前的完整历史拼回来，就算成了另一个上下文下的概率，ρ 和 loss 也随之改变；clip 无法修复这种输入错误。保存原始 token 可以避免解码、重拼模板、再编码造成的不一致，但不能把陈旧轨迹自动变成当前策略的 on-policy 数据。
+
+对应代码：Dressage 的 `write_sample_from_segment()` 将记录中的 tokens、mask 和采样 log-prob 写入训练样本；其 Slime 后端重新计算 log-prob，再由 `compute_policy_loss()` 计算概率比与裁剪损失。[训练样本构造](https://github.com/Accio-Lab/Dressage/blob/3e3142fe8ea07e4504c3b20a936a4c201a3de44c/dressage/rollout/artifacts/samples.py#L291) · [log-prob 与策略 loss](https://github.com/THUDM/slime/blob/aaf5c2092b01219fa0d5c2d323741d409086ca32/slime/backends/megatron_utils/loss.py#L912) · [概率比与 clip](https://github.com/THUDM/slime/blob/aaf5c2092b01219fa0d5c2d323741d409086ca32/slime/utils/ppo_utils.py#L125)
 
 ### 4.2 State replay 为什么不能省
 
-工具已经创建草稿 P-104，但返回响应超时。模型看到的是超时提示，数据库里却已经有草稿。如果只重放文本、不恢复真实状态，后续动作就会面对另一个世界。
+继续用采购任务举例：Agent 调用工具创建一份采购单草稿。工具已将草稿写入数据库，但返回响应时超时，因此模型只看到“请求超时”，不知道草稿其实已经创建成功。如果要从这里恢复执行，就必须恢复“数据库中已有这份草稿”的状态；只恢复对话文本、却使用空数据库，后续重试就会面对不同的环境。
 
 ![图 5 · “调用超时”不等于“没有副作用” | 取自seminar PPT 第 7 页。采购超时是教学示例；左侧还原输入，右侧还原文件、服务与会话状态。](./assets/occamy-figures/05-replay.webp)
 
@@ -135,6 +166,10 @@ Dressage 是这条核心训练路径的开源实现入口。阅读代码时可�
 
 长任务积累大量工具输出，可能超过上下文预算。压缩把旧历史变成摘要，并保留必要的近期交互。**环境没有因此回滚，已经创建的文件和记录仍然存在。**
 
+以 **CompactionRL v2** 为例，剩余上下文空间低于阈值时，系统加入摘要指令，让当前策略模型压缩较早历史；随后用“系统提示 + 含摘要的恢复模板 + 最近 $k$ 轮原文”继续执行。默认 $k=2$，空间不足时可减少；一轮包含助手动作及对应的环境观察，例如工具调用与返回结果。[论文 §3.1](https://arxiv.org/html/2607.05378v2#S3.S1)
+
+**例子：** 已有 10 轮交互，保留最近 2 轮时，将第 1～8 轮压缩成摘要，第 9、10 轮保持原文。这样既保留早期关键信息，也能直接读取最近的工具结果；这是该论文的默认设置，具体 harness 可采用不同配置。
+
 ![图 6 · 执行、摘要、继续执行共享一次任务结果 | 取自seminar PPT 第 8 页。图示是逻辑分段；实际记录的 segment 划分以具体实现为准。](./assets/occamy-figures/06-compaction.webp)
 
 采购摘要应保留“缺口 70、供应商 B、只建草稿”，还应保留已经执行的操作及未确认状态。若遗漏“不要提交”，模型可能在后续把任务推进到错误终态。好摘要的标准是能支持后续正确行动，不只是读起来简洁。
@@ -150,6 +185,46 @@ Dressage 是这条核心训练路径的开源实现入口。阅读代码时可�
 
 同一段摘要可以先作为模型输出被训练，再作为后续输入被读取。这两个身份发生在不同位置，并不矛盾。
 
+**CompactionRL 把模型自己生成的摘要也当作策略动作训练，Occamy 的最终 RL 阶段采用了这种做法。** 摘要生成位置的 `mask=1`：还原生成摘要的真实前缀，重新算各 token 的 `new_logp`，与 `old_logp` 得到概率比 $\rho_i=\exp(\mathrm{new\_logp}_i-\mathrm{old\_logp}_i)$，再计算 PPO 裁剪损失 $\ell_i=-\min(\rho_i\widehat A_i,\operatorname{clip}(\rho_i,1-\epsilon,1+\epsilon)\widehat A_i)$。$i$ 是训练 token 的位置，$\widehat A_i$ 是其优势，$\epsilon$ 是裁剪幅度；摘要与执行 token 的损失一起按有效 token 汇总。摘要被复制到后续上下文时，该输入位置的 `mask=0`。
+
+**摘要的学习信号来自整个任务的最终奖励，没有单独的“摘要质量分”。** Critic 与 GAE 据此计算优势，因此共享最终奖励不代表各 token 的优势相同。例如摘要保留“只建草稿、不要提交”并帮助后续任务成功，最终结果就可以为摘要生成提供学习信号。
+
+**优势怎么计算？段内沿用 PPO 常用的 GAE，再做 CompactionRL 的跨段修正：**
+
+**Segment 具体怎么划分？** CompactionRL 将执行与摘要分成不同的训练片段。假设一次任务只压缩一次，就是“执行段 → 摘要段 → 执行段”；一段执行可以包含多轮工具交互，这三段仍共享同一个最终任务奖励。 **执行段不是按工具调用次数划分的。** 例如生成摘要 1 后，连续进行“读文件 → 修改代码 → 运行测试”三轮交互，中间没有再次压缩或其他上下文重写，这三轮仍属于同一个执行段；再次生成摘要时，才进入下一个摘要段。
+
+| 片段 | 为计算概率而提供的输入上下文 | 本段新生成、参与训练的 token |
+| --- | --- | --- |
+| 执行段 $\sigma_1$ | 任务提示，以及执行中逐步积累的工具观察等 | 压缩前的模型执行输出，例如读文件、修改代码的工具调用 |
+| 摘要段 $\sigma_2$ | 待总结的历史 + 摘要指令 | 模型新生成的摘要 |
+| 执行段 $\sigma_3$ | 系统提示、摘要恢复模板、保留的近期交互，以及后续新观察 | 恢复后多轮新生成的执行输出，例如读文件、修改代码、运行测试三轮合在这一段 |
+
+**摘要段会读取前面的历史，但不会把这些历史再训练一次。** $n_s$ 只统计该段新生成且参与训练的输出 token，不统计输入上下文和工具返回；摘要或近期交互被复制到后续输入时，也不重复计数。[论文 §3.1](https://arxiv.org/html/2607.05378v2#S3.S1)
+
+**后续计数例子：** 假设三段分别有 100、20、80 个训练 token，则 $N_{>s}=\sum_{j>s}n_j$，即把同一轨迹后面各段的训练 token 数相加：
+
+| 当前片段 | 本段训练 token 数 $n_s$ | 后续训练 token 总数 $N_{>s}$ | 本段局部优势乘的系数 |
+| --- | ---: | --- | --- |
+| 执行段 $\sigma_1$ | 100 | $20+80=100$ | $(\gamma\lambda)^{100}$ |
+| 摘要段 $\sigma_2$ | 20 | $80$ | $(\gamma\lambda)^{80}$ |
+| 执行段 $\sigma_3$ | 80 | $0$ | $1$ |
+
+这里指数数的是**后续训练 token，不是后续 segment**。同一段的局部优势乘同一个系数，具体计算如下。
+
+1. 算一步 TD 残差：$\delta_{s,i}=r_{s,i}+\gamma V_\phi(h_{s,i+1})-V_\phi(h_{s,i})$。
+2. 各 segment 独立在段内累加残差，得到局部优势，不接入下一段的优势：$A^{\mathrm{loc}}_{s,i}=\sum_{l=0}^{n_s-i}(\gamma\lambda)^l\delta_{s,i+l}$。
+3. 对算好的局部优势乘一次该段的后续距离系数，得到用于 PPO loss 的优势；修正后的值不再传回其他段递推：$\widehat A_{s,i}=(\gamma\lambda)^{N_{>s}}A^{\mathrm{loc}}_{s,i}$。
+
+$s$ 是片段，$i$ 是段内训练 token 位置，$n_s$ 是该段训练 token 数，$l$ 是向后累加的偏移；$h$ 是对应上下文，$V_\phi$ 是 Critic 的价值预测，$r$ 是局部奖励，$\gamma$ 是奖励折扣，$\lambda$ 是 GAE 衰减参数。这里局部计算把同一个任务终局奖励放在各段末尾，其余位置奖励为 0；$N_{>s}$ 是同一轨迹后续片段的训练 token 总数。
+
+**前两步是常见 GAE，第三步是跨段距离修正。** 局部计算把终局奖励“搬近”了，第三步补偿后续距离，但没有补回后续片段的全部 TD 残差，因此不等于完整轨迹 GAE，也不是按段数平均 loss。Occamy 附录 C.2 同样采用这一形式，局部段末后继价值置 0，并使用随轨迹长度变化的 $\lambda_\tau$。[CompactionRL §3.2](https://arxiv.org/html/2607.05378v2#S3.S2) · [详细手算](./compactionrl.html#chapter-5)
+
+**$\lambda_\tau$ 怎样随长度变化？** Occamy 使用 $\lambda_\tau=1-\frac{1}{\alpha L_\tau}$，其中 $\alpha=1.5$，$L_\tau$ 是整条轨迹中参与训练的 token 总数，包含执行与摘要输出，不是某一段的长度。先按整条轨迹确定一个 $\lambda_\tau$，再将它用于各段 GAE 和跨段修正。
+
+**Occamy 表 11 与 CompactionRL v2 的实验配置均设 $\gamma=1$**，因此跨段系数简化为 $(\gamma\lambda_\tau)^{N_{>s}}=\lambda_\tau^{N_{>s}}$；$\lambda_\tau<1$ 仍会带来衰减。这是论文采用的配置，不是所有 PPO 的统一默认值。[Occamy 表 11](https://arxiv.org/html/2609.11977v1#A3.SS2) · [CompactionRL §4.1](https://arxiv.org/html/2607.05378v2#S4.S1)
+
+$\lambda$ 控制 GAE 中后续 TD 残差的衰减，实际权重是 $(\gamma\lambda)^l$；轨迹越长，上式给出的 $\lambda_\tau$ 越接近 1，减轻远处反馈因反复相乘而迅速衰减的问题。例如 $L_\tau=1000$ 时，$\lambda_\tau=1-\frac{1}{1500}\approx0.999333$；若 $\gamma=1$，跨越 500 个训练 token 的系数约为 $0.999333^{500}\approx0.716$。这是该配置的长度自适应设计，普通 PPO 不要求使用这个公式。[Occamy 附录 C.2](https://arxiv.org/html/2609.11977v1#A3.SS2)
+
 ### 5.3 跨段学习不等于跨段补回全历史
 
 训练压缩前动作时，重建压缩前前缀；训练摘要时，使用生成摘要的前缀；训练压缩后动作时，使用真实摘要和近期交互。最终奖励可以影响这些动作的学习信号，但不能让模型在 forward 时读取当时已被移出上下文的历史。
@@ -162,13 +237,23 @@ Dressage 是这条核心训练路径的开源实现入口。阅读代码时可�
 
 ![图 7 · Occamy 的分支训练路线 | 取自seminar PPT 第 9 页。Marathon 与 Sprint 是完整检查点；约 15K 条 SFT 轨迹是两支的去重并集。](./assets/occamy-figures/07-training.webp)
 
-共同起点是 Qwen3.6-35B-A3B 的后训练检查点。Marathon 分支通过长任务 SFT 与 HDPO 学习长时程执行；Sprint 分支通过更广泛的短任务 SFT 保持覆盖。随后均匀合并参数，再以 SAO 配合 CompactionRL 做最终 co-work RL。
+共同起点是 Qwen3.6-35B-A3B 的后训练检查点。Marathon 分支通过长任务 SFT（[见 6.2](#section-6-2)）与 HDPO（[见 6.3](#section-6-3)）学习长时程执行；Sprint 分支通过更广泛的短任务 SFT 保持覆盖。随后均匀合并参数，再以 SAO 配合 CompactionRL 做最终 co-work RL。
 
 **这里没有“把 MoE 内部的两组专家接起来”。** 两个分支各自都是完整模型；最终部署一个合并后又经过 RL 的检查点，不需要在两套模型之间做推理路由。
 
 ### 6.2 SFT：建立基本工作行为
 
-PPT 给出的两支 SFT 数据去重并集约为 **15.0K 条轨迹、403.3M tokens**。内容覆盖通用 Agent、长时程交互、终端与软件工程、工具调用 grounding。长轨迹提供持续执行示范，短轨迹补足格式、参数绑定和基本工具行为，不能用“越长越好”筛选。
+论文 §5.1、表 3 给出的 Marathon 与 Sprint 两支 SFT 数据去重并集为 **14,998 条轨迹（约 15.0K）、403.3M tokens**，不是任一分支单独的数据量。该表未分别列出两支的数据配比。[论文 Table 3](https://arxiv.org/html/2609.11977v1#S5.S1)
+
+| 数据类型 | 轨迹数 | Token 数 | 主要用途 |
+| --- | ---: | ---: | --- |
+| 通用 Agent | 5,418 | 204.1M | 多轮助手、电脑操作、文件与网页工具、专业交付物 |
+| 长程交互 Agent | 923 | 88.4M | 持续状态下的多会话任务，学习长期规划与执行 |
+| 终端与软件工程 | 1,228 | 43.1M | 沙箱中的文件、命令行与代码任务 |
+| 工具调用 grounding | 7,429 | 67.7M | 工具选择、调用格式、参数绑定与约束遵循 |
+| **去重并集合计** | **14,998** | **403.3M** | 两支 SFT 数据的合并统计 |
+
+M 表示百万。**轨迹数占比不等于 token 占比：** 工具调用类占约一半轨迹，却仅占 16.8% 的 tokens；通用 Agent 与长程交互合计贡献 72.5% 的 tokens。长轨迹提供持续执行示范，短轨迹补足基本工具行为，不能仅凭长度筛选。
 
 **式 1 · 带监督掩码的 SFT 损失**
 
@@ -182,31 +267,41 @@ $t$ 是序列位置，$T$ 是长度；$y_t$ 是示范 token，$h_t$ 是当时的
 
 ### 6.3 HDPO：相同准确性下比较交互效率
 
-HDPO 全称 **Hierarchical Decoupled Policy Optimization**。PPT 展示的是 Occamy 的**效率奖励项**，不是完整 HDPO loss。对同一任务采样多条轨迹，先按终局准确性奖励分组，再比较同组交互步数。
+**HDPO（Hierarchical Decoupled Policy Optimization，分层解耦策略优化）让模型兼顾任务准确性与工具使用效率，分别处理两类学习信号。** 在 Occamy 的 Marathon 训练中，同一任务采样多条轨迹，按终局准确性奖励分组，再比较同分轨迹的交互步数，让模型在相同准确性下减少冗余交互。[Occamy §5.2](https://arxiv.org/html/2609.11977v1#S5.SS2)
 
-**式 2 · 同准确性组及平均步数**
+**HDPO 用的是 GRPO 的组相对优势 + PPO 风格的裁剪损失，不是 SFT 或 DPO。** 原论文式 7 用同题全部轨迹的准确性奖励算优势，不需要 Critic；式 11 将准确性和效率两份 GRPO loss 加权。Marathon 先做 SFT、再做 HDPO，之后与 Sprint 合并，最后才进入第 7 章的 SAO + CompactionRL；这些是先后阶段。[HDPO 原论文 §3.2](https://arxiv.org/html/2604.08545v1#S3.S2)
 
-$$
-\mathcal Q_i=\{j:R_j^{\mathrm{acc}}=R_i^{\mathrm{acc}}\},\qquad \bar S_i=\frac{1}{|\mathcal Q_i|}\sum_{j\in\mathcal Q_i}S_j
-$$
-
-$i,j$ 是轨迹编号，$R_i^{\mathrm{acc}}$ 是准确性奖励，$\mathcal Q_i$ 是与第 $i$ 条同分的轨迹集合；$S_j$ 是交互步数，$|\mathcal Q_i|$ 是组大小，$\bar S_i$ 是组内平均步数。
-
-**式 3 · 效率奖励**
+**准确性 loss 怎么算？** 先算 $A_i^{\mathrm{acc}}=(R_i^{\mathrm{acc}}-\mu_{\mathrm{acc}})/(\sigma_{\mathrm{acc}}+\epsilon)$。$i$ 是轨迹编号，$R_i^{\mathrm{acc}}$ 是准确性奖励，$\mu_{\mathrm{acc}},\sigma_{\mathrm{acc}}$ 是同题全部采样轨迹的奖励均值与标准差（包含失败轨迹），$\epsilon$ 防止除零。再把该优势用于本轨迹每个训练 token，展开核心裁剪策略项：
 
 $$
-R_i^{\mathrm{eff}}=\frac{\bar S_i-S_i}{\bar S_i}
+L_{\mathrm{acc}}=\operatorname{Agg}_{i,t}\!\left[-\min\!\left(\rho_{i,t}A_i^{\mathrm{acc}},\operatorname{clip}(\rho_{i,t},1-\eta,1+\eta)A_i^{\mathrm{acc}}\right)\right]
 $$
 
-$R_i^{\mathrm{eff}}$ 是效率奖励，这个计算要求 $\bar S_i>0$。同分前提下，比平均步数少得到正值，多则得到负值。
+$t$ 是 token 位置，$\rho_{i,t}=\exp(\mathrm{new\_logp}_{i,t}-\mathrm{old\_logp}_{i,t})$ 比较同一前缀下新旧策略对原 token 的概率，$\eta$ 是裁剪幅度；$\operatorname{Agg}$ 表示按训练 mask 与约定权重聚合。
 
-| 教学轨迹 | 准确性奖励 | 步数 | 同分组平均步数 | 效率奖励 |
+**效率 loss 怎么算？** 将准确性 loss 中的 $A_i^{\mathrm{acc}}$ 换成效率优势 $A_i^{\mathrm{eff}}$，其余符号含义不变：
+
+$$
+L_{\mathrm{tool}}=\operatorname{Agg}_{i,t}\!\left[-\min\!\left(\rho_{i,t}A_i^{\mathrm{eff}},\operatorname{clip}(\rho_{i,t},1-\eta,1+\eta)A_i^{\mathrm{eff}}\right)\right]
+$$
+
+$R_i^{\mathrm{eff}}$ 是效率奖励，$A_i^{\mathrm{eff}}$ 是由奖励构造的效率优势，$L_{\mathrm{tool}}$ 才是用于更新参数的策略损失。**奖励 → 优势 → 策略损失，三者不能直接画等号。** Occamy 给出了下方的效率奖励，但未完整展开其后续优势标准化，不能直接认定 $A_i^{\mathrm{eff}}=R_i^{\mathrm{eff}}$。
+
+最后 $L_{\mathrm{HDPO}}=w_{\mathrm{acc}}L_{\mathrm{acc}}+w_{\mathrm{tool}}L_{\mathrm{tool}}$，两个 $w$ 是损失权重。**轨迹级奖励先变成优势，再作用于 token loss；不是算完 token loss 后再追加长度惩罚。** Occamy 未展开 Marathon 的聚合分母及两项权重，不能直接套用最终 RL 的 token 平均配置。
+
+**Occamy 论文给出的效率奖励为** $R_i^{\mathrm{eff}}=(\bar S_i-S_i)/\bar S_i$。$i$ 是轨迹编号，$S_i$ 是该轨迹的交互步数，$\bar S_i$ 是同一任务中、准确性奖励与它相同的轨迹的平均步数（须大于 0）。比同组平均步数少，效率奖励为正；更多则为负。这是效率奖励项，不是完整 HDPO loss。
+
+**例子：** 同一任务采样得到 A、B、C 三条轨迹：
+
+| 轨迹 | 准确性奖励 | 步数 | 同分组平均步数 | 效率奖励 |
 | --- | --- | --- | --- | --- |
 | A | 1 | 10 | 15 | $+1/3$ |
 | B | 1 | 20 | 15 | $-1/3$ |
 | C | 0 | 5 | 5 | 0 |
 
-C 不会仅因比 A 更短，就在这个效率项中胜过 A。若有多条 0 分轨迹，它们也可以构成同分组。B 的负效率奖励表示“同等准确性下更慢”，不是说 B 没完成任务。准确性与效率如何进入总优化目标，要查对应实现，不能把上式当成全部训练损失。[报告 §5.2](https://arxiv.org/html/2609.11977v1#S5.S2)
+A、B 都成功，平均 15 步，因此分别得到 $+1/3$、$-1/3$；B 的负值只表示同分下更慢。C 单独属于 0 分组，效率奖励为 0，不会因比 A 更短就获得正效率奖励。这里按 Occamy 的同分分组定义，若有多条 0 分轨迹，也会在该组内部比较。
+
+**论文与代码的边界：** HDPO 原论文的效率优势只比较同题成功轨迹，成功不足两条时置零；Occamy 则采用上文的“相同准确性奖励分组”定义。核对的 Dressage `3e3142f` 有组内均值／可选标准差归一化的通用 GRPO 路径，但未找到 HDPO 双通道 loss，不能将它当作 Marathon 的完整实现。[原论文式 7–11](https://arxiv.org/html/2604.08545v1#S3.S2) · [Dressage GRPO 代码](https://github.com/Accio-Lab/Dressage/blob/3e3142fe8ea07e4504c3b20a936a4c201a3de44c/dressage/training/reward_post_process.py#L118-L160)
 
 ### 6.4 Model soup：参数合并是什么
 
@@ -240,7 +335,30 @@ $$
 
 $t$ 为动作 token 位置，$y_t,h_t$ 为实际 token 与前缀；$\pi_\theta$ 是当前策略，$\pi_{\mathrm{rollout}}$ 的 log-prob 来自采样记录；$\rho_t$ 是概率比，$\epsilon_l,\epsilon_h$ 控制下、上界，$f$ 为筛选后的权重。窄屏公式中的 $\ell_t$ 与 $\ell_t^{\mathrm{rollout}}$ 分别缩写当前和采样时的 log-prob。它不同于普通 PPO 的裁剪：**区间外直接不贡献这项策略梯度**。这是算法筛选，不是因为该动作“事后做错了”才删除。
 
-优势依赖 critic，SAO 还讨论更充分的价值预训练、更快的价值更新与跳过 observation 的 GAE。跳过的是工具返回在优势递推中的生成位置，工具反馈仍保留在决策上下文中。[SAO §3](https://arxiv.org/html/2607.07508v1#S3)
+**Critic 学什么？** Actor 生成动作，Critic $V_\phi(h_t)$ 预测在当前上下文 $h_t$ 下还能获得多少未来回报；$\phi$ 是 Critic 参数。单条 rollout 没有同题的组内均值可作基线，因此 SAO 用 Critic 和 GAE 提供优势。Critic 估得不准，会直接使 Actor 的学习信号变得嘈杂。
+
+**Critic 的 loss：让价值预测接近回报目标。** 将论文的均方误差写成训练 token 的平均：
+
+$$
+L_V=\frac{1}{N}\sum_{t\in I}\left(V_\phi(h_t)-\widehat R_t\right)^2
+$$
+
+$I$ 是参与价值训练的模型输出位置集合，$N=|I|$，$\widehat R_t$ 是回报目标，不是当前 token 的即时奖励。用 GAE 构造目标时，$\widehat R_t=V_{\mathrm{old}}(h_t)+A_t^{\mathrm{critic}}$：$V_{\mathrm{old}}$ 是这批数据计算目标时的价值预测，$A^{\mathrm{critic}}$ 是用于价值目标的未归一化优势。**目标算好后固定，只对当前预测 $V_\phi$ 反向传播；不能把归一化后的 Actor 优势直接加回去。** 例如目标为 0.9，预测从 0.4 变为 0.7，单点 loss 就从 $(0.4-0.9)^2=0.25$ 降到 $(0.7-0.9)^2=0.04$。[SAO §2](https://arxiv.org/html/2607.07508v1#S2) · [GAE 回报目标的实现示例](https://github.com/volcengine/verl/blob/main/verl/trainer/ppo/core_algos.py)
+
+**GAE 怎样跳过工具观察？** 只沿模型生成的动作 token 递推：$\delta_t=r_t+\gamma V_{\mathrm{old}}(h_{t+1})-V_{\mathrm{old}}(h_t)$，$A_t=\delta_t+\gamma\lambda A_{t+1}$。这里 $t+1$ 指下一个动作 token，$r_t$ 是即时奖励，$\gamma$ 是奖励折扣，$\lambda$ 控制残差累积的衰减。比如“调用测试 → 100 个报错 token → 修复输出”，递推直接连接调用末尾与修复开头，不经过这 100 个观察位置；但修复时的 $h_{t+1}$ 仍包含报错。真正终止后的价值和优势置 0；不能将因预算耗尽而截断的记录一律当作自然终止。
+
+**SAO 的价值训练技巧，分别解决什么问题？**
+
+| 做法 | 具体含义 |
+| --- | --- |
+| 扩大价值预训练 | 先用更多带回报的轨迹训练 Critic，改善起步时的价值估计；这是价值回归，不是让 Actor 模仿示范 |
+| 更快的价值更新 | 原论文设 $K=2$，每次策略更新配两次价值更新，让 Critic 跟上策略变化；同一批训练中区分固定目标与不断更新的预测 |
+| 冻结 Critic 注意力 | 论文观察到价值模型的 Full Attention 梯度较大，因而冻结注意力模块、优化 MoE 投影；这不表示冻结 Actor |
+| Actor、Critic 使用不同 λ | 原论文设 $\lambda_{\mathrm{actor}}=1-\frac{1}{1.5L}$、$\lambda_{\mathrm{critic}}=1$，$L$ 是响应长度。两者的优势用途不同：前者更新策略，后者构造价值目标 |
+| Actor、Critic 共用 γ（Occamy） | Occamy 附录 C.2 明确设两者的 $\gamma=1$；Critic 又有 $\lambda_{\mathrm{critic}}=1$，因此段内 GAE 为 $A_t^{\mathrm{critic}}=\delta_t+A_{t+1}^{\mathrm{critic}}$，直接累加后续 TD 残差，不随距离衰减。Actor 的 $\lambda<1$，仍有衰减。[配置原文](https://arxiv.org/html/2609.11977v1#A3.S2) |
+| 分别配置学习率 | 原论文 Actor 为 $10^{-6}$，Critic 为 $5\times10^{-6}$；更快更新还包括更新频率，不能只理解为调大学习率 |
+
+当 $\lambda_{\mathrm{critic}}=1$、轨迹真正终止且末端后继价值为 0 时，$V_{\mathrm{old}}+A^{\mathrm{critic}}$ 等价于折扣后的实际回报；这也解释了 Critic 为什么是在拟合回报，而不是拟合 Actor 使用的标准化优势。表中除明确标注 Occamy 的 γ 一项外，其余为 **SAO 原论文的配置**；Occamy 附录 C.2 另外给出其最终 RL 的参数，不能默认所有设置完全照搬。[SAO §3.2](https://arxiv.org/html/2607.07508v1#S3.S2) · [实验配置 §4.1](https://arxiv.org/html/2607.07508v1#S4.S1) · [SAO 完整笔记与手算](./sao.html#chapter-4)
 
 ### 7.2 CompactionRL：执行动作与摘要共同学习
 

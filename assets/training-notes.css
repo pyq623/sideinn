@@ -1,0 +1,3 @@
+/* Keep the original portrait note cards readable and reserve their loading space. */
+body[data-note-id="sao"] .note-figure img{aspect-ratio:941/1672;max-width:560px;margin-inline:auto;object-fit:contain;background:#fff}
+body[data-note-id="compactionrl"] .note-figure img{aspect-ratio:3/4;max-width:640px;margin-inline:auto;object-fit:contain;background:#f7f8fc}

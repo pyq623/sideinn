@@ -36,6 +36,7 @@ git clone https://github.com/pyq623/ai-study-notes.git ai-study-notes
 | RSI 正文 | `notes.md` |
 | 推理基础设施正文 | `inference-infra.md` |
 | 研究笔记的页面壳、元信息与数据源配置 | `notes/rsi.html`、`notes/inference-infra.html`、`notes/occamy.html` |
+| SAO / CompactionRL 正文、公式与配图 | `sao.md` / `compactionrl.md`、`assets/*-formulas.json`、`assets/sao-figures/` / `assets/compactionrl-figures/`；阅读页为 `notes/sao.html` / `notes/compactionrl.html` |
 | Occamy 专题正文、公式与配图 | `occamy.md`、`assets/occamy-formulas.json`、`assets/occamy-figures/` |
 | RSI / 推理笔记的编号公式与窄屏版本 | `assets/formulas.json` / `assets/infra-formulas.json` |
 | 图示 | `assets/diagrams/`、`assets/infra-diagrams/` |

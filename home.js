@@ -19,7 +19,7 @@
  $('category-list').addEventListener('click',e=>{const b=e.target.closest('button');if(b){category=b.dataset.category;render();}});
  $('clear-filters').addEventListener('click',()=>{category='';$('library-search').value='';render();$('library-search').focus();});
  async function init(){
-  const response=await fetch('./assets/notebook.json');if(!response.ok)throw Error('Unable to load notebook');notes=await response.json();
+  const response=await fetch('./assets/notebook.json',{cache:'no-cache'});if(!response.ok)throw Error('Unable to load notebook');notes=await response.json();
   $('total-notes').textContent=notes.length+' 篇笔记';categories();render();$('note-list').setAttribute('aria-busy','false');
  }
  init().catch(error=>{$('note-list').setAttribute('aria-busy','false');$('load-status').textContent='笔记目录暂时无法加载，请刷新重试。';console.error(error);});

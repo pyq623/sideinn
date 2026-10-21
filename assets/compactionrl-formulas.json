@@ -1,0 +1,38 @@
+[
+  {
+    "number": 1,
+    "title": "压缩触发条件",
+    "wide": "C-|h_t|<T_{\\mathrm{comp}}",
+    "narrow": "C-|h_t|<T_{\\mathrm{comp}}"
+  },
+  {
+    "number": 2,
+    "title": "token 概率比",
+    "wide": "\\rho_{s,i}=\\frac{\\pi_\\theta(y_{s,i}\\mid h_{s,i})}{\\pi_{\\mathrm{rollout}}(y_{s,i}\\mid h_{s,i})}",
+    "narrow": "\\rho_{s,i}=\\frac{\\pi_\\theta(y_{s,i}\\mid h_{s,i})}{\\pi_{\\mathrm{rollout}}(y_{s,i}\\mid h_{s,i})}"
+  },
+  {
+    "number": 3,
+    "title": "单个 token 的 PPO 损失",
+    "wide": "\\ell_{s,i}=-\\min\\!\\left(\\rho_{s,i}\\widehat A_{s,i},\\operatorname{clip}(\\rho_{s,i},1-\\epsilon,1+\\epsilon)\\widehat A_{s,i}\\right)",
+    "narrow": "\\begin{aligned}\\ell_{s,i}=-\\min\\bigl\\{&\\rho_{s,i}\\widehat A_{s,i},\\\\&\\operatorname{clip}(\\rho_{s,i},1-\\epsilon,1+\\epsilon)\\widehat A_{s,i}\\bigr\\}\\end{aligned}"
+  },
+  {
+    "number": 4,
+    "title": "全批次训练 token 统一平均",
+    "wide": "L_\\pi=\\frac{1}{|\\mathcal M|}\\sum_{(s,i)\\in\\mathcal M}\\ell_{s,i}",
+    "narrow": "L_\\pi=\\frac{1}{|\\mathcal M|}\\sum_{(s,i)\\in\\mathcal M}\\ell_{s,i}"
+  },
+  {
+    "number": 5,
+    "title": "片段内的 TD 残差与局部 GAE",
+    "wide": "\\delta_{s,i}=r_{s,i}+\\gamma V_\\phi(h_{s,i+1})-V_\\phi(h_{s,i}),\\qquad A^{\\mathrm{loc}}_{s,i}=\\sum_{l=0}^{n_s-i}(\\gamma\\lambda)^l\\delta_{s,i+l}",
+    "narrow": "\\begin{aligned}\\delta_{s,i}&=r_{s,i}+\\gamma V_\\phi(h_{s,i+1})-V_\\phi(h_{s,i})\\\\A^{\\mathrm{loc}}_{s,i}&=\\sum_{l=0}^{n_s-i}(\\gamma\\lambda)^l\\delta_{s,i+l}\\end{aligned}"
+  },
+  {
+    "number": 6,
+    "title": "论文的跨段位置修正",
+    "wide": "N_{>s}=\\sum_{j>s}n_j,\\qquad \\widehat A_{s,i}=(\\gamma\\lambda)^{N_{>s}}A^{\\mathrm{loc}}_{s,i}",
+    "narrow": "\\begin{aligned}N_{>s}&=\\sum_{j>s}n_j\\\\\\widehat A_{s,i}&=(\\gamma\\lambda)^{N_{>s}}A^{\\mathrm{loc}}_{s,i}\\end{aligned}"
+  }
+]

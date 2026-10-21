@@ -1,0 +1,32 @@
+[
+  {
+    "number": 1,
+    "title": "TD 残差与 GAE 递推",
+    "wide": "\\delta_t=r_t+\\gamma V_{\\mathrm{old}}(h_{t+1})-V_{\\mathrm{old}}(h_t),\\qquad A_t=\\delta_t+\\gamma\\lambda A_{t+1}",
+    "narrow": "\\begin{aligned}\\delta_t&=r_t+\\gamma V_{\\mathrm{old}}(h_{t+1})-V_{\\mathrm{old}}(h_t)\\\\A_t&=\\delta_t+\\gamma\\lambda A_{t+1}\\end{aligned}"
+  },
+  {
+    "number": 2,
+    "title": "直接概率比",
+    "wide": "\\rho_t=\\exp\\!\\left(\\log\\pi_\\theta(y_t\\mid h_t)-\\log\\pi_{\\mathrm{rollout}}(y_t\\mid h_t)\\right)",
+    "narrow": "\\rho_t=\\frac{\\pi_\\theta(y_t\\mid h_t)}{\\pi_{\\mathrm{rollout}}(y_t\\mid h_t)}"
+  },
+  {
+    "number": 3,
+    "title": "双侧过滤",
+    "wide": "f(\\rho_t)=\\begin{cases}\\rho_t,&1-\\epsilon_l<\\rho_t<1+\\epsilon_h,\\\\0,&\\text{其他情况}.\\end{cases}",
+    "narrow": "f(\\rho_t)=\\begin{cases}\\rho_t,&1-\\epsilon_l<\\rho_t<1+\\epsilon_h,\\\\0,&\\text{其他情况}.\\end{cases}"
+  },
+  {
+    "number": 4,
+    "title": "论文的策略目标写成最小化形式",
+    "wide": "L_{\\mathrm{DIS}}=-\\frac{1}{N}\\sum_{t\\in I}f(\\rho_t)\\widehat A_t\\log\\pi_\\theta(y_t\\mid h_t)",
+    "narrow": "L_{\\mathrm{DIS}}=-\\frac{1}{N}\\sum_{t\\in I}f(\\rho_t)\\widehat A_t\\log\\pi_\\theta(y_t\\mid h_t)"
+  },
+  {
+    "number": 5,
+    "title": "价值损失与 GAE 回报目标",
+    "wide": "L_V=\\frac{1}{N}\\sum_{t\\in I}\\left(V_\\phi(h_t)-\\widehat R_t\\right)^2,\\qquad \\widehat R_t=V_{\\mathrm{old}}(h_t)+A_t^{\\mathrm{raw}}",
+    "narrow": "\\begin{aligned}L_V&=\\frac{1}{N}\\sum_{t\\in I}\\left(V_\\phi(h_t)-\\widehat R_t\\right)^2\\\\\\widehat R_t&=V_{\\mathrm{old}}(h_t)+A_t^{\\mathrm{raw}}\\end{aligned}"
+  }
+]
