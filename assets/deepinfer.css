@@ -1,0 +1,15 @@
+/* Reserve diagram space before lazy loading to keep chapter anchors stable. */
+body[data-note-id="deepinfer"] .note-figure img{aspect-ratio:8/5;object-fit:contain;background:#faf7f0}
+
+/* Official figures retain their native proportions and original pixels/paths. */
+body[data-note-id="deepinfer"] .note-figure img[src$="official-a-system.png"]{aspect-ratio:1727/911;background:#fff}
+body[data-note-id="deepinfer"] .note-figure img[src$="official-b-prefill.png"]{aspect-ratio:1350/930;background:#fff}
+body[data-note-id="deepinfer"] .note-figure img[src$="official-c-decode.png"]{aspect-ratio:1350/930;background:#fff}
+body[data-note-id="deepinfer"] .note-figure img[src$="official-d-v41-architecture.svg"]{aspect-ratio:910/469;background:#fff}
+body[data-note-id="deepinfer"] .note-figure img[src$="official-e-csa2.svg"]{aspect-ratio:1355/431;background:#fff}
+body[data-note-id="deepinfer"] .note-figure img[src$="official-f-indexer.svg"]{aspect-ratio:894/402;background:#fff}
+body[data-note-id="deepinfer"] .note-figure img[src$="official-g-dspark.svg"]{aspect-ratio:388.08/251.04;background:#fff}
+body[data-note-id="deepinfer"] .note-figure img[src$="official-h-wide-ep.png"]{aspect-ratio:1350/930;background:#fff}
+
+/* CED dataflow uses a portrait canvas and embedded MathJax vector glyphs. */
+body[data-note-id="deepinfer"] .note-figure img[src$="02-ced-latex.svg"]{aspect-ratio:2/3;background:#faf8f2}

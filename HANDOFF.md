@@ -229,3 +229,14 @@ TTL 为 10 分钟；`CNAME` 文件只有 `sideinn.ink`。HTTPS 由 GitHub Pages 
 ### Hot100 导入与核对
 
 2026-10-21 本地新增独立「算法与 Hot100」分类。原手册正文为 95 道编号题 + 1 道补充题，共 96 道题，另有 4 篇技巧总结；不是额外补写 100 道题。导入器跳过旧纸面目录，使用唯一 LeetCode 题号建立逐题页面，保留 68 张图片（72 次引用）、代码换行缩进和表格。更新时运行 `python scripts/import-hot100.py /path/to/Hot100算法题复习手册.docx`（依赖 lxml、Pillow），核对内容数量与内链，再检查首页分类、搜索、手机排版和复习标记持久化。复习记录使用独立键 `sideinn:hot100:review:v1`。首页以独立分类展示；正式入口为 `/hot100/`。
+
+
+### DeepInfer 笔记与连续演示（2026-10-23）
+
+- 首页入口在 `assets/notebook.json`；正文 `deepinfer.md`，阅读页 `notes/deepinfer.html`，公式 `assets/deepinfer-formulas.json`，样式 `assets/deepinfer.css`。沿用 Occamy 阅读器，独立草稿键 `study-notes-draft-v1-deepinfer`。共 13 章、42 小节、10 组公式、8 张官图和 5 张教学图。
+- 图片与出处在 `assets/deepinfer-figures/`，官图来源、图号、哈希和许可见 `official-sources.json`。CED 图的数学符号为 MathJax SVG 路径；源文件 `ced-math.json`，生成器 `scripts/build-deepinfer-ced.py`。
+- 第 3.1 / 3.4 / 4.1 节链接到 `notes/deepinfer-walkthrough.html`。26 页连续动画支持手动上一页/下一页、自动放映/暂停、速度、进度、章节跳转和放大。数值附录保留在 `notes/deepinfer-walkthrough-details.html`。
+- 演示源码在 `assets/deepinfer-walkthrough/`：`model.mjs` 为唯一数值来源，`movie.mjs` / `movie.css` 为动画，`view.mjs` / `walkthrough.css` 为数值附录，维护说明见该目录 README。它使用人工 6 层二维模型，不是训练过的 DeepSeek 权重；第 9 token 由外部指定，短后缀重放明确标为近似。
+- 机制依据 DeepSeek-V4.1-Flash 论文 `2609.19969v1`、DSpark `2607.05147v1`、官方部署文章及 DeepInfer 固定提交 `9bd9cf243fc53ef9afbf8f04d391d989117d6ab9` 的源码与 Q&A。未找到以该框架为题的独立原论文，勿与同名项目混淆。
+- 维护后运行 `node scripts/check-deepinfer-walkthrough.mjs`，检查全长重放、截断误差传播、前缀缓存保留、增量 decode、因果性、索引复用和权重归一化；同时检查桌面/手机页面、全部 26 页、公式、手动/自动/暂停、正文图与首页入口。
+- 本次按用户授权发布 DeepInfer 专题及首页入口；其他本地 Hot100、注意力代码和首页草稿不属于此发布范围。
