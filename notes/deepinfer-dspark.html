@@ -1,0 +1,27 @@
+<!doctype html><html lang="zh-CN"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>草稿怎样被调度与验证 · DSpark 连贯动画 · 支线客栈</title>
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="../assets/deepinfer-dspark/player.css?v=20261023-4">
+<script>window.MathJax={startup:{typeset:false},svg:{fontCache:'none'},options:{enableMenu:false}};</script><script defer src="../assets/vendor/tex-svg.js"></script>
+<script type="module" src="../assets/deepinfer-dspark/player.mjs?v=20261023-4"></script>
+</head><body>
+<header><a href="./deepinfer.html#section-5-1">← 回到 DeepInfer 第五章</a><span>支线客栈 · 连贯动画</span></header>
+<main><p class="eyebrow">第 5、6 章 · 同一轮请求，从草稿到交付</p><h1>验证名额给谁？草稿怎么变成输出？</h1>
+<p class="intro">两条请求各写出 3 枚草稿，一共只留下 3 枚去验证。跟着同一批 token，看名额如何计算、目标模型如何一次算出概率，以及哪些文字最终送给用户。</p>
+<p class="scope">人工教学例：概率、耗时、随机数均为设定值；计算由 JavaScript 完成。不是实际模型运行或性能测试。<a href="#sources">机制依据与简化说明 ↓</a></p>
+<section class="player" aria-label="DSpark 调度与投机验证放映">
+<div class="transport"><button id="restart">↶ 从头</button><button id="prev">← 上一页</button><button id="play" class="primary">自动放映</button><button id="next">下一页 →</button><label>速度 <select id="speed"><option value="0.75">0.75×</option><option selected value="1">1×</option><option value="1.5">1.5×</option><option value="2">2×</option></select></label><span id="count"></span></div>
+<nav class="chapters" aria-label="动画章节"><button data-page="0">① 生成草稿</button><button data-page="5">② 计算调度</button><button data-page="11">③ 目标验证</button><button data-page="20">④ 交付与下一轮</button></nav>
+<div class="caption" aria-live="polite"><p id="phase"></p><h2 id="title">正在载入…</h2><p id="narration"></p></div>
+<div class="legend"><span>金色：待验证</span><span>绿色：接受</span><span>红色：拒绝</span><span>灰色：调度未选</span><span>蓝色：目标采样</span></div>
+<div id="scene"><div id="lanes" aria-label="同一轮请求的持续状态"></div><div id="workbench"></div></div>
+<div class="checkpoint"><span>本页要点</span><div id="takeaway"></div><div id="formula"></div></div>
+<div class="progress"><label for="timeline">逐页回看</label><input type="range" id="timeline" min="0" max="22" step="1" value="0"><span id="mode">手动翻页 · 每次只播放本页</span></div>
+<p class="source-line" id="source-line"></p><p id="error" role="alert" hidden>页面计算出错，请刷新重试。</p>
+</section>
+<section class="audit" id="sources"><h2>机制依据与教学边界</h2>
+<p>本动画用人工概率表展示采样逻辑，用一个三项 logits 修正展示轻量 Markov 头；没有加载神经网络权重。每页的公式、排名、预算和接受结果都由同一组数据计算，固定随机数只为便于复看。</p>
+<div class="source-grid"><article><h3>草稿与调度</h3><p>并行骨干加轻量顺序头、条件置信度与前缀存活率，见 <a href="https://arxiv.org/html/2607.05147v1#S3">DSpark §3</a>。动画只展示 Markov 变体，不展开训练和 RNN 变体。</p><p>工程调度以较早轮次信息定总预算，以较新信息分配长度，见 <a href="https://github.com/deepseek-ai/DeepInfer/blob/9bd9cf243fc53ef9afbf8f04d391d989117d6ab9/csrc/engine/mtp_varlen.hpp">固定版本 MTPVarlen</a>；累乘与稳定排序见 <a href="https://github.com/deepseek-ai/DeepInfer/blob/9bd9cf243fc53ef9afbf8f04d391d989117d6ab9/deepinfer/model_executor/layers/tilelang_ops/schedule_mtp_varlen.py">分配参考实现</a>。</p></article><article><h3>验证与纠正</h3><p>一次目标前向、连续接受前缀、正残差纠正和全接受后追加 token，见 <a href="https://arxiv.org/html/2211.17192#S2.S3">投机采样原论文 §2.3 / Algorithm 1</a>。</p><p>本例为随机采样，不是 greedy 的逐字匹配。每个概率表显示该位置所有非零项，其他词的概率为零；忽略 EOS、长度上限、量化与分布式执行。</p></article></div>
+<p><strong>预算时间线不能混用：</strong>本例假定前两轮的置信度估计相同，便于只跟踪一组数字。成本表是包含本轮开销的假设值；真实代码使用档位、运行时估计与异步状态。论文的因果早停算法与工程中的历史预算策略有区别；不能看完本轮所有未来候选后，随意倒推验证长度并声称无损。参见 <a href="https://arxiv.org/html/2607.05147v1#S5.S2">DSpark §5.2</a>。</p>
+<details><summary>查看原论文官方流程图</summary><img class="official" src="../assets/deepinfer-figures/official-g-dspark.svg" alt="DSpark 论文 Figure 1：草稿生成、前缀调度与目标验证"><p>DSpark Figure 1 原图，<a href="https://arxiv.org/html/2607.05147v1#S3.F1">来源</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。上方中文动画为本站教学示例。</p></details>
+<p><a href="./deepinfer.html#section-6-1">继续读第六章的公式与源码解释 →</a></p></section></main><footer>支线客栈 · 公式使用 MathJax 矢量排版</footer></body></html>

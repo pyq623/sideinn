@@ -104,7 +104,15 @@ $$
 
 ### 3.1 CED 为什么能减少 prefill
 
-**先跟着一个小模型走一遍：** [8 个位置、6 层的连贯动画（可手动翻页）](./deepinfer-walkthrough.html#input)。它用同一段 prompt 和固定人工权重，连续展示每层隐藏状态、两路 KV、索引与注意力输出；还可进入[数值附录](./deepinfer-walkthrough-details.html#input)修改重放长度，逐项对照完整计算。数字是教学模型真实算出的结果，不是 DeepSeek 权重或模型性能。
+> **建议先看 · 第 3、4 章配套动画**
+>
+> **跟着一段 prompt，走完模型的四个阶段**
+>
+> 用 8 个位置、6 层的小模型，连续看清 encoder 编码、decoder 的两路输入、Top-k 选择，以及前缀复用与尾部重放。
+>
+> [开始看动画 →](./deepinfer-walkthrough.html#input)　[查看数值附录](./deepinfer-walkthrough-details.html#input)
+>
+> 4 节 · 23 页 · 可手动翻页或自动放映。使用人工教学权重，帮助理解数据流，不代表 DeepSeek 的真实权重或性能。
 
 CED 的全称是 **Causal Encoder-Decoder（因果编码器—解码器）**。在这里，前 20 层是 encoder，后 20 层是 decoder；每个位置都只能使用当前及之前的信息。**投影的起点是 encoder 末层的 hidden state（隐藏状态，即每个输入位置的向量表示），不是把 encoder 已有的 KV Cache 原封不动交给 decoder。** Decoder 所需的 global KV 由这些表示通过相应投影权重构造，跨层共享规则见下一节。[V4.1 论文 §2.2](https://arxiv.org/html/2609.19969v1#S2.S2)
 
@@ -176,7 +184,7 @@ Single-Pass mHC 与 Mega-mHC 关注残差流混合及融合执行；Engram 是�
 
 ### 4.1 一层只看 128，不等于多层只依赖 128
 
-**接着看同一个例子的差异传播：** [完整计算与尾部重放逐层对照](./deepinfer-walkthrough.html#replay)。默认例子中，第 8 个位置在 decoder 第一层的输出仍然相同，第二层却开始不同；图中沿着“下层隐藏状态 → 上层局部 KV → 注意力输出”追踪原因。之后继续展示第 9 个位置的增量 decode，以及下一次请求命中全局缓存时的局部状态恢复。
+**接着看前缀命中后的局部恢复：** [打开第四节：前缀复用与重放](./deepinfer-walkthrough.html#restore)。图中同时展示全局缓存 1–8 全部复用、位置 1–5 不重新前向，以及尾部 6–8 重放恢复局部 SWA 状态。
 
 SWA（Sliding-Window Attention）只在局部窗口内做注意力。但上层的一个 key/value 来自下层 hidden state，下层又融合了更早信息。多层叠加后，**间接依赖范围会继续向历史扩展**。
 
@@ -216,6 +224,16 @@ export DEEPINFER_YOCO_PREFILL_KEEP_TOKENS=140
 ## 第 5 章 DSpark：先把草稿写得便宜且连贯
 
 ### 5.1 投机解码的基本账本
+
+> **建议先看 · 第 5、6 章配套动画**
+>
+> **跟着两条请求，算完调度与验证的一整轮**
+>
+> 从 6 枚草稿中分配 3 个验证名额，再逐项看目标概率、接受判断、拒绝纠正与最终交付。每一步沿用同一组 token 和数字。
+>
+> [开始看动画 →](./deepinfer-dspark.html#draft)　[直接看调度怎么算](./deepinfer-dspark.html#schedule)
+>
+> 4 节 · 23 页 · 可手动翻页或自动放映。概率、耗时和随机数为人工教学设定，计算过程可复核。
 
 普通自回归每轮主要推进一个 token。投机解码先由较小的 drafter 提议一串候选，再用目标模型批量验证：接受连续前缀，到首个拒绝位置按规则修正，后面的候选不直接交付。若全接受，还可从目标分布追加一个 token。
 
@@ -262,6 +280,8 @@ $z_k$ 是并行骨干给出的基础 logits；$W_1$ 是词表到低维的嵌入�
 ## 第 6 章 DSpark 调度：把验证算力给更值得的前缀
 
 ### 6.1 条件接受率要累乘
+
+**配套动画：** [从第二节开始，看验证预算如何计算和分配](./deepinfer-dspark.html#schedule)。沿用第五章的同一轮请求，算出前缀存活率、总预算和各请求验证长度，再继续查看正式验证。
 
 假设某请求三个候选的条件接受率为 0.9、0.8、0.5。第三个候选只有在前两个都接受时才能被保留，因此其前缀存活率是 $0.9\times0.8\times0.5=0.36$，不是 0.5。
 
