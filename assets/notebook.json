@@ -1,5 +1,27 @@
 [
   {
+    "id": "deepinfer",
+    "coverLabel": "DEEP INFER",
+    "href": "./notes/deepinfer.html",
+    "title": "DeepInfer 推理系统技术笔记",
+    "english": "Model, Cache & Inference Scheduling",
+    "category": "推理系统与 AI Infra",
+    "tags": [
+      "DeepInfer",
+      "DSpark",
+      "CED",
+      "CSA2",
+      "KV Cache",
+      "MoE",
+      "推理系统"
+    ],
+    "summary": "沿一次编程 Agent 请求，拆解 CED、CSA2、SWA 重放、DSpark 动态验证与专家负载均衡，再串起持久缓存、异步调度和输出控制。结合原论文、固定版本源码、官方配图与手算复习。",
+    "updated": "2026-10-23",
+    "details": "13 章 · 8 张官图 + 5 张图解 · 10 组公式",
+    "coverFooter": "INFERENCE SYSTEMS",
+    "readLabel": "阅读专题"
+  },
+  {
     "id": "hot100",
     "coverLabel": "HOT100",
     "href": "./hot100/",

@@ -1,0 +1,110 @@
+[
+  {
+    "file": "official-a-system.png",
+    "source": "https://github.com/deepseek-ai/DeepInfer/blob/9bd9cf243fc53ef9afbf8f04d391d989117d6ab9/doc/images/architecture_overview.png",
+    "license": "Apache-2.0; see LICENSE-DeepInfer.txt",
+    "credit": "DeepSeek-AI",
+    "modification": "None; original file bytes",
+    "sha256": "a04aed83c96ddc4a6ec7e578b961d8a3fdbea16ac72a4f51b3cc2221b858beb5",
+    "accessed": "2026-10-23",
+    "width": 1727,
+    "height": 911
+  },
+  {
+    "file": "official-b-prefill.png",
+    "source": "https://github.com/deepseek-ai/DeepInfer/blob/9bd9cf243fc53ef9afbf8f04d391d989117d6ab9/doc/images/prefill_pareto.png",
+    "license": "Apache-2.0; see LICENSE-DeepInfer.txt",
+    "credit": "DeepSeek-AI",
+    "modification": "None; original file bytes",
+    "sha256": "ef3c63e857e3340890abe2fb8379f8c8e2564c6a104975b09634875bfdc33741",
+    "accessed": "2026-10-23",
+    "width": 1350,
+    "height": 930
+  },
+  {
+    "file": "official-c-decode.png",
+    "source": "https://github.com/deepseek-ai/DeepInfer/blob/9bd9cf243fc53ef9afbf8f04d391d989117d6ab9/doc/images/decode_pareto.png",
+    "license": "Apache-2.0; see LICENSE-DeepInfer.txt",
+    "credit": "DeepSeek-AI",
+    "modification": "None; original file bytes",
+    "sha256": "26d9f0f990c236f61f5b86e248062c4436b2fef6f5852961359b15a2d4c5c65f",
+    "accessed": "2026-10-23",
+    "width": 1350,
+    "height": 930
+  },
+  {
+    "file": "official-d-v41-architecture.svg",
+    "source": "https://arxiv.org/html/2609.19969v1/arch_full.svg",
+    "context": "https://arxiv.org/html/2609.19969v1#S1.F3",
+    "figure": "Figure 3",
+    "credit": "DeepSeek-AI",
+    "license": "arXiv non-exclusive distribution license; original authors retain rights",
+    "modification": "None; original arXiv HTML SVG bytes",
+    "sha256": "ce602ddd190c50c2341aa8a91e5392204a54a8f85befaba824bc4584d7caa98f",
+    "accessed": "2026-10-23",
+    "svg_dimensions": {
+      "width": "910pt",
+      "height": "469pt",
+      "viewBox": "0 0 910 469"
+    }
+  },
+  {
+    "file": "official-e-csa2.svg",
+    "source": "https://arxiv.org/html/2609.19969v1/arch_csa2.svg",
+    "context": "https://arxiv.org/html/2609.19969v1#S2.F4",
+    "figure": "Figure 4",
+    "credit": "DeepSeek-AI",
+    "license": "arXiv non-exclusive distribution license; original authors retain rights",
+    "modification": "None; original arXiv HTML SVG bytes",
+    "sha256": "1c2b7b1861e004c72484f631a73f649ab06b8f03d918dd9b6fccf8519bba2973",
+    "accessed": "2026-10-23",
+    "svg_dimensions": {
+      "width": "1355pt",
+      "height": "431pt",
+      "viewBox": "0 0 1355 431"
+    }
+  },
+  {
+    "file": "official-f-indexer.svg",
+    "source": "https://arxiv.org/html/2609.19969v1/arch_hsi.svg",
+    "context": "https://arxiv.org/html/2609.19969v1#S2.F5",
+    "figure": "Figure 5",
+    "credit": "DeepSeek-AI",
+    "license": "arXiv non-exclusive distribution license; original authors retain rights",
+    "modification": "None; original arXiv HTML SVG bytes",
+    "sha256": "5ae29150ebc1d2635a15be884cd3f939ae513b65f9c9e2a815e76b04d568dd9c",
+    "accessed": "2026-10-23",
+    "svg_dimensions": {
+      "width": "894pt",
+      "height": "402pt",
+      "viewBox": "0 0 894 402"
+    }
+  },
+  {
+    "file": "official-g-dspark.svg",
+    "source": "https://arxiv.org/html/2607.05147v1/model_arch.svg",
+    "context": "https://arxiv.org/html/2607.05147v1#S3.F1",
+    "figure": "Figure 1",
+    "credit": "Xin Cheng et al. (Peking University / DeepSeek-AI)",
+    "license": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)",
+    "modification": "None; original arXiv HTML SVG bytes",
+    "sha256": "cb5ab1fd82c2fb8f710a7d31d29acb774b509d5edf8edf9a2d2d1aef217df4a9",
+    "accessed": "2026-10-23",
+    "svg_dimensions": {
+      "width": "388.08pt",
+      "height": "251.04pt",
+      "viewBox": "0 0 388.08 251.04"
+    }
+  },
+  {
+    "file": "official-h-wide-ep.png",
+    "source": "https://github.com/deepseek-ai/DeepInfer/blob/9bd9cf243fc53ef9afbf8f04d391d989117d6ab9/doc/images/wide_ep_decode_pareto.png",
+    "license": "Apache-2.0; see LICENSE-DeepInfer.txt",
+    "credit": "DeepSeek-AI",
+    "modification": "None; original file bytes",
+    "sha256": "719594a75b14cbb14ddba69872eb44be7a328729716dfb3838ce59dbf898ab7c",
+    "accessed": "2026-10-23",
+    "width": 1350,
+    "height": 930
+  }
+]

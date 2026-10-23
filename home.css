@@ -44,3 +44,7 @@
 .note-card[data-note-id="compactionrl"] .note-cover:after{border-color:#cabbd9;box-shadow:0 0 0 17px #f1edf6,0 0 0 18px #d6cce3}
 .note-card[data-note-id="compactionrl"] .note-cover strong{font-size:27px;letter-spacing:-1px}
 @media(max-width:760px){.note-card[data-note-id="compactionrl"] .note-cover strong{font-size:18px;letter-spacing:-.5px}}
+
+/* DeepInfer uses two short lines so its full name fits the narrow book cover. */
+.note-card[data-note-id="deepinfer"] .note-cover strong{font-size:28px;letter-spacing:-1px;line-height:1.15}
+@media(max-width:760px){.note-card[data-note-id="deepinfer"] .note-cover strong{font-size:22px;letter-spacing:-.5px}}

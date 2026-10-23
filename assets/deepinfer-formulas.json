@@ -1,0 +1,62 @@
+[
+  {
+    "number": 1,
+    "title": "已处理输入与新算输入的简化关系",
+    "wide": "T_{\\mathrm{new}}=(1-h)T_{\\mathrm{all}}",
+    "narrow": "T_{\\mathrm{new}}=(1-h)T_{\\mathrm{all}}"
+  },
+  {
+    "number": 2,
+    "title": "用 token-layer 工作量理解 prefill 节省",
+    "wide": "C_{\\mathrm{full}}\\propto NL,\\qquad C_{\\mathrm{CED}}\\propto \\frac{NL}{2}+\\frac{WL}{2}",
+    "narrow": "\\begin{aligned}C_{\\mathrm{full}}&\\propto NL,\\\\C_{\\mathrm{CED}}&\\propto \\frac{NL}{2}+\\frac{WL}{2}\\end{aligned}"
+  },
+  {
+    "number": 3,
+    "title": "重放段里的可见范围",
+    "wide": "\\max(s,i-W+1)\\leq j\\leq i",
+    "narrow": "\\max(s,i-W+1)\\leq j\\leq i"
+  },
+  {
+    "number": 4,
+    "title": "标准投机采样的接受与纠正",
+    "wide": "\\alpha(x)=\\min\\!\\left(1,\\frac{p(x)}{q(x)}\\right),\\qquad p_{\\mathrm{res}}(x)=\\frac{[p(x)-q(x)]_+}{\\sum_y[p(y)-q(y)]_+}",
+    "narrow": "\\begin{aligned}\\alpha(x)&=\\min\\!\\left(1,\\frac{p(x)}{q(x)}\\right),\\\\p_{\\mathrm{res}}(x)&=\\frac{[p(x)-q(x)]_+}{\\sum_y[p(y)-q(y)]_+}\\end{aligned}"
+  },
+  {
+    "number": 5,
+    "title": "Markov 头的低秩修正",
+    "wide": "q_k=\\operatorname{softmax}\\!\\left(z_k+W_1[x_{k-1}]W_2\\right)",
+    "narrow": "q_k=\\operatorname{softmax}\\!\\left(z_k+W_1[x_{k-1}]W_2\\right)"
+  },
+  {
+    "number": 6,
+    "title": "前缀存活率与期望推进长度",
+    "wide": "a_{r,j}=\\prod_{i=1}^{j}c_{r,i},\\qquad \\tau_r(\\ell_r)=1+\\sum_{j=1}^{\\ell_r}a_{r,j}",
+    "narrow": "\\begin{aligned}a_{r,j}&=\\prod_{i=1}^{j}c_{r,i},\\\\\\tau_r(\\ell_r)&=1+\\sum_{j=1}^{\\ell_r}a_{r,j}\\end{aligned}"
+  },
+  {
+    "number": 7,
+    "title": "用硬件步耗时计算预期吞吐",
+    "wide": "B=R+\\sum_{r=1}^{R}\\ell_r,\\qquad \\Theta=\\frac{\\sum_{r=1}^{R}\\tau_r(\\ell_r)}{t(B)}",
+    "narrow": "\\begin{aligned}B&=R+\\sum_{r=1}^{R}\\ell_r,\\\\\\Theta&=\\frac{\\sum_{r=1}^{R}\\tau_r(\\ell_r)}{t(B)}\\end{aligned}"
+  },
+  {
+    "number": 8,
+    "title": "观察 rank 负载不均衡",
+    "wide": "\\rho_{\\mathrm{load}}=\\frac{\\max_g n_g}{\\frac{1}{G}\\sum_{g=1}^{G}n_g}",
+    "narrow": "\\rho_{\\mathrm{load}}=\\frac{\\max_g n_g}{\\frac{1}{G}\\sum_{g=1}^{G}n_g}"
+  },
+  {
+    "number": 9,
+    "title": "缓存复用是否划算的教学判据",
+    "wide": "T_{\\mathrm{lookup}}+T_{\\mathrm{transfer}}+T_{\\mathrm{replay}}<T_{\\mathrm{recompute}}",
+    "narrow": "\\begin{aligned}&T_{\\mathrm{lookup}}+T_{\\mathrm{transfer}}\\\\&\\quad+T_{\\mathrm{replay}}<T_{\\mathrm{recompute}}\\end{aligned}"
+  },
+  {
+    "number": 10,
+    "title": "重叠的理想收益上界直觉",
+    "wide": "T_{\\mathrm{serial}}\\approx T_C+T_G,\\qquad T_{\\mathrm{overlap}}\\gtrsim\\max(T_C,T_G)",
+    "narrow": "\\begin{aligned}T_{\\mathrm{serial}}&\\approx T_C+T_G,\\\\T_{\\mathrm{overlap}}&\\gtrsim\\max(T_C,T_G)\\end{aligned}"
+  }
+]

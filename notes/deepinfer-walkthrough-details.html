@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CED 教学模型 · 数值附录 · 支线客栈</title>
+<meta name="description" content="用可复算的六层教学模型，逐步查看 prompt、隐藏状态、全局 KV、局部 KV、CSA2 与有限重放的变化。">
+<link rel="stylesheet" href="../theme.css?v=20261019">
+<link rel="stylesheet" href="../assets/deepinfer-walkthrough/walkthrough.css?v=20261023-2">
+<script>window.MathJax={startup:{typeset:false},tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg:{fontCache:'none'},options:{enableMenu:false}};</script>
+<script defer src="../assets/vendor/tex-svg.js"></script>
+<script type="module" src="../assets/deepinfer-walkthrough/view.mjs?v=20261023-2"></script>
+</head>
+<body>
+<a class="skip" href="#scene">跳到当前步骤</a>
+<header class="site-header"><a href="./deepinfer-walkthrough.html#input">← 回到连贯动画</a><span>支线客栈 · 逐步实验</span></header>
+<main>
+<section class="intro">
+<p class="eyebrow">第三、四章配套 · 同一段 prompt，同一组变量</p>
+<h1>8 个位置，走完 CED 与 SWA 重放</h1>
+<p>先把完整输入算到 encoder 末层，再沿着同一份表示走两条路：一条准备全局 KV，一条把尾部送过 decoder。最后用数字检查“少算”究竟改变了哪里。</p>
+<p><strong>建议第一遍保持“重放 3 个位置、跟踪位置 8”</strong>，按“下一步”顺着看；到差异对照时，再切换重放长度。手机上的宽表可左右滑动。</p>
+<p class="boundary"><strong>这是可复算的教学模型。</strong>分词、二维向量和权重均为人工设定，未使用 DeepSeek 权重，也不预测语言答案。保留因果注意力、CED 数据来源、跨层复用与重放边界；省略 MoE、归一化、RoPE、mHC、量化与复杂压缩。真实架构请对照笔记中的官图。</p>
+</section>
+<div class="workspace">
+<aside class="steps"><nav id="step-nav" aria-label="演示步骤"></nav></aside>
+<div class="lesson">
+<div class="controls"><label>尾部重放长度 <select id="replay"><option value="3">3 个位置 · 默认</option><option value="5">5 个位置</option><option value="8">8 个位置 · 完整对照</option></select></label><label>跟踪位置 <select id="position" aria-label="跟踪的 prompt 位置"></select></label></div>
+<div id="layer-map" class="layer-map" aria-label="六层模型结构"></div>
+<article id="scene" aria-live="polite" aria-busy="true"><p>正在计算教学模型…</p></article>
+<div class="pager"><button id="previous" type="button">← 上一步</button><span id="progress"></span><button id="next" type="button">下一步 →</button></div>
+<p id="runtime-error" role="alert" hidden>演示暂未加载完成，请刷新页面重试。</p>
+</div>
+</div>
+<section class="reference" id="notation">
+<h2>符号与计算规则：可以照着复算</h2>
+<div id="definitions"></div>
+<details><summary>展开全部人工权重与初始向量</summary><div id="parameters"></div><p>本页所有数字由浏览器中的同一计算程序生成，内部使用双精度，展示保留四位小数；差值使用未舍入值。位置编号从 1 开始。</p><a href="../assets/deepinfer-walkthrough/model.mjs">查看教学模型计算源码</a></details>
+<h2>回到原论文与章节</h2>
+<p>CED、CSA2 三种模式与 SWA 重放的机制依据：<a href="https://arxiv.org/html/2609.19969v1#S2.S2" target="_blank" rel="noopener">V4.1-Flash §2.2</a>、<a href="https://arxiv.org/html/2609.19969v1#S2.S3" target="_blank" rel="noopener">§2.3</a>、<a href="https://arxiv.org/html/2609.19969v1#S3.S2.S2" target="_blank" rel="noopener">§3.2.2</a>；缓存命中时不覆盖已有全局 KV 的边界见<a href="https://github.com/deepseek-ai/DeepInfer/blob/9bd9cf243fc53ef9afbf8f04d391d989117d6ab9/doc/inference_deployment_qa.md" target="_blank" rel="noopener">官方部署 Q&amp;A</a>。候选池缩小在本演示的 decode 步骤启用。</p>
+<p>这里的 6 层、窗口 3、Top-2、每块 2 个位置、候选池最多 4 个位置，以及所有数值都是教学设定，不能用来推断真实模型的误差或速度。</p>
+<p><a href="./deepinfer.html#chapter-2">第 2 章：prefill 与 decode 的成本</a> · <a href="./deepinfer.html#chapter-3">第 3 章：CED / CSA2</a> · <a href="./deepinfer.html#chapter-4">第 4 章：bounded replay</a></p>
+</section>
+</main>
+<footer>支线客栈 · 本地教学实验 · 2026.10.23</footer>
+<noscript>本演示需要 JavaScript 计算中间状态。可返回 DeepInfer 笔记阅读文字与静态图。</noscript>
+</body></html>
