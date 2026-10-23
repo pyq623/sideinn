@@ -242,3 +242,12 @@ TTL 为 10 分钟；`CNAME` 文件只有 `sideinn.ink`。HTTPS 由 GitHub Pages 
 - 本次按用户授权发布 DeepInfer 专题及首页入口；其他本地 Hot100、注意力代码和首页草稿不属于此发布范围。
 
 2026-10-23 用户确认发布动画阅读改进：控制栏移到讲解上方，补齐 CED 两路和 Top-k 选择说明，主放映收敛为 4 节 23 页。第四节同时展示前缀 1–8 全局缓存全部复用、位置 1–5 不重算和尾部 6–8 重放恢复局部 KV；旧 #replay 跳转到该节。详细维护说明见 assets/deepinfer-walkthrough/README.md。
+
+### DSpark 调度与验证动画（2026-10-23）
+
+- 页面 `notes/deepinfer-dspark.html` 共 4 节、23 页：生成草稿、计算调度、目标验证、交付与下一轮。支持手动翻页、自动放映/暂停、速度、进度和章节跳转；草稿流程图支持放大。
+- 源码在 `assets/deepinfer-dspark/`：`model.mjs` 为教学数值来源，`player.mjs` / `player.css` 为放映内容与样式，`draft-diagram.mjs` 绘制并行骨干与轻量顺序头流程。概率、随机数、耗时均为人工教学设定，没有运行真实模型或 GPU 性能测试。
+- 每枚草稿分别显示调度估计 `c` 与前缀存活率 `a`，验证时显示目标/草稿概率 `p` / `q` 和接受概率。`R` 是请求数，`B` 是本轮目标前向的 query token 总数，不能与名为 B 的请求混淆；未调度草稿不填造验证概率。
+- 正文 `deepinfer.md` 第 3、5 章分别用醒目卡片链接 CED 与 DSpark 动画，第 6 章链接 DSpark 的 `#schedule`；卡片样式在 `assets/deepinfer.css`。本次范围是 DSpark 动画及这些正文入口。
+- 修改后运行 `node scripts/check-deepinfer-dspark.mjs`，核对预算最优值、连续前缀分配、接受/拒绝、Markov 修正、残差归一化和目标分布一致性；涉及 CED 时另跑 `node scripts/check-deepinfer-walkthrough.mjs`。浏览器检查桌面/手机全部 23 页、公式、流程图放大、手动/自动/暂停、章节跳转与正文入口。
+- 当前发布分支已完成数值检查及桌面/手机全页验证；正式上线仍需合并后按第 5 节核对对应部署与正式页面。
