@@ -104,7 +104,7 @@ $$
 
 ### 3.1 CED 为什么能减少 prefill
 
-**先跟着一个小模型走一遍：** [8 个位置、6 层的连贯动画（可手动翻页）](./deepinfer-walkthrough.html#input)。它用同一段 prompt 和固定人工权重，连续展示每层隐藏状态、两路 KV、索引与注意力输出；可以改重放长度，逐项对照完整计算。数字是教学模型真实算出的结果，不是 DeepSeek 权重或模型性能。
+**先跟着一个小模型走一遍：** [8 个位置、6 层的连贯动画（可手动翻页）](./deepinfer-walkthrough.html#input)。它用同一段 prompt 和固定人工权重，连续展示每层隐藏状态、两路 KV、索引与注意力输出；还可进入[数值附录](./deepinfer-walkthrough-details.html#input)修改重放长度，逐项对照完整计算。数字是教学模型真实算出的结果，不是 DeepSeek 权重或模型性能。
 
 CED 的全称是 **Causal Encoder-Decoder（因果编码器—解码器）**。在这里，前 20 层是 encoder，后 20 层是 decoder；每个位置都只能使用当前及之前的信息。**投影的起点是 encoder 末层的 hidden state（隐藏状态，即每个输入位置的向量表示），不是把 encoder 已有的 KV Cache 原封不动交给 decoder。** Decoder 所需的 global KV 由这些表示通过相应投影权重构造，跨层共享规则见下一节。[V4.1 论文 §2.2](https://arxiv.org/html/2609.19969v1#S2.S2)
 
