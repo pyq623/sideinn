@@ -1,7 +1,7 @@
 <!doctype html><html lang="zh-CN"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>看 prompt 怎样走过模型 · CED 连贯动画 · 支线客栈</title>
-<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="../assets/deepinfer-walkthrough/movie.css?v=20261023-2">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="../assets/deepinfer-walkthrough/movie.css?v=20261023-3">
 <script>window.MathJax={startup:{typeset:false},svg:{fontCache:'none'},options:{enableMenu:false}};</script>
 <script defer src="../assets/vendor/tex-svg.js"></script>
 <script type="module" src="../assets/deepinfer-walkthrough/movie.mjs?v=20261023-2"></script>
@@ -13,9 +13,9 @@
 <p class="opening">看同一批编号方块经过 encoder、分成两路，再进入 decoder。<strong>编号一直代表同一个输入位置；变化的是它携带的隐藏状态。</strong> 点击“下一页”播放一个动作后停住，或选择“自动放映”连续观看。</p>
 <p class="scope">缩小教学例：8 个位置、6 层、窗口 3。配置和数值为人工设定；不是 DeepSeek 权重或语言能力复现。<a href="#audit">查看核对结果与依据 ↓</a></p>
 <section class="player" aria-label="CED 与有限重放动画">
+<div class="transport"><button id="restart" aria-label="从头播放">↶ 从头</button><button id="prev" aria-label="上一页">← 上一页</button><button id="play" class="primary">自动放映</button><button id="next" aria-label="下一页">下一页 →</button><label>速度 <select id="speed"><option value="0.75">0.75×</option><option value="1" selected>1×</option><option value="1.5">1.5×</option><option value="2">2×</option></select></label><span id="frame-count"></span></div>
 <div class="chapter-nav" aria-label="动画段落"><button data-jump="0">① 输入与 encoder</button><button data-jump="5">② 两路进入 decoder</button><button data-jump="15">③ 截断差异</button><button data-jump="17">④ 继续生成</button><button data-jump="22">⑤ 再次命中</button></div>
 <div class="caption" aria-live="polite"><p id="phase"></p><h2 id="frame-title">正在准备动画…</h2><p id="narration">正在载入同一个教学模型的中间状态。</p></div>
-<div class="transport"><button id="restart" aria-label="从头播放">↶ 从头</button><button id="prev" aria-label="上一页">← 上一页</button><button id="play" class="primary">自动放映</button><button id="next" aria-label="下一页">下一页 →</button><label>速度 <select id="speed"><option value="0.75">0.75×</option><option value="1" selected>1×</option><option value="1.5">1.5×</option><option value="2">2×</option></select></label><span id="frame-count"></span></div>
 <div class="legend"><span><i class="state"></i>移动的隐藏状态</span><span><i class="cache"></i>全局 KV：保留并读取</span><span><i class="local"></i>逐层局部 KV</span><span><i class="changed"></i>截断引起差异</span><button id="zoom" aria-pressed="false">放大画面</button></div>
 <div class="screen" id="screen"><svg id="board" viewBox="0 0 1000 610" role="img" aria-labelledby="board-title board-desc"><title id="board-title">同一段 prompt 的连续数据流</title><desc id="board-desc">动画正在加载。</desc></svg></div>
 <div class="live-value"><div><span>本页完成时的检查点</span><strong id="tracking">位置 8 · 暗号</strong></div><div id="math-value"></div><p id="cache-status"></p></div>
