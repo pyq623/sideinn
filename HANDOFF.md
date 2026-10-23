@@ -235,8 +235,10 @@ TTL 为 10 分钟；`CNAME` 文件只有 `sideinn.ink`。HTTPS 由 GitHub Pages 
 
 - 首页入口在 `assets/notebook.json`；正文 `deepinfer.md`，阅读页 `notes/deepinfer.html`，公式 `assets/deepinfer-formulas.json`，样式 `assets/deepinfer.css`。沿用 Occamy 阅读器，独立草稿键 `study-notes-draft-v1-deepinfer`。共 13 章、42 小节、10 组公式、8 张官图和 5 张教学图。
 - 图片与出处在 `assets/deepinfer-figures/`，官图来源、图号、哈希和许可见 `official-sources.json`。CED 图的数学符号为 MathJax SVG 路径；源文件 `ced-math.json`，生成器 `scripts/build-deepinfer-ced.py`。
-- 第 3.1 / 3.4 / 4.1 节链接到 `notes/deepinfer-walkthrough.html`。26 页连续动画支持手动上一页/下一页、自动放映/暂停、速度、进度、章节跳转和放大。数值附录保留在 `notes/deepinfer-walkthrough-details.html`。
+- 第 3.1 / 3.4 / 4.1 节链接到 `notes/deepinfer-walkthrough.html`。23 页、4 节连续动画支持手动上一页/下一页、自动放映/暂停、速度、进度、章节跳转和放大。数值附录保留在 `notes/deepinfer-walkthrough-details.html`。
 - 演示源码在 `assets/deepinfer-walkthrough/`：`model.mjs` 为唯一数值来源，`movie.mjs` / `movie.css` 为动画，`view.mjs` / `walkthrough.css` 为数值附录，维护说明见该目录 README。它使用人工 6 层二维模型，不是训练过的 DeepSeek 权重；第 9 token 由外部指定，短后缀重放明确标为近似。
 - 机制依据 DeepSeek-V4.1-Flash 论文 `2609.19969v1`、DSpark `2607.05147v1`、官方部署文章及 DeepInfer 固定提交 `9bd9cf243fc53ef9afbf8f04d391d989117d6ab9` 的源码与 Q&A。未找到以该框架为题的独立原论文，勿与同名项目混淆。
-- 维护后运行 `node scripts/check-deepinfer-walkthrough.mjs`，检查全长重放、截断误差传播、前缀缓存保留、增量 decode、因果性、索引复用和权重归一化；同时检查桌面/手机页面、全部 26 页、公式、手动/自动/暂停、正文图与首页入口。
+- 维护后运行 `node scripts/check-deepinfer-walkthrough.mjs`，检查全长重放、截断误差传播、前缀缓存保留、增量 decode、因果性、索引复用和权重归一化；同时检查桌面/手机页面、全部 23 页、公式、手动/自动/暂停、正文图与首页入口。
 - 本次按用户授权发布 DeepInfer 专题及首页入口；其他本地 Hot100、注意力代码和首页草稿不属于此发布范围。
+
+2026-10-23 用户确认发布动画阅读改进：控制栏移到讲解上方，补齐 CED 两路和 Top-k 选择说明，主放映收敛为 4 节 23 页。第四节同时展示前缀 1–8 全局缓存全部复用、位置 1–5 不重算和尾部 6–8 重放恢复局部 KV；旧 #replay 跳转到该节。详细维护说明见 assets/deepinfer-walkthrough/README.md。
