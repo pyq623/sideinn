@@ -1,10 +1,10 @@
 <!doctype html><html lang="zh-CN"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>看 prompt 怎样走过模型 · CED 连贯动画 · 支线客栈</title>
-<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="../assets/deepinfer-walkthrough/movie.css?v=20261023-2">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="../assets/deepinfer-walkthrough/movie.css?v=20261023-6">
 <script>window.MathJax={startup:{typeset:false},svg:{fontCache:'none'},options:{enableMenu:false}};</script>
 <script defer src="../assets/vendor/tex-svg.js"></script>
-<script type="module" src="../assets/deepinfer-walkthrough/movie.mjs?v=20261023-2"></script>
+<script type="module" src="../assets/deepinfer-walkthrough/movie.mjs?v=20261023-7"></script>
 </head><body>
 <header><a href="./deepinfer.html#section-3-1">← 回到 DeepInfer 笔记</a><span>支线客栈 · 动画讲解</span></header>
 <main>
@@ -13,21 +13,22 @@
 <p class="opening">看同一批编号方块经过 encoder、分成两路，再进入 decoder。<strong>编号一直代表同一个输入位置；变化的是它携带的隐藏状态。</strong> 点击“下一页”播放一个动作后停住，或选择“自动放映”连续观看。</p>
 <p class="scope">缩小教学例：8 个位置、6 层、窗口 3。配置和数值为人工设定；不是 DeepSeek 权重或语言能力复现。<a href="#audit">查看核对结果与依据 ↓</a></p>
 <section class="player" aria-label="CED 与有限重放动画">
-<div class="chapter-nav" aria-label="动画段落"><button data-jump="0">① 输入与 encoder</button><button data-jump="5">② 两路进入 decoder</button><button data-jump="15">③ 截断差异</button><button data-jump="17">④ 继续生成</button><button data-jump="22">⑤ 再次命中</button></div>
-<div class="caption" aria-live="polite"><p id="phase"></p><h2 id="frame-title">正在准备动画…</h2><p id="narration">正在载入同一个教学模型的中间状态。</p></div>
 <div class="transport"><button id="restart" aria-label="从头播放">↶ 从头</button><button id="prev" aria-label="上一页">← 上一页</button><button id="play" class="primary">自动放映</button><button id="next" aria-label="下一页">下一页 →</button><label>速度 <select id="speed"><option value="0.75">0.75×</option><option value="1" selected>1×</option><option value="1.5">1.5×</option><option value="2">2×</option></select></label><span id="frame-count"></span></div>
-<div class="legend"><span><i class="state"></i>移动的隐藏状态</span><span><i class="cache"></i>全局 KV：保留并读取</span><span><i class="local"></i>逐层局部 KV</span><span><i class="changed"></i>截断引起差异</span><button id="zoom" aria-pressed="false">放大画面</button></div>
+<div class="chapter-nav" aria-label="动画段落"><button data-jump="0">① 输入与 encoder</button><button data-jump="5">② 两路进入 decoder</button><button data-jump="14">③ 继续生成</button><button data-jump="19">④ 前缀复用与重放</button></div>
+<div class="caption" aria-live="polite"><p id="phase"></p><h2 id="frame-title">正在准备动画…</h2><p id="narration">正在载入同一个教学模型的中间状态。</p></div>
+<aside id="selection-flow" class="selection-flow" aria-label="索引选择与注意力计算" hidden></aside>
+<div class="legend"><span><i class="state"></i>移动的隐藏状态</span><span><i class="cache"></i>全局 KV：保留并读取</span><span><i class="local"></i>逐层局部 KV</span><button id="zoom" aria-pressed="false">放大画面</button></div>
 <div class="screen" id="screen"><svg id="board" viewBox="0 0 1000 610" role="img" aria-labelledby="board-title board-desc"><title id="board-title">同一段 prompt 的连续数据流</title><desc id="board-desc">动画正在加载。</desc></svg></div>
 <div class="live-value"><div><span>本页完成时的检查点</span><strong id="tracking">位置 8 · 暗号</strong></div><div id="math-value"></div><p id="cache-status"></p></div>
 
-<label class="timeline-label" for="timeline">放映进度 · 可拖动回看</label><input id="timeline" type="range" min="0" max="26" step="0.01" value="0" aria-label="动画进度">
+<label class="timeline-label" for="timeline">放映进度 · 可拖动回看</label><input id="timeline" type="range" min="0" max="23" step="0.01" value="0" aria-label="动画进度">
 <p class="player-foot"><span id="source-label"></span> · 动画顺序用于解释；同一层的 prompt 位置可并行计算。<span id="motion-note"></span></p>
 <p id="error" role="alert" hidden>动画加载失败，请刷新重试。</p>
 </section>
 <section class="audit" id="audit">
 <h2>这次核对了什么</h2>
 <p><strong>结论：核心数据流有依据；旧页面的二维算式只能证明自定义例子的内部一致性，不能证明真实模型的行为或精度。</strong>主动画现在始终保留编号与缓存位置，避免把“数值变了”“缓存共享了”“整层跳过了”混在一起。</p>
-<div class="audit-grid"><div><h3>有原始依据的机制</h3><ul><li>decoder 全局 KV 从 encoder 末层表示投影。</li><li>Full / Reindex / Reuse 仍计算当前层的主 Q 和局部 KV。</li><li>有限重放得到近似局部状态；旧全局内容仍可读取。</li><li>命中全局、缺失局部时，重放旧尾部不覆盖已命中的全局 KV。</li></ul></div><div><h3>本例的人工简化</h3><ul><li>6 层的模式排列、窗口 3、Top-2、二维权重。</li><li>K/V 绑定、简化索引器和残差更新；不含 MoE、RoPE、量化、mHC。</li><li>“蓝鲸”是外部指定的第 9 个 token，不是模型算出的答案。</li><li>数值差异不能用于估算真实模型的质量损失。</li></ul></div></div>
+<div class="audit-grid"><div><h3>有原始依据的机制</h3><ul><li>decoder 全局 KV 从 encoder 末层表示投影。</li><li>Full / Reindex / Reuse 仍计算当前层的主 Q 和局部 KV。</li><li>有限重放得到近似局部状态；旧全局内容仍可读取。</li><li>命中全局、缺失局部时，重放旧尾部不覆盖已命中的全局 KV。</li></ul></div><div><h3>本例的人工简化</h3><ul><li>6 层的模式排列、窗口 3、Top-2、二维权重。</li><li>K/V 绑定、简化索引器和残差更新；不含 MoE、RoPE、量化、mHC。</li><li>“蓝鲸”是外部指定的第 9 个 token，不是模型算出的答案。</li></ul></div></div>
 <p>还需区分：全局内容与局部状态可能都命中，此时无需 encoder 重放；动画最后一段专门演示“全局命中、局部缺失”的分支。真实模型是 40 层，encoder / decoder 各 20 层，不是本动画的 3 + 3。</p>
 <p>原始依据：<a href="https://arxiv.org/html/2609.19969v1#S2.S2" target="_blank" rel="noopener">论文 §2.2：CED</a> · <a href="https://arxiv.org/html/2609.19969v1#S2.S3" target="_blank" rel="noopener">§2.3：CSA2</a> · <a href="https://arxiv.org/html/2609.19969v1#S3.S2.S2" target="_blank" rel="noopener">§3.2.2：重放</a> · <a href="https://github.com/deepseek-ai/DeepInfer/blob/9bd9cf243fc53ef9afbf8f04d391d989117d6ab9/deepinfer/model_executor/models/v4_modules/attn.py#L668" target="_blank" rel="noopener">实现：全长 KV 写入与当前 Q/SWA</a> · <a href="https://github.com/deepseek-ai/DeepInfer/blob/9bd9cf243fc53ef9afbf8f04d391d989117d6ab9/doc/inference_deployment_qa.md#kv-cache-hits-and-recomputation" target="_blank" rel="noopener">官方部署 Q&amp;A</a>。</p>
 <p><a class="details-link" href="./deepinfer-walkthrough-details.html#input">需要复算时：展开完整数值、矩阵与逐层表格 →</a></p>
