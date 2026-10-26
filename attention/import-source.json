@@ -1,0 +1,29 @@
+{
+  "source": "Formulaic/content/docs/pyq-interview/2-attention-handwrite",
+  "entries": [
+    {
+      "id": "mha",
+      "source": "1-mha/mha_practice.py",
+      "file": "code/mha_practice.py",
+      "sha256": "10c46b0488d5f13077eafa15ea160aa2b6d212aa0e8608e4b4e07f4a5ec76148"
+    },
+    {
+      "id": "mqa",
+      "source": "2-mqa/mqa_practice.py",
+      "file": "code/mqa_practice.py",
+      "sha256": "611a88b49d06fc1f03f2c1464d985058c24f47d1852b75f7ba5f27e6e12ed512"
+    },
+    {
+      "id": "gqa",
+      "source": "3-gqa/gqa_practice.py",
+      "file": "code/gqa_practice.py",
+      "sha256": "588d60a1e2127ed68b8a9223357b360638971713205ba7845fd5fb8c7388a357"
+    },
+    {
+      "id": "mla",
+      "source": "4-mla/mla_handwrite.py",
+      "file": "code/mla_handwrite.py",
+      "sha256": "246cb57148cc522068183a5c1913f99b49e3d3e680dfc5ca133e7603c66875a7"
+    }
+  ]
+}

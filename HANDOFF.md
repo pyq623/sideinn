@@ -27,6 +27,7 @@ git clone https://github.com/pyq623/ai-study-notes.git ai-study-notes
 | 要修改的内容 | 文件或目录 |
 | --- | --- |
 | Hot100 目录、逐题正文、图片与复习标记 | `hot100/`；从用户 DOCX 用 `scripts/import-hot100.py` 导入，生成内容不手改；来源摘要见 `hot100/import-source.json` |
+| Attention 手写代码目录、阅读页与下载源码 | `attention/`；用 `scripts/import-attention.py` 从原笔记导入，来源与 SHA-256 见 `attention/import-source.json` |
 | 首页文案、结构、资源版本参数 | `index.html` |
 | 首页分类、搜索、卡片渲染 | `home.js` |
 | 首页布局和卡片封面 | `home.css` |
@@ -251,3 +252,20 @@ TTL 为 10 分钟；`CNAME` 文件只有 `sideinn.ink`。HTTPS 由 GitHub Pages 
 - 正文 `deepinfer.md` 第 3、5 章分别用醒目卡片链接 CED 与 DSpark 动画，第 6 章链接 DSpark 的 `#schedule`；卡片样式在 `assets/deepinfer.css`。本次范围是 DSpark 动画及这些正文入口。
 - 修改后运行 `node scripts/check-deepinfer-dspark.mjs`，核对预算最优值、连续前缀分配、接受/拒绝、Markov 修正、残差归一化和目标分布一致性；涉及 CED 时另跑 `node scripts/check-deepinfer-walkthrough.mjs`。浏览器检查桌面/手机全部 23 页、公式、流程图放大、手动/自动/暂停、章节跳转与正文入口。
 - 当前发布分支已完成数值检查及桌面/手机全页验证；正式上线仍需合并后按第 5 节核对对应部署与正式页面。
+
+### Attention 手写代码（2026-10-26）
+
+- 入口 `attention/index.html`，阅读页为 `mha.html`、`mqa.html`、`gqa.html`、`mla.html`；四份原始 Python 文件位于 `attention/code/`，首页入口由 `assets/notebook.json` 配置。页面支持代码高亮、复制、下载、最小调用及实现间导航。
+- 原笔记目录为 `Formulaic/content/docs/pyq-interview/2-attention-handwrite`。在本站根目录运行 `python3 scripts/import-attention.py /path/to/2-attention-handwrite`，只需 Python 标准库；运行页面示例另需 PyTorch。修改原始 `.py` 后重新导入，保持空白、缩进、注释和换行，不手改生成页面或格式化下载源码。
+- 模板与说明在 `scripts/import-attention.py`，专题样式与复制逻辑在 `attention/attention.css`、`attention/attention.js`。页面还依赖已跟踪的 `theme.css`、`hot100/hot100.css` 和站点 logo；改动共用样式时同时检查 Attention 与 Hot100。
+- 每次导入检查 `attention/import-source.json`，确认原文件、下载文件的 SHA-256 一致，页面完整代码的文本及剪贴板内容与原文件一致。当前四份源码的哈希如下；源码有授权修改时同步更新清单及下表。
+
+| 文件 | SHA-256 |
+| --- | --- |
+| `mha_practice.py` | `10c46b0488d5f13077eafa15ea160aa2b6d212aa0e8608e4b4e07f4a5ec76148` |
+| `mqa_practice.py` | `611a88b49d06fc1f03f2c1464d985058c24f47d1852b75f7ba5f27e6e12ed512` |
+| `gqa_practice.py` | `588d60a1e2127ed68b8a9223357b360638971713205ba7845fd5fb8c7388a357` |
+| `mla_handwrite.py` | `246cb57148cc522068183a5c1913f99b49e3d3e680dfc5ca133e7603c66875a7` |
+
+- 验证目录和四个阅读页在 1440、520、390px 下的导航、代码横向滚动、复制及剪贴板回退、`.py` 下载，并检查首页分类和搜索。运行四个最小调用，核对输出形状 `[2, 5, 16]`、有限值、因果遮罩和 key padding mask；每个 query 必须至少有一个可见 key。
+- 本次发布前已完成导入复现、源码/页面/复制/下载一致性和上述浏览器检查，四个示例及遮罩检查在 PyTorch 2.8 环境通过。范围限 Attention 页面及首页入口；正式上线仍需按第 5 节核对合并提交的部署和正式页面。

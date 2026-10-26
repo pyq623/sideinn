@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MHA 手写代码 · 支线客栈</title><meta name="description" content="MHA、MQA、GQA、MLA 的 PyTorch 手写代码，保留注释，支持复制与下载。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="../hot100/hot100.css?v=20261021-painted-logo">
+<link rel="stylesheet" href="./attention.css?v=20261021-mqa"><script defer src="./attention.js?v=20261021"></script></head>
+<body><a class="skip" href="#main">跳到正文</a><header class="top"><a class="brand" href="../"><img class="brand-logo" src="../assets/sideinn-logo-painted-v2-256.png" width="54" height="54" alt=""><span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">手写代码目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./">← 手写代码目录</a><nav aria-label="四个注意力实现"><a href="./mha.html" aria-current=page>MHA · 多头注意力</a><a href="./mqa.html" >MQA · 多查询注意力</a><a href="./gqa.html" >GQA · 分组查询注意力</a><a href="./mla.html" >MLA · 多头潜在注意力</a></nav><details open><summary>本页导航</summary><nav><a href="#implementation">完整代码</a><a href="#run">最小调用</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">ATTENTION / PYTORCH</div><h1>MHA · 多头注意力</h1><p class="metadata">Multi-Head Attention</p><p>Q、K、V 一次投影，再拆成多个头。重点复习 reshape、transpose、缩放点积与 mask。</p><p class="code-note">输入和输出均为 [B, S, D]；D 必须能被头数 H 整除。</p>
+<h2 id="implementation">完整代码</h2><div class="code-actions"><span>mha_practice.py</span><button type="button" data-copy="implementation-code">复制代码</button><a href="./code/mha_practice.py" download>下载 .py</a><span class="copy-status" role="status"></span></div><pre tabindex="0" aria-label="Python 代码"><code id="implementation-code" class="language-python"><span class="tok-keyword">import</span> math
+<span class="tok-keyword">import</span> torch 
+<span class="tok-keyword">import</span> torch.nn <span class="tok-keyword">as</span> nn
+<span class="tok-keyword">import</span> torch.nn.functional <span class="tok-keyword">as</span> F
+
+<span class="tok-keyword">class</span> MultiHeadAttention(nn.Module):
+    <span class="tok-keyword">def</span> __init__(self, d_model, num_heads, dropout=<span class="tok-number">0.0</span>):
+        super().__init__()
+
+        <span class="tok-keyword">assert</span> d_model % num_heads == <span class="tok-number">0</span>
+
+        self.d_model = d_model
+        self.num_heads = num_heads
+        self.head_dim = self.d_model // self.num_heads
+
+        self.dropout = nn.Dropout(dropout)
+
+        self.qkv_proj = nn.Linear(d_model, <span class="tok-number">3</span>*d_model)
+        self.out_proj = nn.Linear(d_model, d_model)
+
+    <span class="tok-keyword">def</span> forward(self, x, causal=<span class="tok-keyword">False</span>, attention_mask=<span class="tok-keyword">None</span>):
+        B, S, D = x.shape
+        qkv = self.qkv_proj(x)
+
+        qkv = qkv.view(B, S, <span class="tok-number">3</span>, self.num_heads, self.head_dim)
+        q, k, v = qkv.unbind(dim=<span class="tok-number">2</span>)
+
+        q = q.transpose(<span class="tok-number">1</span>, <span class="tok-number">2</span>)
+        k = k.transpose(<span class="tok-number">1</span>, <span class="tok-number">2</span>)
+        v = v.transpose(<span class="tok-number">1</span>, <span class="tok-number">2</span>)
+
+        scores = (q @ k.transpose(-<span class="tok-number">1</span>,-<span class="tok-number">2</span>)) / math.sqrt(self.head_dim)
+
+        <span class="tok-keyword">if</span> causal:
+            causal_mask = torch.triu(
+                torch.ones(S, S, device=x.device, dtype=torch.bool),
+                diagonal=<span class="tok-number">1</span>
+            )
+            scores = scores.masked_fill(causal_mask, float(<span class="tok-string">&quot;-inf&quot;</span>))
+
+        <span class="tok-keyword">if</span> attention_mask <span class="tok-keyword">is</span> <span class="tok-keyword">not</span> <span class="tok-keyword">None</span>:
+            mask = attention_mask[:, <span class="tok-keyword">None</span>, <span class="tok-keyword">None</span>, :].bool()
+            scores = scores.masked_fill(~mask, float(<span class="tok-string">&quot;-inf&quot;</span>))
+
+        scores = F.softmax(scores, dim=-<span class="tok-number">1</span>)
+        attn = self.dropout(scores)
+
+        attn = attn @ v
+
+        attn = attn.transpose(<span class="tok-number">1</span>, <span class="tok-number">2</span>).contiguous().view(B, S, D)
+
+        <span class="tok-keyword">return</span> self.out_proj(attn)</code></pre>
+<h2 id="run">最小调用</h2><p>安装 PyTorch 后，将下载的 <code>mha_practice.py</code> 放在当前目录，再运行下面的示例。<code>attention_mask</code> 中 1 表示有效 token；<code>causal=True</code> 屏蔽未来位置。</p><pre tabindex="0" aria-label="Python 代码"><code id="example-code" class="language-python"><span class="tok-keyword">import</span> torch
+<span class="tok-keyword">from</span> mha_practice <span class="tok-keyword">import</span> MultiHeadAttention
+
+model = MultiHeadAttention(d_model=<span class="tok-number">16</span>, num_heads=<span class="tok-number">4</span>).eval()
+x = torch.randn(<span class="tok-number">2</span>, <span class="tok-number">5</span>, <span class="tok-number">16</span>)  <span class="tok-comment"># [B, S, D]</span>
+mask = torch.ones(<span class="tok-number">2</span>, <span class="tok-number">5</span>, dtype=torch.bool)
+y = model(x, causal=<span class="tok-keyword">True</span>, attention_mask=mask)
+print(y.shape)  <span class="tok-comment"># torch.Size([2, 5, 16])</span>
+</code></pre>
+<p class="metadata">这四份实现的 padding mask 屏蔽的是 key 位置。调用时应保证每个参与计算的 query 至少有一个可见 key，避免整行被屏蔽后 softmax 产生 NaN。</p>
+<nav class="neighbors" aria-label="其他实现"><a href="./mqa.html">MQA · 多查询注意力 →</a><a href="./gqa.html">GQA · 分组查询注意力 →</a><a href="./mla.html">MLA · 多头潜在注意力 →</a></nav></main></div><footer class="footer">支线客栈 · 注意力手写代码 <span>Python / PyTorch · MHA / MQA / GQA / MLA</span></footer></body></html>
