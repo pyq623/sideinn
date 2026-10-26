@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MLA 手写代码 · 支线客栈</title><meta name="description" content="MHA、MQA、GQA、MLA 的 PyTorch 手写代码，保留注释，支持复制与下载。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="../hot100/hot100.css?v=20261021-painted-logo">
+<link rel="stylesheet" href="./attention.css?v=20261021-mqa"><script defer src="./attention.js?v=20261021"></script></head>
+<body><a class="skip" href="#main">跳到正文</a><header class="top"><a class="brand" href="../"><img class="brand-logo" src="../assets/sideinn-logo-painted-v2-256.png" width="54" height="54" alt=""><span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">手写代码目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./">← 手写代码目录</a><nav aria-label="四个注意力实现"><a href="./mha.html" >MHA · 多头注意力</a><a href="./mqa.html" >MQA · 多查询注意力</a><a href="./gqa.html" >GQA · 分组查询注意力</a><a href="./mla.html" aria-current=page>MLA · 多头潜在注意力</a></nav><details open><summary>本页导航</summary><nav><a href="#implementation">完整代码</a><a href="#run">最小调用</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">ATTENTION / PYTORCH</div><h1>MLA · 多头潜在注意力</h1><p class="metadata">Multi-Head Latent Attention</p><p>先把 KV 压缩到共享 latent，再展开内容 K/V，并组合独立的 RoPE 分支。保留 RMSNorm 与 RoPE 辅助函数。</p><p class="code-note">这是显式展开 K/V 的教学实现；当前 forward 没有增量 KV cache 接口。</p>
+<h2 id="implementation">完整代码</h2><div class="code-actions"><span>mla_handwrite.py</span><button type="button" data-copy="implementation-code">复制代码</button><a href="./code/mla_handwrite.py" download>下载 .py</a><span class="copy-status" role="status"></span></div><pre tabindex="0" aria-label="Python 代码"><code id="implementation-code" class="language-python"><span class="tok-keyword">import</span> math
+
+<span class="tok-keyword">import</span> torch
+<span class="tok-keyword">import</span> torch.nn <span class="tok-keyword">as</span> nn
+<span class="tok-keyword">import</span> torch.nn.functional <span class="tok-keyword">as</span> F
+
+
+<span class="tok-keyword">class</span> RMSNorm(nn.Module):
+    <span class="tok-string">&quot;&quot;&quot;RMS normalization used for the compressed KV latent.&quot;&quot;&quot;</span>
+
+    <span class="tok-keyword">def</span> __init__(self, dim, eps=<span class="tok-number">1e-6</span>):
+        super().__init__()
+        self.eps = eps
+        self.weight = nn.Parameter(torch.ones(dim))
+
+    <span class="tok-keyword">def</span> forward(self, x):
+        dtype = x.dtype
+        x_float = x.float()
+        normalized = x_float * torch.rsqrt(
+            x_float.pow(<span class="tok-number">2</span>).mean(dim=-<span class="tok-number">1</span>, keepdim=<span class="tok-keyword">True</span>) + self.eps
+        )
+        <span class="tok-keyword">return</span> normalized.to(dtype) * self.weight
+
+
+<span class="tok-keyword">def</span> apply_rotary_embedding(x, base=<span class="tok-number">10_000.0</span>, position_offset=<span class="tok-number">0</span>):
+    <span class="tok-string">&quot;&quot;&quot;Apply RoPE to pairs in the last dimension of [B, H, S, R].&quot;&quot;&quot;</span>
+    rope_dim = x.size(-<span class="tok-number">1</span>)
+    <span class="tok-keyword">if</span> rope_dim == <span class="tok-number">0</span>:
+        <span class="tok-keyword">return</span> x
+    <span class="tok-keyword">if</span> rope_dim % <span class="tok-number">2</span> != <span class="tok-number">0</span>:
+        <span class="tok-keyword">raise</span> ValueError(<span class="tok-string">&quot;qk_rope_head_dim must be even&quot;</span>)
+
+    seq_len = x.size(-<span class="tok-number">2</span>)
+    positions = torch.arange(
+        position_offset,
+        position_offset + seq_len,
+        device=x.device,
+        dtype=torch.float32,
+    )
+    dimensions = torch.arange(<span class="tok-number">0</span>, rope_dim, <span class="tok-number">2</span>, device=x.device).float()
+    inverse_frequencies = base ** (-dimensions / rope_dim)
+    angles = torch.outer(positions, inverse_frequencies)
+    cos = angles.cos()[<span class="tok-keyword">None</span>, <span class="tok-keyword">None</span>, :, :]
+    sin = angles.sin()[<span class="tok-keyword">None</span>, <span class="tok-keyword">None</span>, :, :]
+
+    dtype = x.dtype
+    x_float = x.float()
+    x_even = x_float[..., <span class="tok-number">0</span>::<span class="tok-number">2</span>]
+    x_odd = x_float[..., <span class="tok-number">1</span>::<span class="tok-number">2</span>]
+    rotated = torch.stack(
+        (x_even * cos - x_odd * sin, x_even * sin + x_odd * cos),
+        dim=-<span class="tok-number">1</span>,
+    ).flatten(-<span class="tok-number">2</span>)
+    <span class="tok-keyword">return</span> rotated.to(dtype)
+
+
+<span class="tok-keyword">class</span> MultiHeadLatentAttention(nn.Module):
+    <span class="tok-string">&quot;&quot;&quot;Interview-oriented DeepSeek-style Multi-Head Latent Attention.&quot;&quot;&quot;</span>
+
+    <span class="tok-keyword">def</span> __init__(
+        self,
+        d_model,
+        num_heads,
+        kv_lora_rank,
+        qk_nope_head_dim,
+        qk_rope_head_dim,
+        value_head_dim,
+        dropout=<span class="tok-number">0.0</span>,
+        rope_base=<span class="tok-number">10_000.0</span>,
+    ):
+        super().__init__()
+
+        <span class="tok-keyword">if</span> d_model &lt;= <span class="tok-number">0</span> <span class="tok-keyword">or</span> num_heads &lt;= <span class="tok-number">0</span>:
+            <span class="tok-keyword">raise</span> ValueError(<span class="tok-string">&quot;d_model and num_heads must be positive&quot;</span>)
+        <span class="tok-keyword">if</span> kv_lora_rank &lt;= <span class="tok-number">0</span>:
+            <span class="tok-keyword">raise</span> ValueError(<span class="tok-string">&quot;kv_lora_rank must be positive&quot;</span>)
+        <span class="tok-keyword">if</span> qk_nope_head_dim &lt; <span class="tok-number">0</span> <span class="tok-keyword">or</span> qk_rope_head_dim &lt; <span class="tok-number">0</span>:
+            <span class="tok-keyword">raise</span> ValueError(<span class="tok-string">&quot;Q/K head dimensions cannot be negative&quot;</span>)
+        <span class="tok-keyword">if</span> qk_nope_head_dim + qk_rope_head_dim == <span class="tok-number">0</span>:
+            <span class="tok-keyword">raise</span> ValueError(<span class="tok-string">&quot;Q/K head dimension must be positive&quot;</span>)
+        <span class="tok-keyword">if</span> qk_rope_head_dim % <span class="tok-number">2</span> != <span class="tok-number">0</span>:
+            <span class="tok-keyword">raise</span> ValueError(<span class="tok-string">&quot;qk_rope_head_dim must be even&quot;</span>)
+        <span class="tok-keyword">if</span> value_head_dim &lt;= <span class="tok-number">0</span>:
+            <span class="tok-keyword">raise</span> ValueError(<span class="tok-string">&quot;value_head_dim must be positive&quot;</span>)
+
+        self.d_model = d_model
+        self.num_heads = num_heads
+        self.kv_lora_rank = kv_lora_rank
+        self.qk_nope_head_dim = qk_nope_head_dim
+        self.qk_rope_head_dim = qk_rope_head_dim
+        self.qk_head_dim = qk_nope_head_dim + qk_rope_head_dim
+        self.value_head_dim = value_head_dim
+        self.rope_base = rope_base
+
+        <span class="tok-comment"># Q remains multi-head, then splits into non-positional and RoPE parts.</span>
+        self.q_proj = nn.Linear(d_model, num_heads * self.qk_head_dim)
+
+        <span class="tok-comment"># The down projection emits one shared KV latent plus one shared RoPE K.</span>
+        self.kv_down_proj = nn.Linear(
+            d_model,
+            kv_lora_rank + qk_rope_head_dim,
+        )
+        self.kv_norm = RMSNorm(kv_lora_rank)
+
+        <span class="tok-comment"># The latent is expanded into each head&#x27;s non-positional K and V.</span>
+        self.kv_up_proj = nn.Linear(
+            kv_lora_rank,
+            num_heads * (qk_nope_head_dim + value_head_dim),
+        )
+        self.out_proj = nn.Linear(num_heads * value_head_dim, d_model)
+        self.dropout = nn.Dropout(dropout)
+
+    <span class="tok-keyword">def</span> forward(self, x, causal=<span class="tok-keyword">False</span>, attention_mask=<span class="tok-keyword">None</span>):
+        B, S, D = x.shape
+        <span class="tok-keyword">if</span> D != self.d_model:
+            <span class="tok-keyword">raise</span> ValueError(<span class="tok-string">f&quot;expected input dimension {self.d_model}, got {D}&quot;</span>)
+
+        <span class="tok-comment"># Q: [B, S, H * (D_nope + D_rope)] -&gt; [B, H, S, Dqk]</span>
+        q = self.q_proj(x)
+        q = q.view(B, S, self.num_heads, self.qk_head_dim).transpose(<span class="tok-number">1</span>, <span class="tok-number">2</span>)
+        q_nope, q_rope = q.split(
+            [self.qk_nope_head_dim, self.qk_rope_head_dim],
+            dim=-<span class="tok-number">1</span>,
+        )
+        q_rope = apply_rotary_embedding(q_rope, self.rope_base)
+
+        <span class="tok-comment"># Compress x into the latent cached by MLA and a shared positional key.</span>
+        compressed = self.kv_down_proj(x)
+        kv_latent, k_rope = compressed.split(
+            [self.kv_lora_rank, self.qk_rope_head_dim],
+            dim=-<span class="tok-number">1</span>,
+        )
+
+        <span class="tok-comment"># Expand only for the straightforward training/interview computation.</span>
+        kv = self.kv_up_proj(self.kv_norm(kv_latent))
+        kv = kv.view(
+            B,
+            S,
+            self.num_heads,
+            self.qk_nope_head_dim + self.value_head_dim,
+        ).transpose(<span class="tok-number">1</span>, <span class="tok-number">2</span>)
+        k_nope, v = kv.split(
+            [self.qk_nope_head_dim, self.value_head_dim],
+            dim=-<span class="tok-number">1</span>,
+        )
+
+        <span class="tok-comment"># One positional K is shared by all heads; expand creates only a view.</span>
+        k_rope = apply_rotary_embedding(k_rope.unsqueeze(<span class="tok-number">1</span>), self.rope_base)
+        k_rope = k_rope.expand(-<span class="tok-number">1</span>, self.num_heads, -<span class="tok-number">1</span>, -<span class="tok-number">1</span>)
+
+        q = torch.cat((q_nope, q_rope), dim=-<span class="tok-number">1</span>)
+        k = torch.cat((k_nope, k_rope), dim=-<span class="tok-number">1</span>)
+        scores = (q @ k.transpose(-<span class="tok-number">1</span>, -<span class="tok-number">2</span>)) / math.sqrt(self.qk_head_dim)
+
+        <span class="tok-keyword">if</span> causal:
+            causal_mask = torch.triu(
+                torch.ones(S, S, dtype=torch.bool, device=x.device),
+                diagonal=<span class="tok-number">1</span>,
+            )
+            scores = scores.masked_fill(causal_mask, float(<span class="tok-string">&quot;-inf&quot;</span>))
+
+        <span class="tok-keyword">if</span> attention_mask <span class="tok-keyword">is</span> <span class="tok-keyword">not</span> <span class="tok-keyword">None</span>:
+            mask = attention_mask[:, <span class="tok-keyword">None</span>, <span class="tok-keyword">None</span>, :].bool()
+            scores = scores.masked_fill(~mask, float(<span class="tok-string">&quot;-inf&quot;</span>))
+
+        attention = F.softmax(scores, dim=-<span class="tok-number">1</span>)
+        attention = self.dropout(attention)
+
+        out = attention @ v
+        out = out.transpose(<span class="tok-number">1</span>, <span class="tok-number">2</span>).contiguous().view(
+            B,
+            S,
+            self.num_heads * self.value_head_dim,
+        )
+        <span class="tok-keyword">return</span> self.out_proj(out)
+</code></pre>
+<h2 id="run">最小调用</h2><p>安装 PyTorch 后，将下载的 <code>mla_handwrite.py</code> 放在当前目录，再运行下面的示例。<code>attention_mask</code> 中 1 表示有效 token；<code>causal=True</code> 屏蔽未来位置。</p><pre tabindex="0" aria-label="Python 代码"><code id="example-code" class="language-python"><span class="tok-keyword">import</span> torch
+<span class="tok-keyword">from</span> mla_handwrite <span class="tok-keyword">import</span> MultiHeadLatentAttention
+
+model = MultiHeadLatentAttention(
+    d_model=<span class="tok-number">16</span>, num_heads=<span class="tok-number">4</span>, kv_lora_rank=<span class="tok-number">6</span>,
+    qk_nope_head_dim=<span class="tok-number">4</span>, qk_rope_head_dim=<span class="tok-number">2</span>, value_head_dim=<span class="tok-number">4</span>,
+).eval()
+x = torch.randn(<span class="tok-number">2</span>, <span class="tok-number">5</span>, <span class="tok-number">16</span>)  <span class="tok-comment"># [B, S, D]</span>
+mask = torch.ones(<span class="tok-number">2</span>, <span class="tok-number">5</span>, dtype=torch.bool)
+y = model(x, causal=<span class="tok-keyword">True</span>, attention_mask=mask)
+print(y.shape)  <span class="tok-comment"># torch.Size([2, 5, 16])</span>
+</code></pre>
+<p class="metadata">这四份实现的 padding mask 屏蔽的是 key 位置。调用时应保证每个参与计算的 query 至少有一个可见 key，避免整行被屏蔽后 softmax 产生 NaN。</p>
+<nav class="neighbors" aria-label="其他实现"><a href="./mha.html">MHA · 多头注意力 →</a><a href="./mqa.html">MQA · 多查询注意力 →</a><a href="./gqa.html">GQA · 分组查询注意力 →</a></nav></main></div><footer class="footer">支线客栈 · 注意力手写代码 <span>Python / PyTorch · MHA / MQA / GQA / MLA</span></footer></body></html>

@@ -42,6 +42,28 @@
     "readLabel": "开始复习"
   },
   {
+    "id": "attention-handwrite",
+    "coverLabel": "ATTN",
+    "href": "./attention/",
+    "title": "注意力手写代码：MHA、MQA、GQA、MLA",
+    "english": "Attention · PyTorch Handwritten Implementations",
+    "category": "模型手写代码",
+    "tags": [
+      "MHA",
+      "MQA",
+      "GQA",
+      "MLA",
+      "Attention",
+      "PyTorch",
+      "手写代码"
+    ],
+    "summary": "四份独立的注意力手写实现，保留原代码与注释，配有最小调用示例。对照复习多头拆分、KV 分组共享与低秩压缩，支持复制完整代码和下载 Python 文件。",
+    "updated": "2026-10-21",
+    "details": "4 份代码 · 独立阅读 · 复制与下载",
+    "coverFooter": "MODEL IMPLEMENTATION",
+    "readLabel": "查看代码"
+  },
+  {
     "id": "rsi",
     "href": "./notes/rsi.html",
     "title": "RSI 递归自我改进",
