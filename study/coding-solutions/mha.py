@@ -1,6 +1,5 @@
-# 基于站主已有练习实现；仅补充全 mask 行的处理。
 import math
-import torch
+import torch 
 import torch.nn as nn
 import torch.nn.functional as F
 
@@ -43,11 +42,7 @@ class MultiHeadAttention(nn.Module):
             mask = attention_mask[:, None, None, :].bool()
             scores = scores.masked_fill(~mask, float("-inf"))
 
-        # 补充：全 mask 行的注意力权重定义为零，避免 softmax(-inf) 的 NaN。
-        all_masked = torch.isneginf(scores).all(dim=-1, keepdim=True)
-        scores = scores.masked_fill(all_masked, 0.0)
         scores = F.softmax(scores, dim=-1)
-        scores = scores.masked_fill(all_masked, 0.0)
         attn = self.dropout(scores)
 
         attn = attn @ v

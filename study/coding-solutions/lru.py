@@ -1,48 +1,57 @@
 class ListNode:
     def __init__(self, key=0, val=0):
-        self.key, self.val = key, val
-        self.prev = self.next = None
-
+        self.val = val
+        self.key = key
+        self.prev = None
+        self.next = None
 
 class LRUCache:
-    """沿用原笔记约定：头部最旧，尾部最新。"""
-    def __init__(self, capacity):
-        if capacity < 0:
-            raise ValueError("capacity 必须非负")
-        self.capacity = capacity
-        self.nodes = {}
-        self.head, self.tail = ListNode(), ListNode()
-        self.head.next, self.tail.prev = self.tail, self.head
 
-    def _remove(self, node):
+    def __init__(self, capacity: int):
+        self.capacity = capacity
+        self.hast_dict = dict()
+        self.head = ListNode()
+        self.tail = ListNode()
+        self.head.next = self.tail
+        self.tail.prev = self.head
+
+    def move_to_tail(self, key):
+        node = self.hast_dict[key]
+        # 从当前位置摘出
         node.prev.next = node.next
         node.next.prev = node.prev
-
-    def _append(self, node):
-        node.prev, node.next = self.tail.prev, self.tail
+        # 插到 tail 前面
+        node.prev = self.tail.prev
+        node.next = self.tail
+        # 要先写这个长的，不然先写 self.tail.prev = node的话，tail.prev已经改变了
         self.tail.prev.next = node
         self.tail.prev = node
 
-    def get(self, key):
-        node = self.nodes.get(key)
-        if node is None:
-            return -1
-        self._remove(node)
-        self._append(node)
-        return node.val
-
-    def put(self, key, value):
-        if self.capacity == 0:
-            return
-        node = self.nodes.get(key)
-        if node is not None:
-            node.val = value
-            self._remove(node)
+    def get(self, key: int) -> int:
+        node = self.hast_dict.get(key)
+        if node:
+            self.move_to_tail(node.key)
+            return node.val
         else:
-            node = ListNode(key, value)
-            self.nodes[key] = node
-        self._append(node)
-        if len(self.nodes) > self.capacity:
-            old = self.head.next
-            self._remove(old)
-            del self.nodes[old.key]
+            return -1
+
+    def put(self, key: int, value: int) -> None:
+        if key in self.hast_dict:
+            self.hast_dict[key].val = value
+            self.move_to_tail(key)
+        else:
+            if len(self.hast_dict) == self.capacity:
+                # 弹出头部的节点
+                self.hast_dict.pop(self.head.next.key)
+                # 先将下一个节点更新
+                self.head.next = self.head.next.next
+                # 此时再将下一个节点指向head节点
+                self.head.next.prev = self.head
+                # 如果先 self.head.next.prev =  self.head 这就没意义，因为此时本来就是head
+
+            self.hast_dict[key] = ListNode(key=key, val=value)
+            node = self.hast_dict[key]
+            node.prev = self.tail.prev
+            node.next = self.tail
+            self.tail.prev.next = node
+            self.tail.prev = node
