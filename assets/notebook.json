@@ -1,5 +1,28 @@
 [
   {
+    "id": "coding-practice",
+    "coverLabel": "CODE",
+    "href": "./study/coding-practice.html",
+    "title": "面试手撕专项复习",
+    "english": "Coding Interview · Python Practice",
+    "category": "面试手撕专项复习",
+    "tags": [
+      "AI Infra",
+      "Python",
+      "MHA",
+      "GQA",
+      "MQA",
+      "LRU",
+      "sqrt",
+      "手撕"
+    ],
+    "summary": "按知识点与岗位组织手撕练习。AI Infra 专题包含题面、提示、Python 参考实现、自测清单与题型依据，可保存代码草稿和复习进度。",
+    "updated": "2026-10-26",
+    "details": "1 个专题 · 11 道题 · 5 道必练",
+    "coverFooter": "INTERVIEW PRACTICE",
+    "readLabel": "进入专项复习"
+  },
+  {
     "id": "deepinfer",
     "coverLabel": "DEEP INFER",
     "href": "./notes/deepinfer.html",

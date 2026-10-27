@@ -30,6 +30,8 @@ nav = '<nav class="site-nav" aria-label="全站导航">'
 notice = '<p>本专题由 pyq623 整理，合并至支线客栈时统一了导航与阅读样式，讲义与题目保持原样。旧网址的答题与口述记录不会自动转移，请在旧站导出留存。</p>'
 for page in destination.glob('*.html'):
     content = page.read_text()
+    if page.name.startswith('coding-'):
+        content = content.replace('href="https://sideinn.ink/', 'href="../')
     if old_brand not in content or nav not in content:
         raise SystemExit('Source navigation changed; review importer: ' + page.name)
     content = content.replace(old_brand, new_brand, 1)
@@ -48,7 +50,7 @@ for page in destination.glob('*.html'):
     content = content.replace('<div class="wrap">' + header[0], clean_header + '<div class="wrap">', 1)
     switcher = '<details class="reader-chapters"><summary>切换章节</summary>' + chapter_nav + '</details>' if chapter_nav else ''
     toc_intro = '<a class="reader-back" href="../#notebooks">← 返回笔记目录</a><p class="reader-label">阅读目录</p>'
-    breadcrumbs = '<div class="reader-meta">支线客栈 / ' + ('面试与项目表达' if 'class="area-interview"' in content else '基础与笔试') + '</div>'
+    breadcrumbs = '<div class="reader-meta">支线客栈 / ' + ('面试手撕专项复习' if 'class="area-coding"' in content else '面试与项目表达' if 'class="area-interview"' in content else '基础与笔试') + '</div>'
     if '<div class="course-layout">' in content:
         # Interview title/controls originally sit above the two-column reader.
         opening = re.search(r'<div class="wrap">(.*?)<div class="course-layout">', content, re.S)
@@ -60,6 +62,8 @@ for page in destination.glob('*.html'):
     else:
         # Collection, sources and print pages share the same shell without fabricating a TOC.
         links = chapter_nav or '<nav class="site-nav chapter-nav"><a href="study.html">基础与工程笔记</a><a href="interview.html">面试笔记</a><a href="interview-research.html">面经与追问</a><a href="about.html">关于与许可</a></nav>'
+        if 'class="area-coding"' in content:
+            links = '<nav class="site-nav chapter-nav"><a href="coding-practice.html">手撕专项目录</a><a href="coding-ai-infra.html">AI Infra</a></nav>'
         sidebar = '<aside class="course-toc" id="reader-toc" aria-label="阅读目录">' + toc_intro + '<details open><summary>专题导航</summary>' + links + '</details></aside>'
         content = content.replace('<div class="wrap">', '<div class="wrap"><div class="course-layout reader-overview">' + sidebar, 1)
         content = content.replace('</main>', '</main></div>', 1)
