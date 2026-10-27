@@ -15,6 +15,7 @@ GitHub Pages 入口：https://pyq623.github.io/sideinn/ （自动跳转到正式
 - DeepInfer 笔记配套 [CED 连续演示](notes/deepinfer-walkthrough.html)和 [DSpark 调度与验证动画](notes/deepinfer-dspark.html)，各 4 节、23 页，支持手动翻页与自动放映。DSpark 沿用两条请求讲解草稿生成、预算分配、目标验证和交付；概率与耗时为教学设定。
 - AI 基础与工程笔记：8 个主题单元和工程专题，208 道交互练习。
 - Agentic RL 面试笔记：5 个单元、60 道练习、20 道口述追问，附面经整理和打印总册。
+- [AI Infra 手撕专项](study/coding-practice.html)：11 道 Python/PyTorch 练习，其中 5 道必练，支持草稿、复习状态和 JSON 导出；网页不执行代码或自动判题。
 - [注意力手写代码](attention/)：MHA、MQA、GQA、MLA 四份 PyTorch 实现，保留原代码与注释，支持复制、下载和最小调用示例。
 - 笔记分类、搜索、章节导航、公式和图解、Markdown 下载、打印。
 - 编辑草稿只保存在读者当前浏览器中，不会修改公开网站。

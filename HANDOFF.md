@@ -269,3 +269,11 @@ TTL 为 10 分钟；`CNAME` 文件只有 `sideinn.ink`。HTTPS 由 GitHub Pages 
 
 - 验证目录和四个阅读页在 1440、520、390px 下的导航、代码横向滚动、复制及剪贴板回退、`.py` 下载，并检查首页分类和搜索。运行四个最小调用，核对输出形状 `[2, 5, 16]`、有限值、因果遮罩和 key padding mask；每个 query 必须至少有一个可见 key。
 - 本次发布前已完成导入复现、源码/页面/复制/下载一致性和上述浏览器检查，四个示例及遮罩检查在 PyTorch 2.8 环境通过。范围限 Attention 页面及首页入口；正式上线仍需按第 5 节核对合并提交的部署和正式页面。
+
+### 2026-10-27 · AI Infra 手撕专项
+
+- 入口 `/study/coding-practice.html`，专题 `/study/coding-ai-infra.html`，首页增加对应卡片。11 道 Python/PyTorch 题，5 道必练，支持搜索、优先级/状态筛选、草稿、自测、参考代码复制下载与 JSON 导出。网页不执行代码、不自动判题。
+- 源码位于 ai-study-notes 的 `content/coding/`、`scripts/coding_practice.py` 与 `assets/coding-*`，按现有导入流程维护。保留 AI-01、AI-03 至 AI-12 的题号，不因删除或排序而重编号。
+- 复习记录使用当前域名 localStorage 的 `sideinn:coding:ai-infra:v1`；`?preview=1` 隔离验证数据。本地预览记录不会自动迁移到正式域名。
+- 公开内容仅使用通用岗位与题型名称。两道字符串题沿用 Hot100 的滑动窗口/二维 DP 实现，仅转换为普通函数。稳定与 Online Softmax 相邻，附张量维度和缩放解释。
+- 构建网站不需要 PyTorch；运行 Attention 和张量 Softmax 示例需另行安装。上游 `npm test` 会在已安装 PyTorch 时运行 `tests/test_coding_torch.py` 的数值测试，未安装时明确跳过该组测试。
