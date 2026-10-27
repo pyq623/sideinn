@@ -275,5 +275,11 @@ TTL 为 10 分钟；`CNAME` 文件只有 `sideinn.ink`。HTTPS 由 GitHub Pages 
 - 入口 `/study/coding-practice.html`，专题 `/study/coding-ai-infra.html`，首页增加对应卡片。11 道 Python/PyTorch 题，5 道必练，支持搜索、优先级/状态筛选、草稿、自测、参考代码复制下载与 JSON 导出。网页不执行代码、不自动判题。
 - 源码位于 ai-study-notes 的 `content/coding/`、`scripts/coding_practice.py` 与 `assets/coding-*`，按现有导入流程维护。保留 AI-01、AI-03 至 AI-12 的题号，不因删除或排序而重编号。
 - 复习记录使用当前域名 localStorage 的 `sideinn:coding:ai-infra:v1`；`?preview=1` 隔离验证数据。本地预览记录不会自动迁移到正式域名。
-- 公开内容仅使用通用岗位与题型名称。两道字符串题沿用 Hot100 的滑动窗口/二维 DP 实现，仅转换为普通函数。稳定与 Online Softmax 相邻，附张量维度和缩放解释。
+- 公开内容仅使用通用岗位与题型名称。所有有对应原笔记的 8 道题均保留原版解法、变量与注释：MHA/MQA/GQA、LRU、不同路径、最小路径和、两道字符串题；Hot100 无状态方法仅转换为普通函数，必要时补充类型导入。稳定与 Online Softmax 相邻，附张量维度和缩放解释。
 - 构建网站不需要 PyTorch；运行 Attention 和张量 Softmax 示例需另行安装。上游 `npm test` 会在已安装 PyTorch 时运行 `tests/test_coding_torch.py` 的数值测试，未安装时明确跳过该组测试。
+
+### 2026-10-27 · 原版答案校正
+
+- 上游 PR #8 恢复已有笔记的原实现；不同路径与最小路径和使用原二维 DP，Attention 每个 query 至少有一个可见 key，LRU capacity 为正整数。不要为扩展题目边界而改写用户熟悉的解法。
+- 上游 `content/coding/original-solutions.json` 保存 8 份答案的来源与校验值；修改原答案需根据用户要求核对原笔记。保留题号与存储键。
+- 上游构建、41 项 Python 测试、14 项 Node 测试通过；另外 6 项 PyTorch 数值测试全部通过。页面代码与下载文件均核对原版一致。

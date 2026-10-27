@@ -59,3 +59,5 @@ python3 -m http.server 8000 --bind 127.0.0.1
 Marked 和 MathJax 的许可随文件保存在 `assets/vendor/`。引用的 SGLang 官方图出处见 `assets/infra-diagrams/SOURCES.md`；论文和资料来源保留在各篇笔记中。第三方资源遵循各自许可，其他内容未在此授予额外许可。
 
 `study/` 导入资料由 pyq623 整理，其代码与样式采用 MIT，原创内容采用 CC BY 4.0；具体范围见该目录的 `LICENSE`、`LICENSE-CONTENT.md` 和 `THIRD_PARTY_NOTICES.md`。KaTeX 许可保留在 `study/assets/katex/LICENSE`。这些许可不扩展到本站其他内容。
+
+手撕专项中有对应 Attention / Hot100 笔记的题目保留原版解法、变量与注释；无状态 Hot100 方法仅转换为普通函数。校验清单位于上游 `content/coding/original-solutions.json`，维护时不要自行替换为其他解法。
