@@ -131,7 +131,7 @@ function tick(now){if(!playing)return;if(last)update(time+Math.min((now-last)/10
 function play(){if(!ready)return;cancelAnimationFrame(raf);if(time>=duration)update(0);playing=true;last=0;$('play').textContent='暂停放映';$('play').setAttribute('aria-pressed','true');raf=requestAnimationFrame(tick);}
 function jump(i){stop();const target=Math.max(0,Math.min(frames.length-1,i));update(starts[target],true);if(reduced){update(starts[target]+frames[target][3]*.99);return;}let began;function pageTurn(now){began??=now;const p=Math.min(1,(now-began)/2200);update(starts[target]+frames[target][3]*.99*p);if(p<1)raf=requestAnimationFrame(pageTurn);}raf=requestAnimationFrame(pageTurn);}
 async function init(){await MathJax.startup.promise;await prepare();ready=true;$('timeline').max=String(frames.length);
- const hash=location.hash.slice(1),aliases={input:0,encoder:2,fork:5,full:7,reindex:10,reuse:12,replay:19,decode:14,pool:17,restore:19,summary:22};
+ const hash=location.hash.slice(1),aliases={input:0,encoder:2,'ced-output':4,fork:5,tail:6,full:7,reindex:10,reuse:12,replay:19,decode:14,pool:17,restore:19,summary:22};
  update(starts[aliases[hash]??0],true);$('play').setAttribute('aria-pressed','false');
  $('play').addEventListener('click',()=>playing?stop():play());$('restart').addEventListener('click',()=>{stop();update(0,true);play();});$('prev').addEventListener('click',()=>jump(frame-1));$('next').addEventListener('click',()=>jump(frame+1));
  $('speed').addEventListener('change',()=>{speed=Number($('speed').value);});$('timeline').addEventListener('input',()=>{stop();const v=Number($('timeline').value),i=Math.min(frames.length-1,Math.floor(v));update(v>=frames.length?duration:starts[i]+(v-i)*frames[i][3],true);});

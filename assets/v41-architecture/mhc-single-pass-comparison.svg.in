@@ -1,0 +1,138 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="870" viewBox="0 0 1200 870" role="img" aria-labelledby="title desc"><title id="title">mHC 与 Single-Pass mHC：输入混合系数从哪里来</title><desc id="desc">左右两图均从下往上读。左图当前残差预测的 A l 用于当前 Pre Mapping；右图使用上一子层的 A l减1，当前预测的 A l 沿蓝色虚线交给下一子层。B l 与 C l 均由当前残差预测，供当前 Res 与 Post Mapping 使用。</desc><defs><marker id="arrow" markerWidth="7" markerHeight="7" refX="6.2" refY="3.5" orient="auto"><path d="M0 0L7 3.5L0 7Z" fill="#343434"/></marker><marker id="coef" markerWidth="7" markerHeight="7" refX="6.2" refY="3.5" orient="auto"><path d="M0 0L7 3.5L0 7Z" fill="#2c75a4"/></marker></defs><style>text{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;fill:#262626}.wire{fill:none;stroke:#343434;stroke-width:1.8;marker-end:url(#arrow)}.coef{fill:none;stroke:#2c75a4;stroke-width:2;stroke-dasharray:6 4;marker-end:url(#coef)}</style>
+<g transform="translate(0 0)">
+<text x="300" y="33" text-anchor="middle" font-size="27" font-weight="650" style="fill:#262626">mHC</text>
+<text x="300" y="63" text-anchor="middle" font-size="17" font-weight="400" style="fill:#5b6d67">等待当前子层预测输入混合系数</text>
+<rect x="18" y="85" width="564" height="565" rx="18" fill="#f2f2f2" stroke="none"/>
+<text x="40" y="114" text-anchor="start" font-size="16" font-weight="650" style="fill:#262626">当前子层 · 局部展开</text>
+<rect x="115" y="134" width="68" height="28" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<rect x="112" y="137" width="68" height="28" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<rect x="109" y="140" width="68" height="28" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<rect x="106" y="143" width="68" height="28" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<g data-tex="X_{l+1}" data-label="" data-x="140" data-y="164" data-size="21" data-anchor="middle" data-color="#252525"/>
+<circle cx="140" cy="224" r="14" fill="white" stroke="#343434" stroke-width="1.5"/>
+<g data-tex="+" data-label="" data-x="140" data-y="231" data-size="24" data-anchor="middle" data-color="#252525"/>
+<path class="wire" d="M140 210V171"/>
+<rect x="115" y="343" width="68" height="28" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<rect x="112" y="346" width="68" height="28" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<rect x="109" y="349" width="68" height="28" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<rect x="106" y="352" width="68" height="28" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<g data-tex="B_lX_l" data-label="" data-x="140" data-y="373" data-size="21" data-anchor="middle" data-color="#252525"/>
+<rect x="61" y="421" width="158" height="64" rx="5" fill="#fff0e3" stroke="#c78953"/>
+<text x="140" y="444" text-anchor="middle" font-size="17" font-weight="400" style="fill:#262626">Res Mapping</text>
+<g data-tex="B_l" data-label="" data-x="140" data-y="472" data-size="23" data-anchor="middle" data-color="#252525"/>
+<path class="wire" d="M140 590V485"/>
+<path class="wire" d="M140 421V380"/>
+<path class="wire" d="M140 343V238"/>
+<text x="210" y="402" text-anchor="middle" font-size="16" font-weight="400" style="fill:#5b6d67">混合旧残差</text>
+<rect x="271" y="515" width="158" height="64" rx="5" fill="#fff0e3" stroke="#c78953"/>
+<text x="350" y="538" text-anchor="middle" font-size="17" font-weight="400" style="fill:#262626">Pre Mapping</text>
+<g data-tex="A_l" data-label="" data-x="350" data-y="566" data-size="23" data-anchor="middle" data-color="#252525"/>
+<rect x="316" y="464" width="68" height="28" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<g data-tex="h_l^{\mathrm{in}}" data-label="" data-x="350" data-y="485" data-size="21" data-anchor="middle" data-color="#252525"/>
+<rect x="271" y="387" width="158" height="44" rx="5" fill="#cfe6f1" stroke="#535b60"/>
+<text x="305" y="415" text-anchor="middle" font-size="17" font-weight="400" style="fill:#262626">Layer</text>
+<g data-tex="\mathcal{F}_l" data-label="" data-x="385" data-y="417" data-size="25" data-anchor="middle" data-color="#252525"/>
+<rect x="316" y="327" width="68" height="28" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<g data-tex="h_l^{\mathrm{out}}" data-label="" data-x="350" data-y="348" data-size="21" data-anchor="middle" data-color="#252525"/>
+<rect x="271" y="247" width="158" height="64" rx="5" fill="#fff0e3" stroke="#c78953"/>
+<text x="350" y="270" text-anchor="middle" font-size="17" font-weight="400" style="fill:#262626">Post Mapping</text>
+<g data-tex="C_l" data-label="" data-x="350" data-y="298" data-size="23" data-anchor="middle" data-color="#252525"/>
+<path class="wire" d="M350 515V492"/>
+<path class="wire" d="M350 464V431"/>
+<path class="wire" d="M350 387V355"/>
+<path class="wire" d="M350 327V311"/>
+<path class="wire" d="M350 247V224H154"/>
+<rect x="115" y="581" width="68" height="28" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<rect x="112" y="584" width="68" height="28" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<rect x="109" y="587" width="68" height="28" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<rect x="106" y="590" width="68" height="28" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<g data-tex="X_l" data-label="" data-x="140" data-y="611" data-size="21" data-anchor="middle" data-color="#252525"/>
+<path class="wire" d="M140 634H350V579"/>
+<path d="M140 618V634" stroke="#343434" stroke-width="1.8" fill="none"/>
+<text x="260" y="675" text-anchor="middle" font-size="17" font-weight="400" style="fill:#5b6d67">同一个 token 的多路残差</text>
+<path class="wire" d="M140 634V709H192"/>
+<rect x="192" y="688" width="237" height="76" rx="8" fill="#f2f2f2" stroke="#aab4af"/>
+<text x="310" y="711" text-anchor="middle" font-size="16" font-weight="400" style="fill:#262626">由当前残差预测系数</text>
+<g data-tex="(A_l,B_l,C_l)=\mathcal{H}(X_l)" data-label="" data-x="310" data-y="744" data-size="20" data-anchor="middle" data-color="#252525"/>
+<path class="coef" d="M429 728H511V546H429"/>
+<rect x="450" y="591" width="122" height="49" rx="6" fill="#edf5fc" stroke="#94bddb"/>
+<text x="511" y="611" text-anchor="middle" font-size="14" font-weight="400" style="fill:#2c75a4">当前预测完成</text>
+<g data-tex="A_l" data-label="" data-x="511" data-y="632" data-size="21" data-anchor="middle" data-color="#2c75a4"/>
+<text x="487" y="790" text-anchor="middle" font-size="16" font-weight="400" style="fill:#2c75a4">新系数当前子层就用</text>
+<g data-tex="B_l,\ C_l" data-label="" data-x="175" data-y="795" data-size="21" data-anchor="middle" data-color="#252525"/>
+<text x="175" y="820" text-anchor="middle" font-size="16" font-weight="400" style="fill:#5b6d67">两者都供当前子层使用</text>
+</g>
+<g transform="translate(600 0)">
+<text x="300" y="33" text-anchor="middle" font-size="27" font-weight="650" style="fill:#262626">Single-Pass mHC</text>
+<text x="300" y="63" text-anchor="middle" font-size="17" font-weight="400" style="fill:#5b6d67">使用上一子层准备的输入混合系数</text>
+<rect x="18" y="85" width="564" height="565" rx="18" fill="#f2f2f2" stroke="none"/>
+<text x="40" y="114" text-anchor="start" font-size="16" font-weight="650" style="fill:#262626">当前子层 · 局部展开</text>
+<rect x="115" y="134" width="68" height="28" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<rect x="112" y="137" width="68" height="28" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<rect x="109" y="140" width="68" height="28" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<rect x="106" y="143" width="68" height="28" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<g data-tex="X_{l+1}" data-label="" data-x="140" data-y="164" data-size="21" data-anchor="middle" data-color="#252525"/>
+<circle cx="140" cy="224" r="14" fill="white" stroke="#343434" stroke-width="1.5"/>
+<g data-tex="+" data-label="" data-x="140" data-y="231" data-size="24" data-anchor="middle" data-color="#252525"/>
+<path class="wire" d="M140 210V171"/>
+<rect x="115" y="343" width="68" height="28" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<rect x="112" y="346" width="68" height="28" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<rect x="109" y="349" width="68" height="28" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<rect x="106" y="352" width="68" height="28" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<g data-tex="B_lX_l" data-label="" data-x="140" data-y="373" data-size="21" data-anchor="middle" data-color="#252525"/>
+<rect x="61" y="421" width="158" height="64" rx="5" fill="#fff0e3" stroke="#c78953"/>
+<text x="140" y="444" text-anchor="middle" font-size="17" font-weight="400" style="fill:#262626">Res Mapping</text>
+<g data-tex="B_l" data-label="" data-x="140" data-y="472" data-size="23" data-anchor="middle" data-color="#252525"/>
+<path class="wire" d="M140 590V485"/>
+<path class="wire" d="M140 421V380"/>
+<path class="wire" d="M140 343V238"/>
+<text x="210" y="402" text-anchor="middle" font-size="16" font-weight="400" style="fill:#5b6d67">混合旧残差</text>
+<rect x="271" y="515" width="158" height="64" rx="5" fill="#fff0e3" stroke="#c78953"/>
+<text x="350" y="538" text-anchor="middle" font-size="17" font-weight="400" style="fill:#262626">Pre Mapping</text>
+<g data-tex="A_{l-1}" data-label="" data-x="350" data-y="566" data-size="23" data-anchor="middle" data-color="#252525"/>
+<rect x="316" y="464" width="68" height="28" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<g data-tex="h_l^{\mathrm{in}}" data-label="" data-x="350" data-y="485" data-size="21" data-anchor="middle" data-color="#252525"/>
+<rect x="271" y="387" width="158" height="44" rx="5" fill="#cfe6f1" stroke="#535b60"/>
+<text x="305" y="415" text-anchor="middle" font-size="17" font-weight="400" style="fill:#262626">Layer</text>
+<g data-tex="\mathcal{F}_l" data-label="" data-x="385" data-y="417" data-size="25" data-anchor="middle" data-color="#252525"/>
+<rect x="316" y="327" width="68" height="28" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<g data-tex="h_l^{\mathrm{out}}" data-label="" data-x="350" data-y="348" data-size="21" data-anchor="middle" data-color="#252525"/>
+<rect x="271" y="247" width="158" height="64" rx="5" fill="#fff0e3" stroke="#c78953"/>
+<text x="350" y="270" text-anchor="middle" font-size="17" font-weight="400" style="fill:#262626">Post Mapping</text>
+<g data-tex="C_l" data-label="" data-x="350" data-y="298" data-size="23" data-anchor="middle" data-color="#252525"/>
+<path class="wire" d="M350 515V492"/>
+<path class="wire" d="M350 464V431"/>
+<path class="wire" d="M350 387V355"/>
+<path class="wire" d="M350 327V311"/>
+<path class="wire" d="M350 247V224H154"/>
+<rect x="115" y="581" width="68" height="28" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<rect x="112" y="584" width="68" height="28" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<rect x="109" y="587" width="68" height="28" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<rect x="106" y="590" width="68" height="28" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<g data-tex="X_l" data-label="" data-x="140" data-y="611" data-size="21" data-anchor="middle" data-color="#252525"/>
+<path class="wire" d="M140 634H350V579"/>
+<path d="M140 618V634" stroke="#343434" stroke-width="1.8" fill="none"/>
+<text x="260" y="675" text-anchor="middle" font-size="17" font-weight="400" style="fill:#5b6d67">同一个 token 的多路残差</text>
+<path class="wire" d="M140 634V709H192"/>
+<rect x="192" y="688" width="237" height="76" rx="8" fill="#f2f2f2" stroke="#aab4af"/>
+<text x="310" y="711" text-anchor="middle" font-size="16" font-weight="400" style="fill:#262626">由当前残差预测系数</text>
+<g data-tex="(A_l,B_l,C_l)=\mathcal{H}(X_l)" data-label="" data-x="310" data-y="744" data-size="20" data-anchor="middle" data-color="#252525"/>
+<rect x="446" y="589" width="122" height="49" rx="6" fill="#edf5fc" stroke="#94bddb"/>
+<text x="507" y="608" text-anchor="middle" font-size="14" font-weight="400" style="fill:#2c75a4">上一子层传来</text>
+<g data-tex="A_{l-1}" data-label="" data-x="507" data-y="630" data-size="21" data-anchor="middle" data-color="#2c75a4"/>
+<path class="coef" d="M507 589V546H429"/>
+<rect x="446" y="94" width="122" height="66" rx="6" fill="#edf5fc" stroke="#94bddb"/>
+<text x="507" y="114" text-anchor="middle" font-size="14" font-weight="400" style="fill:#2c75a4">交给下一子层</text>
+<text x="507" y="134" text-anchor="middle" font-size="14" font-weight="400" style="fill:#2c75a4">Pre Mapping</text>
+<g data-tex="A_l" data-label="" data-x="507" data-y="154" data-size="21" data-anchor="middle" data-color="#2c75a4"/>
+<path class="coef" d="M429 728H578V127H568"/>
+<text x="500" y="790" text-anchor="middle" font-size="16" font-weight="400" style="fill:#2c75a4">新系数留给下一子层</text>
+<g data-tex="B_l,\ C_l" data-label="" data-x="175" data-y="795" data-size="21" data-anchor="middle" data-color="#252525"/>
+<text x="175" y="820" text-anchor="middle" font-size="16" font-weight="400" style="fill:#5b6d67">两者都供当前子层使用</text>
+</g>
+<path d="M600 20V830" stroke="#d9ded8"/>
+<path class="wire" d="M310 853H350"/>
+<text x="363" y="859" text-anchor="start" font-size="15" font-weight="400" style="fill:#262626">数据流</text>
+<path class="coef" d="M590 853H630"/>
+<text x="644" y="859" text-anchor="start" font-size="15" font-weight="400" style="fill:#2c75a4">输入混合系数的传递</text>
+</svg>

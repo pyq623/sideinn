@@ -1,0 +1,19 @@
+/* Local to this note; reserve lazy-image space and retain original figure proportions. */
+body[data-note-id="v41-flash"] .note-figure img{object-fit:contain;background:#faf8f2}
+body[data-note-id="v41-flash"] .note-figure img[src$="01-cost-map.svg"]{aspect-ratio:1000/720;}
+body[data-note-id="v41-flash"] .note-figure img[src$="02-ced-paths.svg"]{aspect-ratio:1000/940;}
+body[data-note-id="v41-flash"] .note-figure img[src$="03-candidate-pool.svg"]{aspect-ratio:1000/800;}
+body[data-note-id="v41-flash"] .note-figure img[src$="04-byte-ledger.svg"]{aspect-ratio:1000/790;}
+body[data-note-id="v41-flash"] .note-figure img[src$="05-bounded-replay.svg"]{aspect-ratio:1000/820;}
+body[data-note-id="v41-flash"] .note-figure img[src$="06-async-rollout.svg"]{aspect-ratio:1000/770;}
+body[data-note-id="v41-flash"] .note-figure img[src$="official-fig3-architecture.svg"]{aspect-ratio:910/469;background:#fff;}
+body[data-note-id="v41-flash"] .note-figure img[src$="official-fig4-csa2.svg"]{aspect-ratio:1355/431;background:#fff;}
+body[data-note-id="v41-flash"] .note-figure img[src$="official-fig5-indexer.svg"]{aspect-ratio:894/402;background:#fff;}
+body[data-note-id="v41-flash"] .note-figure img[src$="official-fig9-effort.svg"]{aspect-ratio:1152/288;background:#fff;}
+body[data-note-id="v41-flash"] .note-figure img[src$="official-fig1b-kv.png"]{aspect-ratio:3801/2640;background:#fff;}
+
+/* Keep the architecture walkthrough entry beside its source figure. */
+body[data-note-id="v41-flash"] blockquote:has(a[href^="./v41-architecture.html"]){border:1px solid #ccdcd1;border-left:4px solid var(--teal);background:#f2f7ef;border-radius:10px;padding:20px 24px;margin:24px 0}
+body[data-note-id="v41-flash"] blockquote a[href^="./v41-architecture.html"]{display:inline-block;padding:10px 16px;border-radius:6px;background:var(--teal);color:white;font-weight:600;text-decoration:none;line-height:1.7}
+body[data-note-id="v41-flash"] blockquote a[href^="./v41-architecture.html"]:hover{background:#1d4a3e}
+@media(max-width:650px){body[data-note-id="v41-flash"] blockquote:has(a[href^="./v41-architecture.html"]){padding:16px}}

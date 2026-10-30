@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="800" viewBox="0 0 1000 800" role="img" aria-labelledby="title desc">
+<title id="title">03  候选池不是第一次 Top-K 的同义词</title><desc id="desc">人工小例子：16 个位置，块长 4，保留 2 块，每次选择 Top-2。</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#61716a"/></marker></defs>
+<rect width="1000" height="800" rx="22" fill="#faf8f2"/>
+<g font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, sans-serif">
+<text x="40" y="50" font-size="29" fill="#203b35" font-weight="650" text-anchor="start">03  候选池不是第一次 Top-K 的同义词</text>
+<text x="40" y="86" font-size="18" fill="#61716a" font-weight="400" text-anchor="start">人工小例子：16 个位置，块长 4，保留 2 块，每次选择 Top-2。</text>
+<rect x="40" y="130" width="215" height="220" rx="14" fill="#e5f1eb" stroke="#cfdbd2"/>
+<text x="60" y="166" font-size="23" fill="#22786b" font-weight="650" text-anchor="start">块 A · max 0.8</text>
+<text x="60" y="210" font-size="19" fill="#203b35" font-weight="400" text-anchor="start">位置  1  →  0.1</text>
+<text x="60" y="242" font-size="19" fill="#22786b" font-weight="650" text-anchor="start">位置  2  →  0.8</text>
+<text x="60" y="274" font-size="19" fill="#203b35" font-weight="400" text-anchor="start">位置  3  →  0.2</text>
+<text x="60" y="306" font-size="19" fill="#203b35" font-weight="400" text-anchor="start">位置  4  →  0.3</text>
+<rect x="275" y="130" width="215" height="220" rx="14" fill="#e5f1eb" stroke="#cfdbd2"/>
+<text x="295" y="166" font-size="23" fill="#22786b" font-weight="650" text-anchor="start">块 B · max 0.9</text>
+<text x="295" y="210" font-size="19" fill="#203b35" font-weight="400" text-anchor="start">位置  5  →  0.4</text>
+<text x="295" y="242" font-size="19" fill="#203b35" font-weight="400" text-anchor="start">位置  6  →  0.2</text>
+<text x="295" y="274" font-size="19" fill="#22786b" font-weight="650" text-anchor="start">位置  7  →  0.9</text>
+<text x="295" y="306" font-size="19" fill="#203b35" font-weight="400" text-anchor="start">位置  8  →  0.1</text>
+<rect x="510" y="130" width="215" height="220" rx="14" fill="#eeefea" stroke="#cfdbd2"/>
+<text x="530" y="166" font-size="23" fill="#22786b" font-weight="650" text-anchor="start">块 C · max 0.4</text>
+<text x="530" y="210" font-size="19" fill="#203b35" font-weight="400" text-anchor="start">位置  9  →  0.2</text>
+<text x="530" y="242" font-size="19" fill="#203b35" font-weight="400" text-anchor="start">位置 10  →  0.3</text>
+<text x="530" y="274" font-size="19" fill="#203b35" font-weight="400" text-anchor="start">位置 11  →  0.1</text>
+<text x="530" y="306" font-size="19" fill="#203b35" font-weight="400" text-anchor="start">位置 12  →  0.4</text>
+<rect x="745" y="130" width="215" height="220" rx="14" fill="#eeefea" stroke="#cfdbd2"/>
+<text x="765" y="166" font-size="23" fill="#22786b" font-weight="650" text-anchor="start">块 D · max 0.7</text>
+<text x="765" y="210" font-size="19" fill="#203b35" font-weight="400" text-anchor="start">位置 13  →  0.1</text>
+<text x="765" y="242" font-size="19" fill="#203b35" font-weight="400" text-anchor="start">位置 14  →  0.7</text>
+<text x="765" y="274" font-size="19" fill="#203b35" font-weight="400" text-anchor="start">位置 15  →  0.2</text>
+<text x="765" y="306" font-size="19" fill="#203b35" font-weight="400" text-anchor="start">位置 16  →  0.3</text>
+<rect x="40" y="390" width="440" height="115" rx="14" fill="#f7ecd8" stroke="#cfdbd2"/>
+<text x="60" y="426" font-size="23" fill="#a46b2a" font-weight="650" text-anchor="start">第一次 Full 的 Top-2</text>
+<text x="60" y="463" font-size="20" fill="#203b35" font-weight="400" text-anchor="start">7、2 → 用于这次注意力</text>
+<rect x="520" y="390" width="440" height="115" rx="14" fill="#e5f1eb" stroke="#cfdbd2"/>
+<text x="540" y="426" font-size="23" fill="#22786b" font-weight="650" text-anchor="start">候选池：按块最大分选 B、A</text>
+<text x="540" y="463" font-size="20" fill="#203b35" font-weight="400" text-anchor="start">池内位置：1–8；不含位置 14</text>
+<polyline points="740,505 740,545" fill="none" stroke="#61716a" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="520" y="550" width="440" height="115" rx="14" fill="#e5f1eb" stroke="#cfdbd2"/>
+<text x="540" y="586" font-size="23" fill="#22786b" font-weight="650" text-anchor="start">后续 Reindex 用自己的 Q</text>
+<text x="540" y="623" font-size="20" fill="#203b35" font-weight="400" text-anchor="start">例如在 1–8 中重新选：3、6</text>
+<text x="40" y="578" font-size="23" fill="#203b35" font-weight="650" text-anchor="start">两种选择服务不同目的：</text>
+<text x="40" y="618" font-size="20" fill="#61716a" font-weight="400" text-anchor="start">本层最终读取 ≠ 后续可搜索范围</text>
+<text x="40" y="712" font-size="20" fill="#203b35" font-weight="400" text-anchor="start">真实配置：Top-512；8 位置 / 块；最多 2048 块，即 16384 个候选位置。</text>
+<text x="40" y="777" font-size="15" fill="#61716a" font-weight="400" text-anchor="start">支线客栈 · 原创教学示意 · 依据技术报告 v1，2026-09-17</text>
+</g></svg>

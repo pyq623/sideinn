@@ -1,0 +1,29 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>沿论文原图走一遍 · V4.1-Flash 架构动画 · 支线客栈</title>
+<meta name="description" content="在 DeepSeek-V4.1-Flash Figure 3 原图上逐步演示输入、Encoder、CED 双路径、Decoder 缓存与索引复用，以及 DSpark 的角色。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="../assets/v41-architecture/player.css?v=20261030-candidate-page">
+<script type="module" src="../assets/v41-architecture/player.mjs?v=20261030-candidate-topk"></script></head><body>
+<header><a href="./v41-flash.html#section-2-2">← 回到 2.2 原图与笔记</a><span>支线客栈 · 论文图解</span></header>
+<main><p class="eyebrow">DEEPSEEK V4.1-FLASH · FIGURE 3</p><h1>沿着这张架构图，走完一次请求</h1><p class="intro">原图保持原样。跟着移动标记，从底部输入走到 Encoder，再分清 CED 的两条路径，最后进入 Decoder。每一步都说明：<strong>数据从哪里来、这层算什么、哪些内容被复用。</strong></p>
+<section class="player" aria-label="V4.1-Flash 架构流程动画">
+<div class="transport"><button id="prev">← 上一步</button><button id="auto" class="primary">自动播放</button><button id="next">下一步 →</button><button id="replay">重播本步</button><button id="pause">暂停动作</button><label>速度 <select id="speed"><option value="0.75">0.75×</option><option value="1" selected>1×</option><option value="1.5">1.5×</option><option value="2">2×</option></select></label><p id="mobile-summary" class="mobile-summary"></p></div>
+<div class="navigator"><label for="step-select">跳到步骤</label><select id="step-select"></select><span id="count"></span></div>
+<nav class="chapters" aria-label="动画段落"><button data-step="map">① 输入与 Encoder</button><button data-step="hidden">② CED 两条路径</button><button data-step="decoder-full">③ Decoder 与候选池</button><button data-step="decode">④ 生成与回看</button></nav>
+<div class="walkthrough"><div class="explain" tabindex="0" role="region" aria-label="本步讲解，可上下滚动" aria-live="polite" aria-atomic="true"><p id="phase"></p><h2 id="step-title"></h2><p id="narration"></p><p class="takeaway" id="takeaway"></p>
+<p id="mhc-card" class="mhc-prompt" hidden>想了解 Single-Pass mHC 的工作原理？查看<a href="./v41-single-pass-mhc.html">结构图与详细讲解 →</a></p>
+<p id="engram-card" class="mhc-prompt" hidden>想了解 Engram 怎样查表并使用记忆？查看<a href="./v41-engram.html">Engram 结构图与详细讲解 →</a></p>
+<p id="csa-card" class="mhc-prompt" hidden>想看两个位置怎样压成一条 KV，再选址读取？查看<a href="./v41-csa2.html">CSA2 分步图解 →</a></p><p id="candidate-card" class="mhc-prompt" hidden>想看两份名单怎样从同一组分数产生？查看<a href="./v41-candidate-pool.html">候选池图解 →</a></p><aside id="ced-related" class="concept-card" hidden aria-label="CED 与 DeepInfer 的关联"><p class="concept-label">与 DeepInfer 动画对应</p><p id="ced-related-text"></p><a id="ced-animation" href="./deepinfer-walkthrough.html#fork">看对应动画 →</a><p><a id="ced-note" href="./deepinfer.html#section-3-1">阅读 CED 笔记 →</a></p><p class="hint">DeepInfer 用 8 个位置、尾部 3 个做教学演示；这里展示真实架构配置。</p></aside></div>
+<div class="visual"><div class="figure-toolbar"><div class="legend"><span class="hidden-color">● 隐藏状态前向</span><span class="cache-color">● Global KV 构造</span><span class="index-color">● 候选索引</span><span class="memory-color">● Engram 旁路</span></div><div><a id="mhc-link" class="mhc-button" href="./v41-single-pass-mhc.html" hidden>Single-Pass mHC</a><a id="engram-link" class="mhc-button" href="./v41-engram.html" hidden>Engram</a><a id="csa-link" class="mhc-button" href="./v41-csa2.html" hidden>CSA2</a><a id="ced-link" class="mhc-button" href="./deepinfer-walkthrough.html#fork" hidden>CED 两路动画</a><a id="candidate-link" class="mhc-button" href="./v41-candidate-pool.html" hidden>候选池图解</a><button id="focus" aria-pressed="false">聚焦当前区域</button><label class="motion"><input id="reduce" type="checkbox">减少动态</label></div></div>
+<div class="stage"><svg id="diagram" viewBox="-8 -8 926 485" role="img" aria-labelledby="diagram-title diagram-desc"><title id="diagram-title">V4.1-Flash 完整架构原图与流程高亮</title><desc id="diagram-desc"></desc><image href="../assets/v41-flash-figures/official-fig3-architecture.svg" x="0" y="0" width="910" height="469"/><g id="highlights"></g><g id="routes"></g></svg>
+
+<section id="global-kv-map" class="kv-map" aria-labelledby="kv-map-title">
+ <div class="kv-map-heading"><h3 id="kv-map-title">Global KV 缓存 · 四套来源</h3><span>随当前步骤更新 · 本站示意</span></div>
+ <p class="kv-definition">每个框是一套 global KV，里面有 <strong>main KV（内容）</strong>和 <strong>indexer K（检索键）</strong>。隐藏状态是构造它们的原材料。</p>
+ <div class="kv-banks"></div>
+ <div class="kv-flow" aria-label="本步怎样使用缓存"></div><p class="kv-reading"></p>
+</section></div>
+
+</div></div><div class="state"><div><span>当前层号 · 从 0 开始</span><div id="layer-strip" aria-label="当前所处主干层"></div><p class="hint">左半 0–19 为 Encoder；右半 20–39 为 Decoder。高亮多个层号表示本步展开一个重复组。</p></div><div class="cache-state"><span>已说明的独立 global KV 来源</span><strong id="cache-count"></strong><small>计的是独立缓存来源，不是存储副本数。</small></div></div>
+<div class="bottom"><p id="status" role="status"></p><p><a id="source" target="_blank" rel="noopener">本步论文依据 ↗</a> · <a href="../assets/v41-flash-figures/official-fig3-architecture.svg" target="_blank" rel="noopener">查看完整原图 ↗</a></p></div>
+</section>
+<section class="notes"><h2>看动画时，记住这三件事</h2><ol><li><strong>光点表示数据依赖的方向。</strong>它不是一个真实 token 的算子追踪，移动速度也不是实测耗时。输入中的多个位置和实际 GPU 执行可以并行。</li><li><strong>原图是折叠的结构图。</strong>同一个虚线框会代表多组不同的层。我们用层号条和文字展开次数，不把重复组误画成循环执行同一套参数。</li><li><strong>两条 CED 路径的范围不同。</strong>全长 H 用于构造 Decoder global KV；这里演示的长输入 Prefill 只重放尾部 128 个位置来近似准备 SWA。生成阶段新 token 仍经过完整主干。</li></ol><p>背景为 DeepSeek-AI <a href="https://arxiv.org/html/2609.19969v1#S1.F3">论文 v1 的 Figure 3</a>，原文件未改动；彩色叠加层与分步解释由本站制作。层配置参照 §4.2.1，CED 与 CSA2 参照 §2.2–2.3，有限重放参照 §3.2.2。图片权利归原作者，<a href="../assets/v41-flash-figures/official-sources.json">原图来源清单</a>。</p><p><a href="./deepinfer-dspark.html">继续看 DSpark 草稿与验证动画 →</a></p></section></main><footer>手动：← / → 翻步，空格暂停或继续。切到其他标签页时自动暂停。</footer><noscript>动画需要 JavaScript；可返回笔记阅读原图与完整文字说明。</noscript></body></html>

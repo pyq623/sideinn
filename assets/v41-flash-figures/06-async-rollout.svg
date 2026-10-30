@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="770" viewBox="0 0 1000 770" role="img" aria-labelledby="title desc">
+<title id="title">06  异步 rollout：长任务跨过训练检查点</title><desc id="desc">示意关注调度关系；不表示固定时长，也不改变原始 prompt 的分组归属。</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#61716a"/></marker></defs>
+<rect width="1000" height="770" rx="22" fill="#faf8f2"/>
+<g font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, sans-serif">
+<text x="40" y="50" font-size="29" fill="#203b35" font-weight="650" text-anchor="start">06  异步 rollout：长任务跨过训练检查点</text>
+<text x="40" y="86" font-size="18" fill="#61716a" font-weight="400" text-anchor="start">示意关注调度关系；不表示固定时长，也不改变原始 prompt 的分组归属。</text>
+<text x="40" y="138" font-size="23" fill="#203b35" font-weight="650" text-anchor="start">同一组 GPU 分时执行</text>
+<rect x="40" y="170" width="210" height="145" rx="14" fill="#e5f1eb" stroke="#cfdbd2"/>
+<text x="60" y="206" font-size="23" fill="#22786b" font-weight="650" text-anchor="start">Rollout · θ₀</text>
+<text x="60" y="243" font-size="20" fill="#203b35" font-weight="400" text-anchor="start">样本 A：前半轨迹</text>
+<rect x="280" y="170" width="180" height="145" rx="14" fill="#f7ecd8" stroke="#cfdbd2"/>
+<text x="300" y="206" font-size="23" fill="#a46b2a" font-weight="650" text-anchor="start">Train 1</text>
+<text x="300" y="243" font-size="20" fill="#203b35" font-weight="400" text-anchor="start">更新到 θ₁</text>
+<rect x="490" y="170" width="230" height="145" rx="14" fill="#e5f1eb" stroke="#cfdbd2"/>
+<text x="510" y="206" font-size="23" fill="#22786b" font-weight="650" text-anchor="start">Rollout · θ₁</text>
+<text x="510" y="243" font-size="20" fill="#203b35" font-weight="400" text-anchor="start">A 恢复 + 新样本</text>
+<rect x="750" y="170" width="210" height="145" rx="14" fill="#f7ecd8" stroke="#cfdbd2"/>
+<text x="770" y="206" font-size="23" fill="#a46b2a" font-weight="650" text-anchor="start">Train 2</text>
+<text x="770" y="243" font-size="20" fill="#203b35" font-weight="400" text-anchor="start">更新到 θ₂</text>
+<polyline points="250,245 273,245" fill="none" stroke="#61716a" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="460,245 483,245" fill="none" stroke="#61716a" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="720,245 743,245" fill="none" stroke="#61716a" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="40" y="365" width="920" height="100" rx="14" fill="#e5f1eb" stroke="#cfdbd2"/>
+<text x="60" y="401" font-size="23" fill="#22786b" font-weight="650" text-anchor="start">A 的轨迹：生成 → token 级暂停 → 状态保留 → 继续</text>
+<text x="60" y="438" font-size="20" fill="#203b35" font-weight="400" text-anchor="start">KV 与路由状态可以跨检查点保留；沙箱保留任务执行环境。</text>
+<rect x="40" y="505" width="440" height="165" rx="14" fill="#e5f1eb" stroke="#cfdbd2"/>
+<text x="60" y="541" font-size="23" fill="#22786b" font-weight="650" text-anchor="start">调度层：按完成数补充新任务</text>
+<text x="60" y="578" font-size="20" fill="#203b35" font-weight="400" text-anchor="start">不必等待整个旧批次的慢样本</text>
+<text x="60" y="609" font-size="20" fill="#203b35" font-weight="400" text-anchor="start">完成计数 ≠ 重定义 GRPO 分组</text>
+<rect x="520" y="505" width="440" height="165" rx="14" fill="#f7ecd8" stroke="#cfdbd2"/>
+<text x="540" y="541" font-size="23" fill="#a46b2a" font-weight="650" text-anchor="start">训练层：处理策略滞后与偏差</text>
+<text x="540" y="578" font-size="20" fill="#203b35" font-weight="400" text-anchor="start">限制 off-policy 程度、屏蔽过旧部分</text>
+<text x="540" y="609" font-size="20" fill="#203b35" font-weight="400" text-anchor="start">控制长度偏差，避免只留下短任务</text>
+<text x="40" y="713" font-size="19" fill="#61716a" font-weight="400" text-anchor="start">跨检查点保留 KV 是效率选择；不要把整条恢复轨迹说成严格由当前策略重新采样。</text>
+<text x="40" y="747" font-size="15" fill="#61716a" font-weight="400" text-anchor="start">支线客栈 · 原创教学示意 · 依据技术报告 v1，2026-09-17</text>
+</g></svg>

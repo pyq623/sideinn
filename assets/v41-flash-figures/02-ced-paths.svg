@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="940" viewBox="0 0 1000 940" role="img" aria-labelledby="title desc">
+<title id="title">02  CED：全局缓存与隐藏状态分流</title><desc id="desc">Prefill 的简化路径；两个 20 层模块仍属于同一个因果模型。</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#61716a"/></marker></defs>
+<rect width="1000" height="940" rx="22" fill="#faf8f2"/>
+<g font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, sans-serif">
+<text x="40" y="50" font-size="29" fill="#203b35" font-weight="650" text-anchor="start">02  CED：全局缓存与隐藏状态分流</text>
+<text x="40" y="86" font-size="18" fill="#61716a" font-weight="400" text-anchor="start">Prefill 的简化路径；两个 20 层模块仍属于同一个因果模型。</text>
+<rect x="310" y="125" width="380" height="83" rx="14" fill="#e5f1eb" stroke="#cfdbd2"/>
+<text x="330" y="161" font-size="23" fill="#22786b" font-weight="650" text-anchor="start">输入 N 个 token</text>
+<polyline points="500,208 500,235" fill="none" stroke="#61716a" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="310" y="240" width="380" height="110" rx="14" fill="#e5f1eb" stroke="#cfdbd2"/>
+<text x="330" y="276" font-size="23" fill="#22786b" font-weight="650" text-anchor="start">Encoder · 20 层</text>
+<text x="330" y="313" font-size="20" fill="#203b35" font-weight="400" text-anchor="start">全 N 个位置 → 最终表示 H</text>
+<polyline points="380,350 380,390 245,390 245,425" fill="none" stroke="#61716a" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="620,350 620,390 755,390 755,425" fill="none" stroke="#61716a" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="50" y="401" font-size="18" fill="#22786b" font-weight="400" text-anchor="start">全部位置的 H</text>
+<text x="785" y="401" font-size="18" fill="#a46b2a" font-weight="400" text-anchor="start">尾部 W 个 H</text>
+<rect x="40" y="430" width="410" height="140" rx="14" fill="#e5f1eb" stroke="#cfdbd2"/>
+<text x="60" y="466" font-size="23" fill="#22786b" font-weight="650" text-anchor="start">Global KV 投影与缓存</text>
+<text x="60" y="503" font-size="20" fill="#203b35" font-weight="400" text-anchor="start">由 H 投影 C、Z</text>
+<text x="60" y="534" font-size="20" fill="#203b35" font-weight="400" text-anchor="start">各 decoder 层共享此历史内容</text>
+<rect x="550" y="430" width="410" height="140" rx="14" fill="#f7ecd8" stroke="#cfdbd2"/>
+<text x="570" y="466" font-size="23" fill="#a46b2a" font-weight="650" text-anchor="start">Decoder · 20 层</text>
+<text x="570" y="503" font-size="20" fill="#203b35" font-weight="400" text-anchor="start">尾部隐藏状态逐层前向</text>
+<text x="570" y="534" font-size="20" fill="#203b35" font-weight="400" text-anchor="start">每层自己的 Q、SWA、MoE</text>
+<polyline points="450,502 543,502" fill="none" stroke="#61716a" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="479" y="488" font-size="17" fill="#61716a" font-weight="400" text-anchor="start">读</text>
+<polyline points="755,570 755,605" fill="none" stroke="#61716a" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="550" y="610" width="410" height="93" rx="14" fill="#f7ecd8" stroke="#cfdbd2"/>
+<text x="570" y="646" font-size="23" fill="#a46b2a" font-weight="650" text-anchor="start">尾部局部状态与输出</text>
+<rect x="40" y="610" width="410" height="93" rx="14" fill="#e5f1eb" stroke="#cfdbd2"/>
+<text x="60" y="646" font-size="23" fill="#22786b" font-weight="650" text-anchor="start">全长历史已可检索</text>
+<rect x="40" y="745" width="920" height="126" rx="14" fill="#fff" stroke="#cfdbd2"/>
+<text x="60" y="781" font-size="23" fill="#203b35" font-weight="650" text-anchor="start">边界：尾部重放是经过训练适配的近似</text>
+<text x="60" y="818" font-size="20" fill="#203b35" font-weight="400" text-anchor="start">历史不必全跑 decoder；生成时，每个新 token 仍走 encoder + decoder。</text>
+<text x="60" y="849" font-size="20" fill="#203b35" font-weight="400" text-anchor="start">W = 128；示意省略常规残差、位置编码和具体压缩算子。</text>
+<text x="40" y="917" font-size="15" fill="#61716a" font-weight="400" text-anchor="start">支线客栈 · 原创教学示意 · 依据技术报告 v1，2026-09-17</text>
+</g></svg>

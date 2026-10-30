@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="720" viewBox="0 0 1000 720" role="img" aria-labelledby="title desc">
+<title id="title">01  长任务的三本成本账</title><desc id="desc">同一条 Agent 请求链，分别考察计算、容量和恢复。</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#61716a"/></marker></defs>
+<rect width="1000" height="720" rx="22" fill="#faf8f2"/>
+<g font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, sans-serif">
+<text x="40" y="50" font-size="29" fill="#203b35" font-weight="650" text-anchor="start">01  长任务的三本成本账</text>
+<text x="40" y="86" font-size="18" fill="#61716a" font-weight="400" text-anchor="start">同一条 Agent 请求链，分别考察计算、容量和恢复。</text>
+<rect x="40" y="135" width="290" height="234" rx="14" fill="#e5f1eb" stroke="#cfdbd2"/>
+<text x="60" y="171" font-size="23" fill="#22786b" font-weight="650" text-anchor="start">新输入的计算</text>
+<text x="60" y="208" font-size="20" fill="#203b35" font-weight="400" text-anchor="start">长历史要走多少层？</text>
+<text x="60" y="239" font-size="20" fill="#203b35" font-weight="400" text-anchor="start">CED：全长经过 encoder</text>
+<text x="60" y="270" font-size="20" fill="#203b35" font-weight="400" text-anchor="start">尾部窗口经过 decoder</text>
+<text x="60" y="342" font-size="30" fill="#22786b" font-weight="650" text-anchor="start">01</text>
+<rect x="355" y="135" width="290" height="234" rx="14" fill="#e5f1eb" stroke="#cfdbd2"/>
+<text x="375" y="171" font-size="23" fill="#22786b" font-weight="650" text-anchor="start">历史的容量</text>
+<text x="375" y="208" font-size="20" fill="#203b35" font-weight="400" text-anchor="start">保存几份、每份多大？</text>
+<text x="375" y="239" font-size="20" fill="#203b35" font-weight="400" text-anchor="start">CSA2：序列与跨层共享</text>
+<text x="375" y="270" font-size="20" fill="#203b35" font-weight="400" text-anchor="start">FP4：数据 + 分组 scale</text>
+<text x="375" y="342" font-size="30" fill="#22786b" font-weight="650" text-anchor="start">02</text>
+<rect x="670" y="135" width="290" height="234" rx="14" fill="#e5f1eb" stroke="#cfdbd2"/>
+<text x="690" y="171" font-size="23" fill="#22786b" font-weight="650" text-anchor="start">检索与恢复</text>
+<text x="690" y="208" font-size="20" fill="#203b35" font-weight="400" text-anchor="start">搜索、搬运、重放什么？</text>
+<text x="690" y="239" font-size="20" fill="#203b35" font-weight="400" text-anchor="start">分层索引：缩小候选池</text>
+<text x="690" y="270" font-size="20" fill="#203b35" font-weight="400" text-anchor="start">SWA：只恢复有限尾部</text>
+<text x="690" y="342" font-size="30" fill="#22786b" font-weight="650" text-anchor="start">03</text>
+<rect x="40" y="405" width="920" height="105" rx="14" fill="#f7ecd8" stroke="#cfdbd2"/>
+<text x="60" y="441" font-size="23" fill="#a46b2a" font-weight="650" text-anchor="start">生成阶段：新 token 仍走完整 40 层</text>
+<text x="60" y="478" font-size="20" fill="#203b35" font-weight="400" text-anchor="start">DSpark 另行优化串行生成；mHC 另行优化残差混合的激活访存。</text>
+<rect x="40" y="540" width="920" height="112" rx="14" fill="#fff" stroke="#cfdbd2"/>
+<text x="60" y="576" font-size="23" fill="#203b35" font-weight="650" text-anchor="start">读到“减少”时，先补齐分母</text>
+<text x="60" y="613" font-size="20" fill="#203b35" font-weight="400" text-anchor="start">Global KV 容量 × 1/4 ≠ 持久 KV 容量 × 1/8 ≠ 整机显存 × 1/8。</text>
+<text x="40" y="697" font-size="15" fill="#61716a" font-weight="400" text-anchor="start">支线客栈 · 原创教学示意 · 依据技术报告 v1，2026-09-17</text>
+</g></svg>

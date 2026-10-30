@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="820" viewBox="0 0 1000 820" role="img" aria-labelledby="title desc">
+<title id="title">05  有限重放：保留全局历史，补回局部尾部</title><desc id="desc">人工小例子 W = 4；旧前缀有 12 个位置，新输入为 13、14。</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#61716a"/></marker></defs>
+<rect width="1000" height="820" rx="22" fill="#faf8f2"/>
+<g font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, sans-serif">
+<text x="40" y="50" font-size="29" fill="#203b35" font-weight="650" text-anchor="start">05  有限重放：保留全局历史，补回局部尾部</text>
+<text x="40" y="86" font-size="18" fill="#61716a" font-weight="400" text-anchor="start">人工小例子 W = 4；旧前缀有 12 个位置，新输入为 13、14。</text>
+<text x="40" y="133" font-size="22" fill="#22786b" font-weight="650" text-anchor="start">旧 Global KV 已命中，1–12 保持原值</text>
+<rect x="40" y="155" width="58" height="54" rx="8" fill="#e5f1eb" stroke="#cfdbd2"/>
+<text x="69" y="190" font-size="22" fill="#203b35" font-weight="500" text-anchor="middle">1</text>
+<rect x="106" y="155" width="58" height="54" rx="8" fill="#e5f1eb" stroke="#cfdbd2"/>
+<text x="135" y="190" font-size="22" fill="#203b35" font-weight="500" text-anchor="middle">2</text>
+<rect x="172" y="155" width="58" height="54" rx="8" fill="#e5f1eb" stroke="#cfdbd2"/>
+<text x="201" y="190" font-size="22" fill="#203b35" font-weight="500" text-anchor="middle">3</text>
+<rect x="238" y="155" width="58" height="54" rx="8" fill="#e5f1eb" stroke="#cfdbd2"/>
+<text x="267" y="190" font-size="22" fill="#203b35" font-weight="500" text-anchor="middle">4</text>
+<rect x="304" y="155" width="58" height="54" rx="8" fill="#e5f1eb" stroke="#cfdbd2"/>
+<text x="333" y="190" font-size="22" fill="#203b35" font-weight="500" text-anchor="middle">5</text>
+<rect x="370" y="155" width="58" height="54" rx="8" fill="#e5f1eb" stroke="#cfdbd2"/>
+<text x="399" y="190" font-size="22" fill="#203b35" font-weight="500" text-anchor="middle">6</text>
+<rect x="436" y="155" width="58" height="54" rx="8" fill="#e5f1eb" stroke="#cfdbd2"/>
+<text x="465" y="190" font-size="22" fill="#203b35" font-weight="500" text-anchor="middle">7</text>
+<rect x="502" y="155" width="58" height="54" rx="8" fill="#e5f1eb" stroke="#cfdbd2"/>
+<text x="531" y="190" font-size="22" fill="#203b35" font-weight="500" text-anchor="middle">8</text>
+<rect x="568" y="155" width="58" height="54" rx="8" fill="#e5f1eb" stroke="#cfdbd2"/>
+<text x="597" y="190" font-size="22" fill="#203b35" font-weight="500" text-anchor="middle">9</text>
+<rect x="634" y="155" width="58" height="54" rx="8" fill="#e5f1eb" stroke="#cfdbd2"/>
+<text x="663" y="190" font-size="22" fill="#203b35" font-weight="500" text-anchor="middle">10</text>
+<rect x="700" y="155" width="58" height="54" rx="8" fill="#e5f1eb" stroke="#cfdbd2"/>
+<text x="729" y="190" font-size="22" fill="#203b35" font-weight="500" text-anchor="middle">11</text>
+<rect x="766" y="155" width="58" height="54" rx="8" fill="#e5f1eb" stroke="#cfdbd2"/>
+<text x="795" y="190" font-size="22" fill="#203b35" font-weight="500" text-anchor="middle">12</text>
+<rect x="832" y="155" width="58" height="54" rx="8" fill="#f7ecd8" stroke="#cfdbd2"/>
+<text x="861" y="190" font-size="22" fill="#203b35" font-weight="500" text-anchor="middle">13</text>
+<rect x="898" y="155" width="58" height="54" rx="8" fill="#f7ecd8" stroke="#cfdbd2"/>
+<text x="927" y="190" font-size="22" fill="#203b35" font-weight="500" text-anchor="middle">14</text>
+<text x="40" y="245" font-size="20" fill="#61716a" font-weight="400" text-anchor="start">1–8：无须重放</text>
+<text x="568" y="245" font-size="20" fill="#22786b" font-weight="650" text-anchor="start">9–12：重放段</text>
+<text x="832" y="245" font-size="20" fill="#a46b2a" font-weight="650" text-anchor="start">新增</text>
+<rect x="40" y="280" width="440" height="310" rx="14" fill="#e5f1eb" stroke="#cfdbd2"/>
+<text x="60" y="316" font-size="23" fill="#22786b" font-weight="650" text-anchor="start">重放起点 s = 9</text>
+<text x="60" y="353" font-size="20" fill="#203b35" font-weight="400" text-anchor="start">位置 9   可见：9</text>
+<text x="60" y="384" font-size="20" fill="#203b35" font-weight="400" text-anchor="start">位置 10 可见：9、10</text>
+<text x="60" y="415" font-size="20" fill="#203b35" font-weight="400" text-anchor="start">位置 11 可见：9、10、11</text>
+<text x="60" y="446" font-size="20" fill="#203b35" font-weight="400" text-anchor="start">位置 12 可见：9、10、11、12</text>
+<text x="60" y="477" font-size="20" fill="#203b35" font-weight="400" text-anchor="start">真实 W = 128；此处只为便于手算。</text>
+<rect x="520" y="280" width="440" height="140" rx="14" fill="#e5f1eb" stroke="#cfdbd2"/>
+<text x="540" y="316" font-size="23" fill="#22786b" font-weight="650" text-anchor="start">重放恢复 SWA</text>
+<text x="540" y="353" font-size="20" fill="#203b35" font-weight="400" text-anchor="start">旧 global KV 不被重算值覆盖</text>
+<text x="540" y="384" font-size="20" fill="#203b35" font-weight="400" text-anchor="start">局部可见范围受到起点 s 限制</text>
+<rect x="520" y="450" width="440" height="140" rx="14" fill="#f7ecd8" stroke="#cfdbd2"/>
+<text x="540" y="486" font-size="23" fill="#a46b2a" font-weight="650" text-anchor="start">新增后缀 13、14</text>
+<text x="540" y="523" font-size="20" fill="#203b35" font-weight="400" text-anchor="start">正常追加 global KV</text>
+<text x="540" y="554" font-size="20" fill="#203b35" font-weight="400" text-anchor="start">正常滚动更新局部 SWA</text>
+<rect x="40" y="630" width="920" height="120" rx="14" fill="#fff" stroke="#cfdbd2"/>
+<text x="60" y="666" font-size="23" fill="#203b35" font-weight="650" text-anchor="start">近似发生在哪里？</text>
+<text x="60" y="703" font-size="20" fill="#203b35" font-weight="400" text-anchor="start">重放段开头缺少更早的局部上下文；它不是从头完整前向的逐值等价结果。</text>
+<text x="60" y="734" font-size="20" fill="#203b35" font-weight="400" text-anchor="start">论文通过训练适配减少影响；不能据此断言所有输出完全一致。</text>
+<text x="40" y="797" font-size="15" fill="#61716a" font-weight="400" text-anchor="start">支线客栈 · 原创教学示意 · 依据技术报告 v1，2026-09-17</text>
+</g></svg>
