@@ -1,0 +1,61 @@
+[
+  {
+    "file": "official-fig1b-kv.png",
+    "source": "https://arxiv.org/html/2609.19969v1/figures/teaser_b.png",
+    "context": "https://arxiv.org/html/2609.19969v1#S0.F1",
+    "figure": "Figure 1(b)",
+    "credit": "DeepSeek-AI",
+    "accessed": "2026-10-26",
+    "modification": "None; original bytes",
+    "sha256": "b61bf4651d4b163e02fb21d7298bf7b36b810c1da2300cb2d1e498c373793e4b",
+    "license": "arXiv non-exclusive distribution license; original authors retain rights"
+  },
+  {
+    "file": "official-fig3-architecture.svg",
+    "source": "https://arxiv.org/html/2609.19969v1/arch_full.svg",
+    "context": "https://arxiv.org/html/2609.19969v1#S1.F3",
+    "figure": "Figure 3",
+    "credit": "DeepSeek-AI",
+    "accessed": "2026-10-26",
+    "modification": "None; original bytes",
+    "sha256": "ce602ddd190c50c2341aa8a91e5392204a54a8f85befaba824bc4584d7caa98f",
+    "license": "arXiv non-exclusive distribution license; original authors retain rights",
+    "viewBox": "0 0 910 469"
+  },
+  {
+    "file": "official-fig4-csa2.svg",
+    "source": "https://arxiv.org/html/2609.19969v1/arch_csa2.svg",
+    "context": "https://arxiv.org/html/2609.19969v1#S2.F4",
+    "figure": "Figure 4",
+    "credit": "DeepSeek-AI",
+    "accessed": "2026-10-26",
+    "modification": "None; original bytes",
+    "sha256": "1c2b7b1861e004c72484f631a73f649ab06b8f03d918dd9b6fccf8519bba2973",
+    "license": "arXiv non-exclusive distribution license; original authors retain rights",
+    "viewBox": "0 0 1355 431"
+  },
+  {
+    "file": "official-fig5-indexer.svg",
+    "source": "https://arxiv.org/html/2609.19969v1/arch_hsi.svg",
+    "context": "https://arxiv.org/html/2609.19969v1#S2.F5",
+    "figure": "Figure 5",
+    "credit": "DeepSeek-AI",
+    "accessed": "2026-10-26",
+    "modification": "None; original bytes",
+    "sha256": "5ae29150ebc1d2635a15be884cd3f939ae513b65f9c9e2a815e76b04d568dd9c",
+    "license": "arXiv non-exclusive distribution license; original authors retain rights",
+    "viewBox": "0 0 894 402"
+  },
+  {
+    "file": "official-fig9-effort.svg",
+    "source": "https://arxiv.org/html/2609.19969v1/effort_three_panel.svg",
+    "context": "https://arxiv.org/html/2609.19969v1#S5.F9",
+    "figure": "Figure 9",
+    "credit": "DeepSeek-AI",
+    "accessed": "2026-10-26",
+    "modification": "None; original bytes",
+    "sha256": "3c9ec3f9b22b2acb3ee098330ebaa60dbde9689ee95358425c26880b87caad0e",
+    "license": "arXiv non-exclusive distribution license; original authors retain rights",
+    "viewBox": "0 0 1152 288"
+  }
+]

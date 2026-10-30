@@ -1,0 +1,107 @@
+<svg id="csa-diagram" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 700" width="1000" height="700" role="img" aria-labelledby="csa-title csa-desc"><title id="csa-title">CSA2(2, Full)：压缩、选址与读取</title><desc id="csa-desc">教学例：查询位置9。历史位置1到8形成四条压缩记忆。索引器对四条记忆评分，选C2与C4；主注意力读取这两条全局记忆和窗口内位置7到9的局部KV。</desc><defs><marker id="csa-arrow" markerWidth="7" markerHeight="7" refX="6.4" refY="3.5" orient="auto"><path d="M0 0L7 3.5L0 7Z" fill="#58766b"/></marker></defs><style>#csa-diagram text{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif}#csa-diagram .csa-edge{fill:none;stroke:#58766b;stroke-width:2;marker-end:url(#csa-arrow)}</style>
+<g class="csa-part" data-part="0">
+<text x="350" y="25" text-anchor="middle" font-size="20" fill="#29433b">① 已有隐藏状态 · 历史位置 1–8</text>
+<rect x="45" y="42" width="64" height="44" rx="8" fill="#eff5eb" stroke="#b6c9be"/>
+<g data-tex="h_1" data-label="" data-x="77" data-y="72" data-size="23" data-anchor="middle" data-color="#29433b"/>
+<rect x="124" y="42" width="64" height="44" rx="8" fill="#eff5eb" stroke="#b6c9be"/>
+<g data-tex="h_2" data-label="" data-x="156" data-y="72" data-size="23" data-anchor="middle" data-color="#29433b"/>
+<rect x="203" y="42" width="64" height="44" rx="8" fill="#e8f1fa" stroke="#b6c9be"/>
+<g data-tex="h_3" data-label="" data-x="235" data-y="72" data-size="23" data-anchor="middle" data-color="#29433b"/>
+<rect x="282" y="42" width="64" height="44" rx="8" fill="#e8f1fa" stroke="#b6c9be"/>
+<g data-tex="h_4" data-label="" data-x="314" data-y="72" data-size="23" data-anchor="middle" data-color="#29433b"/>
+<rect x="361" y="42" width="64" height="44" rx="8" fill="#f7eedc" stroke="#b6c9be"/>
+<g data-tex="h_5" data-label="" data-x="393" data-y="72" data-size="23" data-anchor="middle" data-color="#29433b"/>
+<rect x="440" y="42" width="64" height="44" rx="8" fill="#f7eedc" stroke="#b6c9be"/>
+<g data-tex="h_6" data-label="" data-x="472" data-y="72" data-size="23" data-anchor="middle" data-color="#29433b"/>
+<rect x="519" y="42" width="64" height="44" rx="8" fill="#f0e8f4" stroke="#b6c9be"/>
+<g data-tex="h_7" data-label="" data-x="551" data-y="72" data-size="23" data-anchor="middle" data-color="#29433b"/>
+<rect x="598" y="42" width="64" height="44" rx="8" fill="#f0e8f4" stroke="#b6c9be"/>
+<g data-tex="h_8" data-label="" data-x="630" data-y="72" data-size="23" data-anchor="middle" data-color="#29433b"/>
+<rect x="765" y="42" width="190" height="44" rx="8" fill="#f7eedc" stroke="#b6c9be"/>
+<text x="860" y="28" text-anchor="middle" font-size="18" fill="#29433b">当前查询位置 9</text>
+<g data-tex="h_9" data-label="" data-x="860" data-y="72" data-size="24" data-anchor="middle" data-color="#29433b"/>
+</g>
+<g class="csa-part" data-part="1">
+<path class="csa-edge" d="M77 86V100H116V118"/>
+<path class="csa-edge" d="M156 86V100H116"/>
+<path class="csa-edge" d="M235 86V100H274V118"/>
+<path class="csa-edge" d="M314 86V100H274"/>
+<path class="csa-edge" d="M393 86V100H432V118"/>
+<path class="csa-edge" d="M472 86V100H432"/>
+<path class="csa-edge" d="M551 86V100H590V118"/>
+<path class="csa-edge" d="M630 86V100H590"/>
+<rect x="45" y="118" width="617" height="62" rx="8" fill="#edf5ef" stroke="#b6c9be"/>
+<text x="353" y="144" text-anchor="middle" font-size="21" fill="#29433b">Compressor · 内容投影 + 门控加权</text>
+<text x="353" y="166" text-anchor="middle" font-size="16" fill="#29433b">每两位置汇合一次，再做归一化等处理</text>
+<rect x="35" y="193" width="637" height="81" rx="10" fill="none" stroke="#c1d0c7" stroke-dasharray="4 3"/><text x="716" y="225" text-anchor="middle" font-size="15" fill="#20755a">main KV</text><text x="716" y="246" text-anchor="middle" font-size="14" fill="#20755a">4 条缓存</text>
+<path class="csa-edge" d="M116 180V207"/>
+<rect x="45" y="207" width="143" height="57" rx="8" fill="#eff5eb" stroke="#b6c9be"/>
+<g data-tex="C_1" data-label="" data-x="116" data-y="232" data-size="22" data-anchor="middle" data-color="#29433b"/>
+<text x="116" y="253" text-anchor="middle" font-size="15" fill="#29433b">来自位置 1、2</text>
+<path class="csa-edge" d="M274 180V207"/>
+<rect x="203" y="207" width="143" height="57" rx="8" fill="#e8f1fa" stroke="#b6c9be"/>
+<g data-tex="C_2" data-label="" data-x="274" data-y="232" data-size="22" data-anchor="middle" data-color="#29433b"/>
+<text x="274" y="253" text-anchor="middle" font-size="15" fill="#29433b">来自位置 3、4</text>
+<path class="csa-edge" d="M432 180V207"/>
+<rect x="361" y="207" width="143" height="57" rx="8" fill="#f7eedc" stroke="#b6c9be"/>
+<g data-tex="C_3" data-label="" data-x="432" data-y="232" data-size="22" data-anchor="middle" data-color="#29433b"/>
+<text x="432" y="253" text-anchor="middle" font-size="15" fill="#29433b">来自位置 5、6</text>
+<path class="csa-edge" d="M590 180V207"/>
+<rect x="519" y="207" width="143" height="57" rx="8" fill="#f0e8f4" stroke="#b6c9be"/>
+<g data-tex="C_4" data-label="" data-x="590" data-y="232" data-size="22" data-anchor="middle" data-color="#29433b"/>
+<text x="590" y="253" text-anchor="middle" font-size="15" fill="#29433b">来自位置 7、8</text>
+</g>
+<g class="csa-part" data-part="2">
+<path class="csa-edge" d="M116 264V284"/>
+<path class="csa-edge" d="M274 264V284"/>
+<path class="csa-edge" d="M432 264V284"/>
+<path class="csa-edge" d="M590 264V284"/>
+<rect x="45" y="284" width="617" height="50" rx="8" fill="#e8f1fa" stroke="#b6c9be"/>
+<text x="353" y="315" text-anchor="middle" font-size="20" fill="#29433b">indexer K · 从压缩内容投影出检索键</text>
+<rect x="765" y="284" width="190" height="50" rx="8" fill="#e8f1fa" stroke="#b6c9be"/>
+<text x="860" y="315" text-anchor="middle" font-size="21" fill="#29433b">indexer Q</text>
+<path class="csa-edge" d="M860 86V284"/>
+<text x="860" y="188" text-anchor="middle" font-size="15" fill="#29433b">当前隐藏状态</text>
+<text x="860" y="210" text-anchor="middle" font-size="15" fill="#29433b">分别生成两种 Q</text>
+</g>
+<g class="csa-part" data-part="3"><rect x="35" y="370" width="637" height="55" rx="8" fill="#edf3f9" stroke="#c1d0c7"/>
+<path class="csa-edge" d="M353 334V370"/>
+<path class="csa-edge" d="M860 334V350H700V399H662"/>
+<text x="180" y="359" text-anchor="middle" font-size="17" fill="#29433b">Indexer score · 本例评分</text>
+<rect data-entry="1" x="45" y="370" width="143" height="55" rx="8" fill="#edf3f9" stroke="#b6c9be"/>
+<g data-tex="C_1" data-label="" data-x="82" data-y="403" data-size="21" data-anchor="middle" data-color="#29433b"/>
+<text x="143" y="403" text-anchor="middle" font-size="22" fill="#29433b">0.2</text>
+<rect data-entry="2" x="203" y="370" width="143" height="55" rx="8" fill="#edf3f9" stroke="#b6c9be"/>
+<g data-tex="C_2" data-label="" data-x="240" data-y="403" data-size="21" data-anchor="middle" data-color="#29433b"/>
+<text x="301" y="403" text-anchor="middle" font-size="22" fill="#29433b">0.9</text>
+<rect data-entry="3" x="361" y="370" width="143" height="55" rx="8" fill="#edf3f9" stroke="#b6c9be"/>
+<g data-tex="C_3" data-label="" data-x="398" data-y="403" data-size="21" data-anchor="middle" data-color="#29433b"/>
+<text x="459" y="403" text-anchor="middle" font-size="22" fill="#29433b">0.4</text>
+<rect data-entry="4" x="519" y="370" width="143" height="55" rx="8" fill="#edf3f9" stroke="#b6c9be"/>
+<g data-tex="C_4" data-label="" data-x="556" data-y="403" data-size="21" data-anchor="middle" data-color="#29433b"/>
+<text x="617" y="403" text-anchor="middle" font-size="22" fill="#29433b">0.7</text>
+</g>
+<g class="csa-part" data-part="4">
+<path class="csa-edge" d="M353 425V459"/>
+<rect x="105" y="459" width="495" height="52" rx="8" fill="#f8efdc" stroke="#b6c9be"/>
+<text x="350" y="490" text-anchor="middle" font-size="22" fill="#29433b">Top-2 → 地址 2、4</text>
+<path class="csa-edge" d="M353 511V546"/>
+<rect x="105" y="546" width="495" height="50" rx="8" fill="#edf5ef" stroke="#b6c9be"/>
+<text x="237" y="577" text-anchor="middle" font-size="19" fill="#29433b">Gather · 按地址取回</text>
+<g data-tex="C_2,\ C_4" data-label="" data-x="480" data-y="577" data-size="24" data-anchor="middle" data-color="#29433b"/>
+<path class="csa-edge" d="M35 235H22V571H105"/>
+<text x="46" y="536" text-anchor="middle" font-size="14" fill="#29433b">读内容</text>
+</g>
+<g class="csa-part" data-part="5"><path class="csa-edge" d="M955 64H984V438H860V459"/>
+<rect x="765" y="459" width="190" height="52" rx="8" fill="#f7eedc" stroke="#b6c9be"/>
+<text x="860" y="491" text-anchor="middle" font-size="17" fill="#29433b">main Q · 来自位置 9</text>
+<rect x="700" y="546" width="255" height="50" rx="8" fill="#f8e7d9" stroke="#b6c9be"/>
+<text x="827" y="568" text-anchor="middle" font-size="17" fill="#29433b">SWA KV · 位置 7、8、9</text>
+<text x="827" y="587" text-anchor="middle" font-size="14" fill="#29433b">窗口 3 · 保留局部细节</text>
+<path class="csa-edge" d="M353 596V631"/>
+<path class="csa-edge" d="M860 511H977V655H600"/>
+<path class="csa-edge" d="M827 596V615H550V631"/>
+<rect x="105" y="631" width="495" height="50" rx="8" fill="#e3f0e8" stroke="#b6c9be"/>
+<text x="353" y="662" text-anchor="middle" font-size="22" fill="#29433b">Main Attention → 本层的新输出</text>
+</g>
+</svg>

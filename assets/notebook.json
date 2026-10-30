@@ -23,6 +23,28 @@
     "readLabel": "进入专项复习"
   },
   {
+    "id": "v41-flash",
+    "coverLabel": "V4.1",
+    "href": "./notes/v41-flash.html",
+    "title": "DeepSeek-V4.1-Flash 技术笔记",
+    "english": "Causal Encoder-Decoder & KV Cache Compression",
+    "category": "推理系统与 AI Infra",
+    "tags": [
+      "DeepSeek",
+      "V4.1-Flash",
+      "CED",
+      "CSA2",
+      "FP4",
+      "KV Cache",
+      "Agent 训练"
+    ],
+    "summary": "从 CED 双路径、跨层共享与候选池读懂缓存压缩。配 22 步架构动画，以及 Single-Pass mHC、Engram、CSA2、候选池专题图解，并关联 DeepInfer 执行流程。",
+    "updated": "2026-10-30",
+    "details": "13 章 · 原论文图与公式 · 22 步架构动画 · 4 篇专题图解",
+    "coverFooter": "MODEL & CACHE",
+    "readLabel": "阅读专题"
+  },
+  {
     "id": "deepinfer",
     "coverLabel": "DEEP INFER",
     "href": "./notes/deepinfer.html",

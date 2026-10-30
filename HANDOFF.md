@@ -283,3 +283,8 @@ TTL 为 10 分钟；`CNAME` 文件只有 `sideinn.ink`。HTTPS 由 GitHub Pages 
 - 上游 PR #8 恢复已有笔记的原实现；不同路径与最小路径和使用原二维 DP，Attention 每个 query 至少有一个可见 key，LRU capacity 为正整数。不要为扩展题目边界而改写用户熟悉的解法。
 - 上游 `content/coding/original-solutions.json` 保存 8 份答案的来源与校验值；修改原答案需根据用户要求核对原笔记。保留题号与存储键。
 - 上游构建、41 项 Python 测试、14 项 Node 测试通过；另外 6 项 PyTorch 数值测试全部通过。页面代码与下载文件均核对原版一致。
+
+### 2026-10-30：发布 DeepSeek-V4.1-Flash 专题
+- 新增13章笔记、原论文图与公式、22步架构动画，附Single-Pass mHC、Engram、CSA2、候选池4篇图解。架构动画含独立滚动说明栏、四套global KV示意及DeepInfer关联入口。
+- 发布范围包含V4.1首页卡片及DeepInfer动画ced-output/tail锚点，不包含并行修改的Hot100和RL专题。静态资源已生成，无需线上构建依赖。
+- 维护源为v41-flash.md、assets/v41-architecture/及其SVG模板；基础验证使用scripts/check-v41-architecture.mjs。

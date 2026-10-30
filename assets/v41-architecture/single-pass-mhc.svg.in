@@ -1,0 +1,135 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="690" viewBox="0 0 1200 690" role="img" aria-labelledby="title desc"><title id="title">普通残差与 Hyper-Connections：竖向结构，左右并排</title><desc id="desc">左侧为普通 Transformer block 和局部展开，右侧为 Hyper-Connections block 和局部展开。每张结构图内均保持从下向上的数据流。</desc><defs><linearGradient id="orange" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#e88b33"/><stop offset="1" stop-color="#efe9df"/></linearGradient><marker id="arrow" markerWidth="7" markerHeight="7" refX="6.2" refY="3.5" orient="auto"><path d="M0 0L7 3.5L0 7Z" fill="#343434"/></marker></defs><style>text{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;fill:#262626}.wire{fill:none;stroke:#343434;stroke-width:1.7;marker-end:url(#arrow)}.dash{fill:none;stroke:#626262;stroke-width:1.5;stroke-dasharray:4 4}</style>
+<text x="250" y="28" text-anchor="middle" font-size="22" font-weight="650">普通 Transformer block</text>
+<text x="850" y="28" text-anchor="middle" font-size="22" font-weight="650">带 Hyper-Connections 的 Transformer block</text>
+<path d="M500 45V610" stroke="#d9ded8"/>
+<rect x="35" y="80" width="190" height="440" rx="24" fill="url(#orange)" stroke="#303030"/>
+<rect x="74" y="440" width="112" height="34" rx="5" fill="#cfe6f1" stroke="#535b60"/>
+<text x="130" y="463" text-anchor="middle" font-size="16" font-weight="400">RMSNorm 1</text>
+<rect x="74" y="360" width="112" height="34" rx="5" fill="#cfe6f1" stroke="#535b60"/>
+<text x="130" y="383" text-anchor="middle" font-size="16" font-weight="400">Attention</text>
+<rect x="74" y="250" width="112" height="34" rx="5" fill="#cfe6f1" stroke="#535b60"/>
+<text x="130" y="273" text-anchor="middle" font-size="16" font-weight="400">RMSNorm 2</text>
+<rect x="74" y="170" width="112" height="34" rx="5" fill="#cfe6f1" stroke="#535b60"/>
+<text x="130" y="193" text-anchor="middle" font-size="16" font-weight="400">MoE</text>
+<path class="wire" d="M130 550V474"/>
+<path class="wire" d="M130 440V394"/>
+<path class="wire" d="M130 360V323"/>
+<path class="wire" d="M130 297V284"/>
+<path class="wire" d="M130 250V204"/>
+<path class="wire" d="M130 170V133"/>
+<path class="wire" d="M130 107V52"/>
+<circle cx="130" cy="310" r="13" fill="white" stroke="#343434" stroke-width="1.5"/>
+<g data-tex="+" data-label="" data-x="130" data-y="316" data-size="23" data-anchor="middle" data-color="#252525"/>
+<circle cx="130" cy="120" r="13" fill="white" stroke="#343434" stroke-width="1.5"/>
+<g data-tex="+" data-label="" data-x="130" data-y="126" data-size="23" data-anchor="middle" data-color="#252525"/>
+<path class="wire" d="M130 490H53V310H116"/>
+<path class="wire" d="M130 287H53V120H116"/>
+<rect x="44" y="297" width="172" height="214" rx="15" class="dash"/>
+<text x="130" y="535" text-anchor="middle" font-size="15" font-weight="400">整体结构</text>
+<rect x="530" y="80" width="190" height="440" rx="24" fill="url(#orange)" stroke="#303030"/>
+<rect x="569" y="440" width="112" height="34" rx="5" fill="#cfe6f1" stroke="#535b60"/>
+<text x="625" y="463" text-anchor="middle" font-size="16" font-weight="400">RMSNorm 1</text>
+<rect x="569" y="360" width="112" height="34" rx="5" fill="#cfe6f1" stroke="#535b60"/>
+<text x="625" y="383" text-anchor="middle" font-size="16" font-weight="400">Attention</text>
+<rect x="569" y="250" width="112" height="34" rx="5" fill="#cfe6f1" stroke="#535b60"/>
+<text x="625" y="273" text-anchor="middle" font-size="16" font-weight="400">RMSNorm 2</text>
+<rect x="569" y="170" width="112" height="34" rx="5" fill="#cfe6f1" stroke="#535b60"/>
+<text x="625" y="193" text-anchor="middle" font-size="16" font-weight="400">MoE</text>
+<path class="wire" d="M625 550V474"/>
+<path class="wire" d="M625 440V394"/>
+<path class="wire" d="M625 360V323"/>
+<path class="wire" d="M625 297V284"/>
+<path class="wire" d="M625 250V204"/>
+<path class="wire" d="M625 170V133"/>
+<path class="wire" d="M625 107V52"/>
+<circle cx="625" cy="310" r="13" fill="white" stroke="#343434" stroke-width="1.5"/>
+<g data-tex="+" data-label="" data-x="625" data-y="316" data-size="23" data-anchor="middle" data-color="#252525"/>
+<circle cx="625" cy="120" r="13" fill="white" stroke="#343434" stroke-width="1.5"/>
+<g data-tex="+" data-label="" data-x="625" data-y="126" data-size="23" data-anchor="middle" data-color="#252525"/>
+<path class="wire" d="M625 490H548V310H611"/>
+<path class="wire" d="M625 287H548V120H611"/>
+<path class="wire" d="M625 494H553V310H611"/>
+<path class="wire" d="M625 291H553V120H611"/>
+<path class="wire" d="M625 498H558V310H611"/>
+<path class="wire" d="M625 295H558V120H611"/>
+<path class="wire" d="M625 502H563V310H611"/>
+<path class="wire" d="M625 299H563V120H611"/>
+<rect x="539" y="297" width="172" height="214" rx="15" class="dash"/>
+<text x="625" y="535" text-anchor="middle" font-size="15" font-weight="400">整体结构</text>
+<rect x="270" y="176" width="208" height="330" rx="15" fill="#f2f2f2" stroke="none"/>
+<text x="374" y="198" text-anchor="middle" font-size="17" font-weight="650">局部展开</text>
+<rect x="291" y="219" width="60" height="26" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<g data-tex="x_{l+1}" data-label="" data-x="321.0" data-y="238" data-size="19" data-anchor="middle" data-color="#252525"/>
+<rect x="291" y="454" width="60" height="26" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<g data-tex="x_l" data-label="" data-x="321.0" data-y="473" data-size="19" data-anchor="middle" data-color="#252525"/>
+<rect x="362" y="348" width="100" height="38" rx="5" fill="#cfe6f1" stroke="#535b60"/>
+<text x="389" y="373" text-anchor="middle" font-size="16" font-weight="400">Layer</text>
+<g data-tex="\mathcal{F}" data-label="" data-x="439" data-y="376" data-size="21" data-anchor="middle" data-color="#252525"/>
+<path class="wire" d="M321 454V296"/>
+<circle cx="321" cy="282" r="13" fill="white" stroke="#343434" stroke-width="1.5"/>
+<g data-tex="+" data-label="" data-x="321" data-y="288" data-size="23" data-anchor="middle" data-color="#252525"/>
+<path class="wire" d="M321 269V245"/>
+<path class="wire" d="M321 441H412V386"/>
+<path class="wire" d="M412 348V282H335"/>
+<path class="dash" d="M216 337L270 210M216 511L270 490"/>
+<text x="374" y="532" text-anchor="middle" font-size="16" font-weight="400">(a) Residual Connection</text>
+<text x="35" y="580" text-anchor="start" font-size="17" font-weight="400">Layer 表示 RMSNorm + Attention，</text>
+<text x="35" y="607" text-anchor="start" font-size="17" font-weight="400">或 RMSNorm + MoE。</text>
+<rect x="774" y="78" width="410" height="442" rx="15" fill="#f2f2f2" stroke="none"/>
+<text x="1148" y="100" text-anchor="end" font-size="17" font-weight="650">局部展开</text>
+<rect x="819" y="101" width="60" height="26" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<rect x="816" y="104" width="60" height="26" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<rect x="813" y="107" width="60" height="26" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<rect x="810" y="110" width="60" height="26" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<g data-tex="x_{l+1}" data-label="" data-x="840.0" data-y="129" data-size="19" data-anchor="middle" data-color="#252525"/>
+<rect x="819" y="467" width="60" height="26" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<rect x="816" y="470" width="60" height="26" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<rect x="813" y="473" width="60" height="26" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<rect x="810" y="476" width="60" height="26" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<g data-tex="x_l" data-label="" data-x="840.0" data-y="495" data-size="19" data-anchor="middle" data-color="#252525"/>
+<circle cx="840" cy="165" r="13" fill="white" stroke="#343434" stroke-width="1.5"/>
+<g data-tex="+" data-label="" data-x="840" data-y="171" data-size="23" data-anchor="middle" data-color="#252525"/>
+<path class="wire" d="M840 152V136"/>
+<rect x="791" y="398" width="138" height="55" rx="5" fill="#fff0e3" stroke="#c78953"/>
+<text x="860" y="421" text-anchor="middle" font-size="16" font-weight="400">Res Mapping</text>
+<g data-tex="\mathcal{H}^{\mathrm{res}}_l" data-label="" data-x="860" data-y="444" data-size="21" data-anchor="middle" data-color="#252525"/>
+<rect x="819" y="316" width="60" height="26" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<rect x="816" y="319" width="60" height="26" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<rect x="813" y="322" width="60" height="26" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<rect x="810" y="325" width="60" height="26" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<g data-tex="h_l^{\mathrm{res}}" data-label="" data-x="840.0" data-y="344" data-size="19" data-anchor="middle" data-color="#252525"/>
+<path class="wire" d="M840 476V464H860V453"/>
+<path class="wire" d="M860 398V365H840V351"/>
+<path class="wire" d="M840 316V179"/>
+<rect x="970" y="422" width="140" height="48" rx="5" fill="#fff0e3" stroke="#c78953"/>
+<text x="1040" y="442" text-anchor="middle" font-size="16" font-weight="400">Pre Mapping</text>
+<g data-tex="\mathcal{H}^{\mathrm{pre}}_l" data-label="" data-x="1040" data-y="463" data-size="21" data-anchor="middle" data-color="#252525"/>
+<rect x="1010" y="388" width="60" height="26" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<g data-tex="h_l^{\mathrm{in}}" data-label="" data-x="1040.0" data-y="407" data-size="19" data-anchor="middle" data-color="#252525"/>
+<rect x="984" y="338" width="112" height="34" rx="5" fill="#cfe6f1" stroke="#535b60"/>
+<text x="1012" y="361" text-anchor="middle" font-size="16" font-weight="400">Layer</text>
+<g data-tex="\mathcal{F}" data-label="" data-x="1066" data-y="364" data-size="21" data-anchor="middle" data-color="#252525"/>
+<rect x="1010" y="305" width="60" height="26" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<g data-tex="h_l^{\mathrm{out}}" data-label="" data-x="1040.0" data-y="324" data-size="19" data-anchor="middle" data-color="#252525"/>
+<rect x="970" y="239" width="140" height="55" rx="5" fill="#fff0e3" stroke="#c78953"/>
+<text x="1040" y="260" text-anchor="middle" font-size="16" font-weight="400">Post Mapping</text>
+<g data-tex="\mathcal{H}^{\mathrm{post}}_l" data-label="" data-x="1040" data-y="284" data-size="21" data-anchor="middle" data-color="#252525"/>
+<rect x="1019" y="185" width="60" height="26" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<rect x="1016" y="188" width="60" height="26" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<rect x="1013" y="191" width="60" height="26" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<rect x="1010" y="194" width="60" height="26" rx="3" fill="#e5e5e5" stroke="#aaa"/>
+<g data-tex="h_l^{\mathrm{post}}" data-label="" data-x="1040.0" data-y="213" data-size="19" data-anchor="middle" data-color="#252525"/>
+<path class="wire" d="M879 489H1040V470"/>
+<path class="wire" d="M1040 422V414"/>
+<path class="wire" d="M1040 388V372"/>
+<path class="wire" d="M1040 338V331"/>
+<path class="wire" d="M1040 305V294"/>
+<path class="wire" d="M1040 239V220"/>
+<path class="wire" d="M1040 185V165H854"/>
+<path class="dash" d="M711 337L774 108M711 511L774 510"/>
+<text x="980" y="544" text-anchor="middle" font-size="16" font-weight="400">(b) Hyper-Connections (HC)</text>
+<text x="530" y="580" text-anchor="start" font-size="17" font-weight="400">Pre Mapping：将多路残差合成子层输入。</text>
+<text x="530" y="607" text-anchor="start" font-size="17" font-weight="400">Post Mapping：把子层输出写回多路残差。</text>
+<text x="600" y="643" text-anchor="middle" font-size="16" font-weight="400">Res Mapping：混合各路残差，逐路得到新的残差表示。</text>
+<g data-tex="x&#x27;_{l,i}=\sum_j B_l[i,j]x_{l,j},\qquad B_l\in\mathbb{R}^{n\times n},\quad X_l\in\mathbb{R}^{n\times d}" data-label="" data-x="600" data-y="676" data-size="21" data-anchor="middle" data-color="#252525"/>
+</svg>

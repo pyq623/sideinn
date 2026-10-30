@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>候选池图解 · V4.1-Flash · 支线客栈</title>
+<meta name="description" content="用8个历史位置理解本层Top-K与后续候选池的区别，以及Reindex怎样重新选址。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="../assets/v41-architecture/player.css?v=20261030-candidate-page">
+</head><body class="mhc-detail-page candidate-detail-page">
+<header><a href="./v41-architecture.html#candidate">← 返回架构动画 · 第 13 步</a><span>支线客栈 · 论文图解</span></header>
+<main><p class="eyebrow">DEEPSEEK V4.1-FLASH · HIERARCHICAL SPARSE INDEXER</p><h1>候选池图解</h1>
+<p class="intro">本层挑出现在要读的位置，同时留下一份较大的名单，供后续层重新选择。</p>
+<section id="candidate-example" class="candidate-example" aria-labelledby="candidate-example-title">
+ <div class="kv-map-heading"><h3 id="candidate-example-title">一轮评分 → 两份名单</h3><span>缩小的教学例子 · 分数为人为设定</span></div>
+ <p>固定同一个查询位置。假设有 8 个可见历史位置，每 2 个位置分一块；本层选 Top-2 位置，候选池选 Top-2 块。</p>
+ <div class="candidate-blocks" aria-label="第20层的同一组索引分数">
+  <div class="candidate-block selected"><strong>A 块 · 入选候选池</strong><div><span>位置 1 <b>0.1</b></span><span class="picked">位置 2 <b>0.9 ★</b></span></div><small>块分数 = 最高分 0.9</small></div>
+  <div class="candidate-block"><strong>B 块</strong><div><span>位置 3 <b>0.7</b></span><span>位置 4 <b>0.6</b></span></div><small>块分数 = 最高分 0.7</small></div>
+  <div class="candidate-block"><strong>C 块</strong><div><span>位置 5 <b>0.2</b></span><span>位置 6 <b>0.3</b></span></div><small>块分数 = 最高分 0.3</small></div>
+  <div class="candidate-block selected"><strong>D 块 · 入选候选池</strong><div><span class="picked">位置 7 <b>0.8 ★</b></span><span>位置 8 <b>0.1</b></span></div><small>块分数 = 最高分 0.8</small></div>
+ </div>
+ <p class="candidate-legend">★ 金色：本层 Top-2 位置；蓝色外框：候选池选中的整块。</p>
+ <div class="candidate-branches">
+  <article><h4>↙ 本层读取：Top-512 positions（位置）</h4><p class="candidate-result">教学例子选 Top-2 positions：<strong>2、7</strong></p><p>取对应 main KV → 用第 20 层的 main Q 计算注意力输出。</p></article>
+  <article><h4>↘ 候选池：Top-2048 blocks（块）</h4><p class="candidate-result">教学例子选 Top-2 blocks：<strong>A、D</strong><br>整块展开 → 位置 <strong>1、2、7、8</strong></p><p>位置 1、8 虽然分数低，也随所在块进入池中。候选池不是从本层 Top-2 名单里再挑出来的。</p></article>
+ </div>
+ <p class="candidate-next"><strong>到第 24 层：</strong>用自己的 indexer Q 对池内的 1、2、7、8 重新评分，可能改选 <strong>1、8</strong>。改的是地址，读取的仍是同一套 main KV。</p>
+ <p class="candidate-real"><strong>真实配置：</strong>本层保存 <strong>Top-512 positions（位置）的地址</strong>用于读取；候选池按块内最高分选 <strong>Top-2048 blocks（块）</strong>，每块 8 个位置，展开后保存最多 16384 个候选位置的地址（不足时取可用项）。这个池供<strong>同一查询位置</strong>的后续 Reindex 共用；处理下一个查询位置时重新建立。<a href="https://arxiv.org/html/2609.19969v1#S2.SS3.SSS2" target="_blank" rel="noopener">论文 §2.3.2 ↗</a></p>
+</section>
+<p class="mhc-return"><a class="mhc-button" href="./v41-architecture.html#candidate">← 返回第 13 步，继续架构动画</a></p>
+</main></body></html>

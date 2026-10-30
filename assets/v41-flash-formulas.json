@@ -1,0 +1,74 @@
+[
+  {
+    "number": 1,
+    "title": "等增量多轮输入的教学账本",
+    "wide": "N_t=N_0+(t-1)\\Delta,\\qquad \\sum_{t=1}^{T}N_t=TN_0+\\frac{T(T-1)}{2}\\Delta",
+    "narrow": "\\begin{aligned}N_t&=N_0+(t-1)\\Delta,\\\\\\sum_{t=1}^{T}N_t&=TN_0+\\frac{T(T-1)}{2}\\Delta\\end{aligned}"
+  },
+  {
+    "number": 2,
+    "title": "Decoder global KV 的投影起点（论文式 1）",
+    "wide": "C_l=H_{L/2}W_l^{KV},\\qquad Z_l=H_{L/2}W_l^Z",
+    "narrow": "\\begin{aligned}C_l&=H_{L/2}W_l^{KV},\\\\Z_l&=H_{L/2}W_l^Z\\end{aligned}"
+  },
+  {
+    "number": 3,
+    "title": "CED 加有限重放的主干工作量近似",
+    "wide": "C_{\\mathrm{full}}=NL,\\qquad C_{\\mathrm{CED}}\\approx N\\frac{L}{2}+W\\frac{L}{2}",
+    "narrow": "\\begin{aligned}C_{\\mathrm{full}}&=NL,\\\\C_{\\mathrm{CED}}&\\approx N\\frac{L}{2}+W\\frac{L}{2}\\end{aligned}"
+  },
+  {
+    "number": 4,
+    "title": "Decoder 五次索引的评分量近似",
+    "wide": "S_{\\mathrm{full}}=5N,\\qquad S_{\\mathrm{hier}}\\approx N+4\\min(N,P)",
+    "narrow": "\\begin{aligned}S_{\\mathrm{full}}&=5N,\\\\S_{\\mathrm{hier}}&\\approx N+4\\min(N,P)\\end{aligned}"
+  },
+  {
+    "number": 5,
+    "title": "单条缓存的数据与 scale",
+    "wide": "B_{\\mathrm{main}}=512\\times\\frac{4}{8}+\\frac{512}{16}=288,\\qquad B_{\\mathrm{index}}=128\\times\\frac{4}{8}+\\frac{128}{32}=68",
+    "narrow": "\\begin{aligned}B_{\\mathrm{main}}&=512\\times\\frac{4}{8}+\\frac{512}{16}\\\\&=288,\\\\B_{\\mathrm{index}}&=128\\times\\frac{4}{8}+\\frac{128}{32}\\\\&=68\\end{aligned}"
+  },
+  {
+    "number": 6,
+    "title": "全模型 global KV 的摊销大小",
+    "wide": "B_{\\mathrm{global}}=\\left(\\frac{3}{2}+1\\right)(288+68)=890\\ \\mathrm{B/token}",
+    "narrow": "\\begin{aligned}B_{\\mathrm{global}}&=\\left(\\frac{3}{2}+1\\right)(288+68)\\\\&=890\\ \\mathrm{B/token}\\end{aligned}"
+  },
+  {
+    "number": 7,
+    "title": "从缓存推到部署内存的正确加法",
+    "wide": "M_{\\mathrm{total}}=M_{\\mathrm{weights}}+M_{\\mathrm{global}}+M_{\\mathrm{SWA}}+M_{\\mathrm{activations}}+M_{\\mathrm{workspace}}+M_{\\mathrm{other}}",
+    "narrow": "\\begin{aligned}M_{\\mathrm{total}}={}&M_{\\mathrm{weights}}+M_{\\mathrm{global}}\\\\&+M_{\\mathrm{SWA}}+M_{\\mathrm{activations}}\\\\&+M_{\\mathrm{workspace}}+M_{\\mathrm{other}}\\end{aligned}"
+  },
+  {
+    "number": 8,
+    "title": "重放段的局部因果窗口",
+    "wide": "\\max(s,i-W+1)\\le j\\le i",
+    "narrow": "\\max(s,i-W+1)\\le j\\le i"
+  },
+  {
+    "number": 9,
+    "title": "持久缓存的两项乘法收益",
+    "wide": "\\frac{M_{\\mathrm{persistent,new}}}{M_{\\mathrm{persistent,old}}}\\approx\\frac{1}{2}\\times\\frac{1}{4}=\\frac{1}{8}",
+    "narrow": "\\begin{aligned}\\frac{M_{\\mathrm{persistent,new}}}{M_{\\mathrm{persistent,old}}}&\\approx\\frac{1}{2}\\times\\frac{1}{4}\\\\&=\\frac{1}{8}\\end{aligned}"
+  },
+  {
+    "number": 10,
+    "title": "Single-Pass mHC 把输入混合系数错开一个 block",
+    "wide": "X_{l+1}=B_lX_l+C_l\\mathcal{F}_l(A_{l-1}X_l),\\qquad (A_l,B_l,C_l)=\\mathcal{H}(X_l)",
+    "narrow": "\\begin{aligned}X_{l+1}&=B_lX_l\\\\&\\quad+C_l\\mathcal{F}_l(A_{l-1}X_l),\\\\(A_l,B_l,C_l)&=\\mathcal{H}(X_l)\\end{aligned}"
+  },
+  {
+    "number": 11,
+    "title": "随 effort 调整的长度惩罚（论文式 9–10）",
+    "wide": "r_{b,j}^{\\mathrm{len}}=-\\min\\!\\left(C_{\\max},k(b)\\frac{\\ell_{b,j}}{L_{\\mathrm{norm}}}\\right),\\qquad k(b)=k_0\\exp\\!\\left(-\\frac{b-b_{\\min}}{\\tau}\\right)",
+    "narrow": "\\begin{aligned}r_{b,j}^{\\mathrm{len}}&=-\\min\\!\\left(C_{\\max},k(b)\\frac{\\ell_{b,j}}{L_{\\mathrm{norm}}}\\right),\\\\k(b)&=k_0\\exp\\!\\left(-\\frac{b-b_{\\min}}{\\tau}\\right)\\end{aligned}"
+  },
+  {
+    "number": 12,
+    "title": "用成功任务归一化成本",
+    "wide": "C_{\\mathrm{success}}=\\frac{C_{\\mathrm{all\\ attempts}}}{n_{\\mathrm{successful\\ tasks}}}",
+    "narrow": "C_{\\mathrm{success}}=\\frac{C_{\\mathrm{all\\ attempts}}}{n_{\\mathrm{successful\\ tasks}}}"
+  }
+]
