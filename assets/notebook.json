@@ -1,5 +1,26 @@
 [
   {
+    "id": "rl-infra-numerics",
+    "coverLabel": "RL 02",
+    "href": "./notes/rl-infra-numerics.html",
+    "title": "02 · 训练推理数值一致性与低精度 RL",
+    "english": "Train–Inference Consistency & Low Precision",
+    "category": "RL Infra 进阶学习",
+    "tags": [
+      "数值一致性",
+      "TIS",
+      "QAT",
+      "miniTE",
+      "MoE",
+      "CPU 实验"
+    ],
+    "summary": "从三种概率与两条 ratio 推导训练推理错位，拆解 QAT、路由重放和执行状态。配固定版本源码、14 组编号公式、五组已运行 CPU 实验及 GPU 验证方案。",
+    "updated": "2026-11-02",
+    "details": "7 章 · 14 组编号公式 · 5 组 CPU 实验",
+    "coverFooter": "NUMERICS · 正文已补全",
+    "readLabel": "阅读专题"
+  },
+  {
     "id": "coding-practice",
     "coverLabel": "CODE",
     "href": "./study/coding-practice.html",

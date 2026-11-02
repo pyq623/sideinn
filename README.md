@@ -10,6 +10,8 @@ GitHub Pages 入口：https://pyq623.github.io/sideinn/ （自动跳转到正式
 
 ## 内容与功能
 
+- [训练推理数值一致性与低精度 RL](notes/rl-infra-numerics.html)：7 章笔记、14 组编号公式与五组可直接运行的 CPU 教学实验，涵盖概率校正、量化与 MoE 路由重放。
+
 - RSI 递归自我改进：13 章、18 个公式。
 - vLLM、SGLang 与推理基础设施：18 章、35 个公式。
 - DeepInfer 笔记配套 [CED 连续演示](notes/deepinfer-walkthrough.html)和 [DSpark 调度与验证动画](notes/deepinfer-dspark.html)，各 4 节、23 页，支持手动翻页与自动放映。DSpark 沿用两条请求讲解草稿生成、预算分配、目标验证和交付；概率与耗时为教学设定。
