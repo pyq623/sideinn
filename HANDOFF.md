@@ -288,3 +288,9 @@ TTL 为 10 分钟；`CNAME` 文件只有 `sideinn.ink`。HTTPS 由 GitHub Pages 
 - 新增13章笔记、原论文图与公式、22步架构动画，附Single-Pass mHC、Engram、CSA2、候选池4篇图解。架构动画含独立滚动说明栏、四套global KV示意及DeepInfer关联入口。
 - 发布范围包含V4.1首页卡片及DeepInfer动画ced-output/tail锚点，不包含并行修改的Hot100和RL专题。静态资源已生成，无需线上构建依赖。
 - 维护源为v41-flash.md、assets/v41-architecture/及其SVG模板；基础验证使用scripts/check-v41-architecture.mjs。
+
+### 2026-11-02：发布训练推理数值一致性与低精度 RL 笔记
+- 正文 `rl-infra-numerics.md`，阅读页 `notes/rl-infra-numerics.html`；公式目录 `assets/rl-infra-numerics-formulas.json`，图片、结果与固定源码来源清单在 `assets/rl-infra-numerics/`。
+- `python3 scripts/rl-infra-numerics-lab.py` 运行五组标准库 CPU 教学实验，重新生成 results.json 与 moe-results.svg；不代表 GPU 性能或大模型收敛复现。
+- 首页新增本篇入口；其他 RL 大纲及 Hot100 改动仍保留本地。尚未发布的相邻篇导航改为返回笔记目录，避免公开死链。
+- 发布检查：五组 CPU 实验通过且输出与原稿一致；14 组编号公式逐项匹配，另有 1 条未编号推导；本地依赖完整。1280/390px 完整渲染无 MathJax 错误，长行内公式在手机端局部滚动，避免整页横向溢出。

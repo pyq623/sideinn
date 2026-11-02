@@ -1,0 +1,130 @@
+{
+  "schema_version": 1,
+  "seed": 20261029,
+  "checks_passed": true,
+  "float32_reduction": {
+    "left_associative": 1.0,
+    "right_associative": 0.0
+  },
+  "batch_scale": {
+    "target": [
+      1.0,
+      0.5
+    ],
+    "alone_or_row_scaled": [
+      1.0,
+      0.5714285714285714
+    ],
+    "with_outlier_tensor_scaled": [
+      0.0,
+      0.0
+    ]
+  },
+  "ste": {
+    "weight": 0.43,
+    "quantized_weight": 0.5,
+    "finite_difference": 0.0,
+    "identity_ste_gradient": -0.5
+  },
+  "importance_sampling": {
+    "p": [
+      0.6,
+      0.3,
+      0.1
+    ],
+    "q": [
+      0.2,
+      0.3,
+      0.5
+    ],
+    "reward": [
+      1.0,
+      -0.5,
+      0.2
+    ],
+    "baseline": 0.47,
+    "target_gradient": [
+      0.318,
+      -0.291,
+      -0.026999999999999996
+    ],
+    "methods": {
+      "uncorrected": {
+        "gradient": [
+          0.29799999999999993,
+          -0.19499999999999995,
+          -0.10299999999999998
+        ],
+        "l2_error": 0.12406449935416661,
+        "angle_degrees": 15.502450837815651,
+        "ess_fraction": 1.0
+      },
+      "exact_is": {
+        "gradient": [
+          0.31799999999999995,
+          -0.291,
+          -0.027
+        ],
+        "l2_error": 5.561946577567963e-17,
+        "angle_degrees": 0.0,
+        "ess_fraction": 0.47169811320754723
+      },
+      "tis_cap_2": {
+        "gradient": [
+          0.27559999999999996,
+          -0.2592,
+          -0.0164
+        ],
+        "l2_error": 0.05404960684408355,
+        "angle_degrees": 1.3507703085805831,
+        "ess_fraction": 0.5714285714285713
+      },
+      "ice_interval_0.5_2": {
+        "gradient": [
+          0.17459999999999998,
+          -0.20369999999999996,
+          0.0291
+        ],
+        "l2_error": 0.17700864385673376,
+        "angle_degrees": 11.980239338900267,
+        "ess_fraction": 0.3
+      }
+    },
+    "prefix_counterexample": {
+      "target_probability_h1": 0.8,
+      "behavior_probability_h1": 0.2,
+      "token_only_weight": 1.0,
+      "token_only_expectation_h1": 0.2,
+      "full_prefix_corrected_expectation_h1": 0.8
+    }
+  },
+  "moe": {
+    "seed": 20261029,
+    "tokens": 512,
+    "routing_flip_fraction": 0.171875,
+    "measurements": {
+      "natural": {
+        "mean_abs_logprob_gap": 0.1510860653944426,
+        "p99_abs_logprob_gap": 1.8991407031234007,
+        "max_abs_logprob_gap": 2.2952348701851872,
+        "p99_ratio": 2.4098015603181424,
+        "ratio_outside_0.8_1.2": 0.150390625
+      },
+      "route_replay": {
+        "mean_abs_logprob_gap": 0.025382679073648332,
+        "p99_abs_logprob_gap": 0.08007311655285855,
+        "max_abs_logprob_gap": 0.09772857061512097,
+        "p99_ratio": 1.0772788528885495,
+        "ratio_outside_0.8_1.2": 0.0
+      },
+      "version_shift": {
+        "mean_abs_logprob_gap": 0.23607574223463548,
+        "p99_abs_logprob_gap": 2.1234481490724058,
+        "max_abs_logprob_gap": 2.597387161855192,
+        "p99_ratio": 2.721095174756866,
+        "ratio_outside_0.8_1.2": 0.2578125
+      }
+    },
+    "note": "Deliberately near-boundary top-1 toy MoE; INT4-like input rounding plus uniform output rounding, NOT NVFP4 or an LLM."
+  }
+}

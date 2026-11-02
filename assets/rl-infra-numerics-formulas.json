@@ -1,0 +1,86 @@
+[
+  {
+    "number": 1,
+    "title": "式 1：把滞后、执行差异和采样变换分开",
+    "wide": "\\log p_u^L-\\log q_v=\\underbrace{\\log p_u^L-\\log p_v^L}_{\\text{weight lag}}+\\underbrace{\\log p_v^L-\\log p_v^R}_{\\text{execution gap}}+\\underbrace{\\log p_v^R-\\log q_v}_{\\text{sampling transform}}.",
+    "narrow": "\\begin{aligned}\\log p_u^L-\\log q_v&=(\\log p_u^L-\\log p_v^L)\\\\&\\quad +(\\log p_v^L-\\log p_v^R)\\\\&\\quad +(\\log p_v^R-\\log q_v).\\end{aligned}"
+  },
+  {
+    "number": 2,
+    "title": "式 2：采样分布的归一化范围",
+    "wide": "q(a\\mid h)=\\frac{\\mathbf{1}_{a\\in S(h)}\\exp(z_a/\\tau)}{\\sum_{b\\in S(h)}\\exp(z_b/\\tau)}.",
+    "narrow": "q(a\\mid h)=\\frac{\\mathbf{1}_{a\\in S(h)}\\exp(z_a/\\tau)}{\\sum_{b\\in S(h)}\\exp(z_b/\\tau)}."
+  },
+  {
+    "number": 3,
+    "title": "式 3：score 的零均值来自采样分布",
+    "wide": "\\mathbb{E}_{p_\\theta}[s(a)]=\\sum_a\\nabla_\\theta p_\\theta(a)=0,\\qquad \\mathbb{E}_{q}[s(a)]\\ne0\\ \\text{in general}.",
+    "narrow": "\\begin{aligned}\\mathbb{E}_{p_\\theta}[s(a)]&=\\sum_a\\nabla_\\theta p_\\theta(a)=0,\\\\\\mathbb{E}_{q}[s(a)]&\\ne0\\quad\\text{in general}.\\end{aligned}"
+  },
+  {
+    "number": 4,
+    "title": "式 4：两条 ratio",
+    "wide": "r_t(\\theta)=\\exp(\\log p_\\theta-\\log p_0),\\qquad \\rho_t=\\exp(\\log p_0-\\log q),\\qquad r_t\\rho_t=\\frac{p_\\theta}{q}.",
+    "narrow": "\\begin{aligned}r_t(\\theta)&=\\exp(\\log p_\\theta-\\log p_0),\\\\\\rho_t&=\\exp(\\log p_0-\\log q),\\\\r_t\\rho_t&=p_\\theta/q.\\end{aligned}"
+  },
+  {
+    "number": 5,
+    "title": "式 5：精确 IS 与截断的偏差",
+    "wide": "\\mathbb{E}_{p_0}[f]=\\mathbb{E}_{q}[\\rho f],\\qquad \\mathbb{E}_{q}[w(\\rho)f]-\\mathbb{E}_{p_0}[f]=\\mathbb{E}_{q}[(w(\\rho)-\\rho)f].",
+    "narrow": "\\begin{aligned}\\mathbb{E}_{p_0}[f]&=\\mathbb{E}_q[\\rho f],\\\\\\mathbb{E}_q[w(\\rho)f]&-\\mathbb{E}_{p_0}[f]\\\\&=\\mathbb{E}_q[(w(\\rho)-\\rho)f].\\end{aligned}"
+  },
+  {
+    "number": 6,
+    "title": "式 6：PPO 外乘冻结的行为校正",
+    "wide": "\\mathcal{L}=-\\mathbb{E}_{q}\\!\\left[\\operatorname{sg}(w(\\rho))\\min\\!\\left(rA,\\operatorname{clip}(r,1-\\epsilon_-,1+\\epsilon_+)A\\right)\\right].",
+    "narrow": "\\begin{aligned}\\mathcal{L}&=-\\mathbb{E}_q[\\operatorname{sg}(w(\\rho))\\,m],\\\\m&=\\min\\!\\left(rA,\\widehat r A\\right),\\\\\\widehat r&=\\operatorname{clip}(r,1-\\epsilon_-,1+\\epsilon_+).\\end{aligned}"
+  },
+  {
+    "number": 7,
+    "title": "式 7：完整回答的概率比",
+    "wide": "\\frac{p_0(y\\mid x)}{q(y\\mid x)}=\\prod_{t=1}^{T}\\rho_t.",
+    "narrow": "\\frac{p_0(y\\mid x)}{q(y\\mid x)}=\\prod_{t=1}^{T}\\rho_t."
+  },
+  {
+    "number": 8,
+    "title": "式 8：logits 扰动如何改变 logprob",
+    "wide": "\\Delta\\log p_i=\\log p'_i-\\log p_i=\\Delta z_i-\\bigl[F(z+\\Delta z)-F(z)\\bigr]\\approx\\Delta z_i-\\sum_j p_j\\Delta z_j.",
+    "narrow": "\\Delta\\log p_i=\\log p'_i-\\log p_i=\\Delta z_i-\\bigl[F(z+\\Delta z)-F(z)\\bigr]\\approx\\Delta z_i-\\sum_j p_j\\Delta z_j."
+  },
+  {
+    "number": 9,
+    "title": "式 9：NVFP4 重建的示意",
+    "wide": "s_b=Q_{\\mathrm{E4M3}}\\!\\left(\\frac{\\max_{i\\in b}|x_i|}{6g}\\right),\\quad c_i=Q_{\\mathrm{E2M1}}\\!\\left(\\frac{x_i}{g s_b}\\right),\\quad \\widehat{x}_i=g s_b c_i.",
+    "narrow": "\\begin{aligned}s_b&=Q_{\\mathrm{E4M3}}\\!\\left(\\frac{\\max_{i\\in b}|x_i|}{6g}\\right),\\\\c_i&=Q_{\\mathrm{E2M1}}\\!\\left(\\frac{x_i}{g s_b}\\right),\\\\\\widehat x_i&=g s_b c_i.\\end{aligned}"
+  },
+  {
+    "number": 10,
+    "title": "式 10：前向量化，反向采用替代导数",
+    "wide": "\\widetilde{w}=w+\\operatorname{sg}(Q(w)-w),\\qquad \\widetilde{w}_{\\mathrm{forward}}=Q(w),\\qquad \\left.\\frac{\\partial\\widetilde{w}}{\\partial w}\\right|_{\\mathrm{STE}}:=1.",
+    "narrow": "\\begin{aligned}\\widetilde w&=w+\\operatorname{sg}(Q(w)-w),\\\\\\widetilde w_{\\mathrm{forward}}&=Q(w),\\\\\\left.\\frac{\\partial\\widetilde w}{\\partial w}\\right|_{\\mathrm{STE}}&:=1.\\end{aligned}"
+  },
+  {
+    "number": 11,
+    "title": "式 11：离散专家集合与连续计算",
+    "wide": "F_I(x)=\\sum_{i\\in I}g_i(x)E_i(x),\\qquad I=\\operatorname{TopK}(u(x)).",
+    "narrow": "\\begin{aligned}F_I(x)&=\\sum_{i\\in I}g_i(x)E_i(x),\\\\I&=\\operatorname{TopK}(u(x)).\\end{aligned}"
+  },
+  {
+    "number": 12,
+    "title": "式 12：路由差异与同路由残差",
+    "wide": "A-B=(A-C)+(C-B).",
+    "narrow": "A-B=(A-C)+(C-B)."
+  },
+  {
+    "number": 13,
+    "title": "式 13：固定集合内的 gate 导数",
+    "wide": "g_i=\\frac{e^{u_i}}{\\sum_{j\\in I_R}e^{u_j}},\\qquad \\frac{\\partial g_i}{\\partial u_j}=g_i(\\mathbf{1}_{i=j}-g_j),\\quad i,j\\in I_R.",
+    "narrow": "\\begin{aligned}g_i&=\\frac{e^{u_i}}{\\sum_{j\\in I_R}e^{u_j}},\\\\\\frac{\\partial g_i}{\\partial u_j}&=g_i(\\mathbf{1}_{i=j}-g_j),\\\\&\\hspace{18mm}i,j\\in I_R.\\end{aligned}"
+  },
+  {
+    "number": 14,
+    "title": "式 14：用于日志的三组量",
+    "wide": "\\delta_t=\\log p_0(a_t\\mid h_t)-\\log q(a_t\\mid h_t),\\qquad \\rho_t=e^{\\delta_t},\\qquad c_t=\\mathbf{1}_{\\rho_t<L\\ \\lor\\ \\rho_t>U}.",
+    "narrow": "\\begin{aligned}\\delta_t&=\\log p_0(a_t\\mid h_t)\\\\&\\quad-\\log q(a_t\\mid h_t),\\\\\\rho_t&=e^{\\delta_t},\\\\c_t&=\\mathbf{1}_{\\rho_t<L\\ \\lor\\ \\rho_t>U}.\\end{aligned}"
+  }
+]

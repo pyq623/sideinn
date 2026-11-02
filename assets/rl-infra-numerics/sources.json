@@ -1,0 +1,80 @@
+{
+  "checked_on": "2026-10-29",
+  "source_files": [
+    {
+      "repo": "THUDM/slime",
+      "commit": "540ea919e45b8b929198abce008a103be9cfc779",
+      "path": "slime/backends/megatron_utils/loss.py",
+      "url": "https://raw.githubusercontent.com/THUDM/slime/540ea919e45b8b929198abce008a103be9cfc779/slime/backends/megatron_utils/loss.py",
+      "sha256": "92ca932bd18019d5899272da1ae65da4a9f8172c4dbdeecbf6897b1f62d7e754",
+      "lines": 1607
+    },
+    {
+      "repo": "THUDM/slime",
+      "commit": "540ea919e45b8b929198abce008a103be9cfc779",
+      "path": "slime/utils/ppo_utils.py",
+      "url": "https://raw.githubusercontent.com/THUDM/slime/540ea919e45b8b929198abce008a103be9cfc779/slime/utils/ppo_utils.py",
+      "sha256": "fce003ac385badbe6946732ef4137bd968a823b0d51f52cc1903ebd8bb61e0ba",
+      "lines": 980
+    },
+    {
+      "repo": "THUDM/slime",
+      "commit": "540ea919e45b8b929198abce008a103be9cfc779",
+      "path": "slime/backends/megatron_utils/actor.py",
+      "url": "https://raw.githubusercontent.com/THUDM/slime/540ea919e45b8b929198abce008a103be9cfc779/slime/backends/megatron_utils/actor.py",
+      "sha256": "9f0e0cd3119c8354cd76c1972c908143b7f933b2653a1f53a2a898b1f8b13739",
+      "lines": 722
+    },
+    {
+      "repo": "vllm-project/vllm",
+      "commit": "61a6f8138fd81f89467af762dc1b74674f544300",
+      "path": "vllm/v1/sample/sampler.py",
+      "url": "https://raw.githubusercontent.com/vllm-project/vllm/61a6f8138fd81f89467af762dc1b74674f544300/vllm/v1/sample/sampler.py",
+      "sha256": "7d3d001b8b6e1f25f02572df29609a4ab5c50abb023b48f5ebdb4752a2b5f7c5",
+      "lines": 501
+    },
+    {
+      "repo": "sgl-project/sglang",
+      "commit": "f6649627836699f76a3054d0812c05ac332932c0",
+      "path": "python/sglang/srt/layers/sampler.py",
+      "url": "https://raw.githubusercontent.com/sgl-project/sglang/f6649627836699f76a3054d0812c05ac332932c0/python/sglang/srt/layers/sampler.py",
+      "sha256": "b9b0c965731104a5a7a1565bc5927d1ddb6dea278f19e3beb981382c468d63e6",
+      "lines": 1070
+    },
+    {
+      "repo": "NVIDIA/TransformerEngine",
+      "commit": "dfc4158d1597f72972fe2863adac436fa3fe1d4d",
+      "path": "transformer_engine/common/recipe/__init__.py",
+      "url": "https://raw.githubusercontent.com/NVIDIA/TransformerEngine/dfc4158d1597f72972fe2863adac436fa3fe1d4d/transformer_engine/common/recipe/__init__.py",
+      "sha256": "5a310fcc898d08283309d10fc768a7dd1b879a73fab73b342488dfb79131b10f",
+      "lines": 766
+    },
+    {
+      "repo": "THUDM/slime",
+      "commit": "540ea919e45b8b929198abce008a103be9cfc779",
+      "path": "slime/utils/routing_replay.py",
+      "url": "https://raw.githubusercontent.com/THUDM/slime/540ea919e45b8b929198abce008a103be9cfc779/slime/utils/routing_replay.py",
+      "sha256": "513a70a86f68fae0e43a392f294e9f125bf7b9155472f895e64a1f079b9c5fa2",
+      "lines": 255
+    },
+    {
+      "repo": "THUDM/slime",
+      "commit": "540ea919e45b8b929198abce008a103be9cfc779",
+      "path": "slime/rollout/sglang_rollout.py",
+      "url": "https://raw.githubusercontent.com/THUDM/slime/540ea919e45b8b929198abce008a103be9cfc779/slime/rollout/sglang_rollout.py",
+      "sha256": "ccca29acba0ebbcc759c1e26d80218bba9011d68eca04e3bc404050026f6bee6",
+      "lines": 792,
+      "checked_on": "2026-10-30"
+    },
+    {
+      "repo": "THUDM/slime",
+      "commit": "540ea919e45b8b929198abce008a103be9cfc779",
+      "path": "docs/en/advanced/policy-mismatch.md",
+      "url": "https://raw.githubusercontent.com/THUDM/slime/540ea919e45b8b929198abce008a103be9cfc779/docs/en/advanced/policy-mismatch.md",
+      "sha256": "5cee4b66dc494b1146a0bbc7b549e50037602972ef39b74feb40a97f05501f74",
+      "lines": 207,
+      "checked_on": "2026-10-30"
+    }
+  ],
+  "scope": "Read-only source inspection; no GPU framework execution."
+}
