@@ -1,0 +1,12 @@
+{
+  "checked": "2026-11-17",
+  "model": "Qwen3.8-Flash-Next",
+  "scope": "Qwen4 架构预览 · 语言模型主干，非 Qwen4-Max",
+  "revision": "812d96e10a0dd82b69d749e68693698cf6c36daa",
+  "config": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next/resolve/812d96e10a0dd82b69d749e68693698cf6c36daa/config.json",
+  "official_note": "https://www.xiaohongshu.com/explore/6a8ee05000000000210307c7",
+  "figure": "官方小红书笔记第 2 / 7 张；技术报告 Figure 1",
+  "report": "https://github.com/QwenLM/Qwen3.8-Flash-Next/blob/main/tech_report.pdf",
+  "model_card": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next",
+  "gallery": "https://sebastianraschka.com/llm-architecture-gallery/"
+}

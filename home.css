@@ -48,3 +48,6 @@
 /* DeepInfer uses two short lines so its full name fits the narrow book cover. */
 .note-card[data-note-id="deepinfer"] .note-cover strong{font-size:28px;letter-spacing:-1px;line-height:1.15}
 @media(max-width:760px){.note-card[data-note-id="deepinfer"] .note-cover strong{font-size:22px;letter-spacing:-.5px}}
+
+.note-card[data-note-id="architecture-qwen4-preview"] .note-cover strong{font-size:30px;letter-spacing:-1px}
+@media(max-width:760px){.note-card[data-note-id="architecture-qwen4-preview"] .note-cover strong{font-size:18px;letter-spacing:-.5px}}

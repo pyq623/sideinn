@@ -306,3 +306,8 @@ TTL 为 10 分钟；`CNAME` 文件只有 `sideinn.ink`。HTTPS 由 GitHub Pages 
 - 内容来自上游 `content/accio-hrg.md`，采用通用模板与公开来源，不包含候选人的个人履历或面试安排。通过上游构建和本站导入器维护，禁止手改生成正文。
 - 发布构建必须使用上游默认公开源，不设置 `HRG_LOCAL_SOURCE`。本地稿的 noindex 标记不是访问控制，不得把本地覆盖构建用于部署。
 - 本次检查包含上游测试、默认构建覆盖本地稿的隔离回归测试，以及公开正文、下载稿、入口与新增提交的隐私检查。
+
+### 2026-11-17：Qwen4 架构预览
+- 新增 `model-architecture/qwen4-preview/`，两版基于官方 Figure 1 的可编辑 SVG 与阅读页；对应 Qwen3.8-Flash-Next，不是 Qwen4-Max。
+- 改进版单列首组 4 层、后续 11 组，标明 48 层编号、N-gram Embedding Layer 仅在第 2 层接入、四条 Expanded Residual 分支以及 GR Read 内含归一化。
+- 构建 `python3 model-architecture/build-qwen4.py`；快照与来源在模型目录。专栏与首页增加第 5 个模型入口。
