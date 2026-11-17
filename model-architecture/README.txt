@@ -28,3 +28,8 @@ Ling-2.6-flash（Bailing v2.5）：ling-2.6-flash/index.html
 术语对应约定：图中模块标签与中文解释中的专有名词必须逐字一致（含大小写），不得部分翻译或换用缩写。例如图中 Up projection，解释也写 Up projection，不写 Up 投影或上投影；Gate projection、Down projection 同理。中文仅用于解释其作用与数据流。
 
 第三方来源：Ling 的 implementation.snapshot.py 为官方代码快照，保留原始版权声明；对应 Apache-2.0 许可全文见 ling-2.6-flash/LICENSE-implementation.txt。页面仅引用该快照作资料依据，不在浏览器中执行。
+
+Qwen4 架构预览：qwen4-preview/index.html（Qwen3.8-Flash-Next，不是 Qwen4-Max）。
+构建：python3 model-architecture/build-qwen4.py；模板：qwen4-preview/template.html。
+复刻依据官方小红书第 2 张图 / 技术报告 Figure 1；改进版明确 48 层、第 2 层单次接入与四条 Expanded Residual 分支。
+来源与固定配置见 sources.json、config.snapshot.json。GR Read 已包含归一化，不要额外添加 pre-normalization。
