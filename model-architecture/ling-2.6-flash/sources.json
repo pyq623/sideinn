@@ -1,0 +1,11 @@
+{
+  "model": "Ling-2.6-flash",
+  "architecture": "BailingMoeV2_5ForCausalLM",
+  "checked": "2026-11-02",
+  "revision": "89f8441a870241ea8c36959b629393045d565e0e",
+  "config": "https://huggingface.co/inclusionAI/Ling-2.6-flash/blob/89f8441a870241ea8c36959b629393045d565e0e/config.json",
+  "implementation": "https://huggingface.co/inclusionAI/Ling-2.6-flash/blob/89f8441a870241ea8c36959b629393045d565e0e/modeling_bailing_moe_v2_5.py",
+  "model_card": "https://huggingface.co/inclusionAI/Ling-2.6-flash-base",
+  "reference": "https://arxiv.org/html/2606.15079v1#S2.F2",
+  "scope": "Flash reconstruction from released code. Figure 2 is a 1T reference, not an official Flash diagram. Main 32-layer decoder shown; auxiliary MTP excluded."
+}

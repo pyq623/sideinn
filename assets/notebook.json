@@ -1,5 +1,88 @@
 [
   {
+    "id": "qwen36-architecture",
+    "coverLabel": "QWEN3.6",
+    "href": "./model-architecture/qwen36/",
+    "title": "Qwen3.6-35B-A3B 架构图",
+    "english": "Hybrid Attention & Mixture of Experts",
+    "category": "模型架构",
+    "tags": [
+      "Qwen3.6",
+      "Gated DeltaNet",
+      "Gated Attention",
+      "MoE",
+      "架构图"
+    ],
+    "summary": "用嵌套重复框读懂 40 层主干：三个 DeltaNet 层接一个 Attention 层，整组重复十次。保留原布局复刻与改进版对照，支持缩放和 SVG / PNG 导出。",
+    "updated": "2026-11-02",
+    "details": "1 个模型 · 2 版结构图 · 缩放与导出",
+    "coverFooter": "MODEL ARCHITECTURE",
+    "readLabel": "查看架构图"
+  },
+  {
+    "id": "qwen3-30b-a3b-architecture",
+    "coverLabel": "QWEN3",
+    "href": "./model-architecture/qwen3-30b-a3b/",
+    "title": "Qwen3-30B-A3B 架构图",
+    "english": "Grouped-Query Attention & Sparse MoE",
+    "category": "模型架构",
+    "tags": [
+      "Qwen3-30B-A3B",
+      "GQA",
+      "QK-Norm",
+      "RoPE",
+      "MoE",
+      "架构图"
+    ],
+    "summary": "48 个完整 Decoder 层，展开 QK-Norm、RoPE 与两条残差连接；每层从 128 个专家中选出 8 个，明确路由与加权汇总。",
+    "updated": "2026-11-02",
+    "details": "1 个模型 · 2 版结构图 · 缩放与导出",
+    "coverFooter": "MODEL ARCHITECTURE",
+    "readLabel": "查看架构图"
+  },
+  {
+    "id": "qwen3-8b-architecture",
+    "coverLabel": "QWEN3",
+    "href": "./model-architecture/qwen3-8b/",
+    "title": "Qwen3-8B 架构图",
+    "english": "Grouped-Query Attention & Dense SwiGLU",
+    "category": "模型架构",
+    "tags": [
+      "Qwen3-8B",
+      "GQA",
+      "QK-Norm",
+      "RoPE",
+      "SwiGLU",
+      "架构图"
+    ],
+    "summary": "36 个完整 Decoder 层，展示 32 个 Q 头如何共享 8 组 KV，以及稠密 SwiGLU 中的 Gate projection、Up projection 和 Down projection。",
+    "updated": "2026-11-02",
+    "details": "1 个模型 · 2 版结构图 · 缩放与导出",
+    "coverFooter": "MODEL ARCHITECTURE",
+    "readLabel": "查看架构图"
+  },
+  {
+    "id": "ling-2.6-flash-architecture",
+    "coverLabel": "LING FLASH",
+    "href": "./model-architecture/ling-2.6-flash/",
+    "title": "Ling-2.6-flash 架构图",
+    "english": "Bailing v2.5 · Lightning Attention & MLA",
+    "category": "模型架构",
+    "tags": [
+      "Bailing v2.5",
+      "Ling-2.6-flash",
+      "Lightning Attention",
+      "MLA",
+      "MoE",
+      "架构图"
+    ],
+    "summary": "32 层混合 Attention：首组单独展开，后续三组用 ×3 表示；明确首层 Dense FFN、31 层 MoE 与共享专家，支持缩放和 SVG / PNG 导出。",
+    "updated": "2026-11-02",
+    "details": "1 个模型 · 2 版结构图 · 缩放与导出",
+    "coverFooter": "MODEL ARCHITECTURE",
+    "readLabel": "查看架构图"
+  },
+  {
     "id": "rl-infra-numerics",
     "coverLabel": "RL 02",
     "href": "./notes/rl-infra-numerics.html",
