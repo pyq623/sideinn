@@ -51,5 +51,8 @@
   .course-article details.hrg-answer-more, .course-article details.hrg-original { padding: 12px 14px; }
 }
 @media print {
+  .hrg-answer-more::details-content, .hrg-original::details-content {
+    content-visibility: visible;
+  }
   .hrg-answer-more > :not(summary), .hrg-original > :not(summary) { display: block; }
 }
