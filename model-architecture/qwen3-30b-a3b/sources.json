@@ -1,0 +1,8 @@
+{
+  "model": "Qwen3-30B-A3B",
+  "checked": "2026-11-02",
+  "config": "https://huggingface.co/Qwen/Qwen3-30B-A3B/blob/main/config.json",
+  "reference": "https://sebastianraschka.com/llm-architecture-gallery/images/architectures/qwen3-30b-a3b.webp",
+  "implementation": "https://github.com/huggingface/transformers/blob/v4.51.3/src/transformers/models/qwen3_moe/modeling_qwen3_moe.py",
+  "scope": "Original Qwen3 checkpoint (April 2025), not 2507, Coder, Next, or Qwen3.6."
+}

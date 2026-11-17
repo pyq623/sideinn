@@ -294,3 +294,9 @@ TTL 为 10 分钟；`CNAME` 文件只有 `sideinn.ink`。HTTPS 由 GitHub Pages 
 - `python3 scripts/rl-infra-numerics-lab.py` 运行五组标准库 CPU 教学实验，重新生成 results.json 与 moe-results.svg；不代表 GPU 性能或大模型收敛复现。
 - 首页新增本篇入口；其他 RL 大纲及 Hot100 改动仍保留本地。尚未发布的相邻篇导航改为返回笔记目录，避免公开死链。
 - 发布检查：五组 CPU 实验通过且输出与原稿一致；14 组编号公式逐项匹配，另有 1 条未编号推导；本地依赖完整。1280/390px 完整渲染无 MathJax 错误，长行内公式在手机端局部滚动，避免整页横向溢出。
+
+### 2026-11-17：发布模型架构专栏
+- 新增 `model-architecture/` 专栏，包含 Qwen3.6-35B-A3B、Qwen3-30B-A3B、Qwen3-8B、Ling-2.6-flash（Bailing v2.5）四款模型；首页新增四个模型架构入口。
+- 每款包含两版可缩放 SVG 图、SVG / PNG 导出、官方来源；英文模块名与中文解释中的专有名词保持一致。
+- 构建、来源与语言规范见 `model-architecture/README.txt`。本次只发布模型架构及其首页入口，不包含其他本地笔记或私人稿。
+- 发布验证：三组构建结果可复现；8 张 SVG、5 个 HTML 页面、61 个本地依赖/链接和 JS 语法检查通过。四款页面的切换、键盘、缩放、桌面/390px 布局正常；两套查看器的 SVG/PNG 导出成功；首页模型架构筛选为 4 项。
