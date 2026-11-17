@@ -1,0 +1,58 @@
+/* Short answers stay visible; supporting detail is deliberately opt-in. */
+.course-article .hrg-answer-first {
+  border-left: 3px solid #8a6741;
+  border-radius: 0 10px 10px 0;
+  background: #f7f2e8;
+  padding: 16px 20px;
+  margin: 14px 0;
+  color: #322d27;
+}
+.hrg-answer-first p { margin: 0; }
+.hrg-answer-first .hrg-kicker {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  color: #765939;
+  margin-bottom: 8px;
+}
+.course-article details.hrg-answer-more,
+.course-article details.hrg-original {
+  border: 1px solid #e3dccc;
+  border-radius: 10px;
+  margin: 10px 0 18px;
+  padding: 12px 18px;
+  background: transparent;
+}
+.hrg-answer-more summary, .hrg-original summary {
+  cursor: pointer;
+  font-weight: 600;
+  line-height: 1.6;
+}
+.hrg-answer-more[open] summary, .hrg-original[open] summary { margin-bottom: 14px; }
+.hrg-answer-more summary:focus-visible, .hrg-original summary:focus-visible {
+  outline: 2px solid #8a6741;
+  outline-offset: 4px;
+}
+.course-article .hrg-note { color: #6e5a40; font-size: 14px; }
+.course-article .hrg-coach {
+  padding: 18px 22px;
+  border: 1px solid #d7d3c4;
+  border-radius: 12px;
+  background: #f7f7f0;
+  margin: 20px 0;
+}
+.hrg-question-nav { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 26px; }
+.hrg-question-nav a { padding: 5px 10px; border: 1px solid #ded5c5; border-radius: 6px; }
+.hrg-answer-first, .hrg-answer-more, .hrg-coach { overflow-wrap: anywhere; }
+.course-article h3[id^="q"] { scroll-margin-top: 105px; }
+@media (max-width: 600px) {
+  .course-article .hrg-answer-first, .course-article .hrg-coach { padding: 14px 16px; }
+  .course-article details.hrg-answer-more, .course-article details.hrg-original { padding: 12px 14px; }
+}
+@media print {
+  .hrg-answer-more::details-content, .hrg-original::details-content {
+    content-visibility: visible;
+  }
+  .hrg-answer-more > :not(summary), .hrg-original > :not(summary) { display: block; }
+}

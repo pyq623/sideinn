@@ -1,5 +1,25 @@
 [
   {
+    "id": "accio-hrg",
+    "coverLabel": "HRG",
+    "href": "./study/accio-hrg.html",
+    "title": "Accio · HRG 面试准备",
+    "english": "HRG Interview Preparation",
+    "category": "HRG 面试",
+    "tags": [
+      "HRG",
+      "阿里国际",
+      "Agent",
+      "Infra",
+      "面试表达"
+    ],
+    "summary": "18 道通用练习题：先给结论，再补证据。整理择业动机、项目贡献、协作分歧、学习成长和反问方法，附公开面经来源与适用边界。",
+    "updated": "2026-11-17",
+    "details": "18 题 · 通用模板 · 7 项公开来源",
+    "coverFooter": "INTERVIEW PREPARATION",
+    "readLabel": "开始练习"
+  },
+  {
     "id": "qwen36-architecture",
     "coverLabel": "QWEN3.6",
     "href": "./model-architecture/qwen36/",
