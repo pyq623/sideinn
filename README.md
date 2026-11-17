@@ -10,6 +10,8 @@ GitHub Pages 入口：https://pyq623.github.io/sideinn/ （自动跳转到正式
 
 ## 内容与功能
 
+- [Accio HRG 通用准备专栏](study/accio-hrg.html)：18 道练习题、简短首答模板、追问与公开来源；模板需按读者真实情况填写。
+
 - [模型架构](model-architecture/)：Qwen3.6-35B-A3B、Qwen3-30B-A3B、Qwen3-8B、Ling-2.6-flash 四款模型，每款两版可缩放图解，支持 SVG / PNG 导出；构建与来源说明见[维护文档](model-architecture/README.txt)。
 
 - [训练推理数值一致性与低精度 RL](notes/rl-infra-numerics.html)：7 章笔记、14 组编号公式与五组可直接运行的 CPU 教学实验，涵盖概率校正、量化与 MoE 路由重放。
