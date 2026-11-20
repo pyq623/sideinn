@@ -268,7 +268,8 @@ def main():
         cards = []
         for e in items:
             cards.append(f'''<li data-search="{esc(e['search'])}" data-id="{e['id']}" data-topic="{category['id']}" data-kind="{'tip' if e['appendix'] else 'problem'}"><a href="./{e['href']}"><span class="problem-title">{esc(e['title'])}</span><span class="problem-meta">{('LeetCode '+e['leetcode']+' · ') if e['leetcode'] else ''}{e['difficulty']}{(' · '+esc(e['supplementLabel'])) if e['supplementLabel'] else ''} <span class="status" data-status-for="{e['id']}"></span></span></a></li>''')
-        intro = ''.join('<p class="topic-intro">'+esc(t)+'</p>' for t in category['intro'])
+        intro_text = [re.sub(r'本章共\s*\d+\s*道题', f'本章共 {len(items)} 道题', t) for t in category['intro']]
+        intro = ''.join('<p class="topic-intro">'+esc(t)+'</p>' for t in intro_text)
         sections.append(f'<section class="topic" id="{category["id"]}"><h2>{esc(category["title"])} <span>{len(items)} '+('篇' if items[0]['appendix'] else '题')+'</span></h2>'+intro+'<ul class="problem-list">'+''.join(cards)+'</ul></section>')
     options = ''.join(f'<option value="{c["id"]}">{esc(c["title"])}</option>' for c in categories)
     topic_links = ''.join(f'<a href="#{c["id"]}">{esc(c["title"])}</a>' for c in categories)
