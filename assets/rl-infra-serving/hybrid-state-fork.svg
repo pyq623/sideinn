@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="650" height="254" viewBox="0 0 650 254" role="img" aria-labelledby="title desc"><title id="title">共享 AB 快照，甲乙各自更新</title><desc id="desc">AB 是共同前缀。甲复制到私有状态后输入 C，得到 ABC 状态；乙复制到私有状态后输入 E，得到 ABE 状态。共享 AB 快照保持不变。</desc><style>text{font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;fill:#244c42;font-size:18px} .small{font-size:15px;fill:#587369} .strong{font-weight:650}</style><defs><marker id="arrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7" fill="#467c6a"/></marker></defs>
+<rect x="14" y="86" width="146" height="78" rx="7" fill="#e4f1e8" stroke="#9cbfa9"/>
+<text x="87" y="115" class="strong" text-anchor="middle">共享 AB 快照</text>
+<text x="87" y="143" class="small" text-anchor="middle">只读，保持不变</text>
+<path d="M160,125 L190,125 L190,59 L213,59" fill="none" stroke="#467c6a" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="221" y="24" width="173" height="70" rx="7" fill="#e8edf9" stroke="#aab5d7"/>
+<text x="307" y="52" class="strong" text-anchor="middle">甲的私有状态</text>
+<text x="307" y="77" class="small" text-anchor="middle">初值复制自 AB</text>
+<path d="M394,59 L478,59" fill="none" stroke="#467c6a" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="437" y="40" class="small" text-anchor="middle">输入 C</text>
+<rect x="487" y="24" width="148" height="70" rx="7" fill="#e4f1e8" stroke="#9cbfa9"/>
+<text x="561" y="52" class="strong" text-anchor="middle">ABC 的状态</text>
+<text x="561" y="77" class="small" text-anchor="middle">仅修改甲的副本</text>
+<path d="M160,125 L190,125 L190,193 L213,193" fill="none" stroke="#467c6a" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="221" y="158" width="173" height="70" rx="7" fill="#e8edf9" stroke="#aab5d7"/>
+<text x="307" y="186" class="strong" text-anchor="middle">乙的私有状态</text>
+<text x="307" y="211" class="small" text-anchor="middle">初值复制自 AB</text>
+<path d="M394,193 L478,193" fill="none" stroke="#467c6a" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="437" y="174" class="small" text-anchor="middle">输入 E</text>
+<rect x="487" y="158" width="148" height="70" rx="7" fill="#e4f1e8" stroke="#9cbfa9"/>
+<text x="561" y="186" class="strong" text-anchor="middle">ABE 的状态</text>
+<text x="561" y="211" class="small" text-anchor="middle">仅修改乙的副本</text>
+<text x="325" y="133" class="small" text-anchor="middle">先隔离可写状态，再各自继续计算</text>
+<text x="12" y="248" class="small" text-anchor="start">历史 KV 若不再修改，可继续共享；不必每次复制整个前缀。</text>
+</svg>

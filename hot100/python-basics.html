@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Python 基础速查 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021-python-basics"><script defer src="./hot100.js?v=20261021-quicksort"></script></head>
+<body data-problem-id="python-basics"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../"><img class="brand-logo" src="../assets/sideinn-logo-painted-v2-256.png" width="54" height="54" alt=""><span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-17">← 附录 技巧总结目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#random">1. random：随机取一个、多个与打乱</a><a class="level-5" href="#sort">2. sort 与 sorted：是否修改原列表</a><a class="level-5" href="#math">3. math 与基本数值运算</a><a class="level-5" href="#list">4. 列表与数组：索引、增删与复制</a><a class="level-5" href="#dict">5. 字典、计数与集合</a><a class="level-5" href="#queue">6. 栈与队列：list / deque</a><a class="level-5" href="#heap">7. heapq：最小堆与 Top K</a><a class="level-5" href="#builtins">8. 常用内置函数与遍历</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 附录 技巧总结</div><h1>Python 基础速查</h1><article><p>刷题时随用随查。示例以常见 Python 3 写法为主；<code>nums</code> 表示列表，<code>n</code> 表示元素数量。</p>
+
+<h2 id="random">1. random：随机取一个、多个与打乱</h2>
+<p>先写 <code>import random</code>。下面三种抽样默认对各位置等概率选择：</p>
+<div class="table-scroll" tabindex="0" aria-label="随机抽样用法"><table><thead><tr><th>方法</th><th>返回值</th><th>重复与限制</th></tr></thead><tbody>
+<tr><td><code>random.choice(nums)</code></td><td>一个元素</td><td>取一次；nums 不能为空</td></tr>
+<tr><td><code>random.sample(nums, k=3)</code></td><td>含 3 个元素的新列表</td><td>不放回，同一位置不重复；0 ≤ k ≤ len(nums)</td></tr>
+<tr><td><code>random.choices(nums, k=3)</code></td><td>含 3 个元素的新列表</td><td>有放回，同一位置可重复；k 可超过长度，k &gt; 0 时 nums 不能为空</td></tr>
+</tbody></table></div>
+<pre tabindex="0"><code class="language-python">import random
+nums = [1, 2, 3, 4, 5]
+one = random.choice(nums)         # 例如 3
+many = random.sample(nums, k=3)    # 例如 [4, 1, 5]
+repeat = random.choices(nums, k=3) # 例如 [2, 2, 5]
+random.shuffle(nums)              # 原地打乱，返回 None
+r = random.randint(1, 6)          # 整数 1～6，两端都包含
+r = random.randrange(1, 6)        # 整数 1～5，不包含 6</code></pre>
+<p><strong>sample 不保证值唯一：</strong><code>[1, 1, 2]</code> 中的两个 1 位于不同位置，可以都被抽中。<a href="./quicksort.html">快排</a>每轮只需一个 pivot，所以用 <code>choice</code>。</p>
+
+<h2 id="sort">2. sort 与 sorted：是否修改原列表</h2>
+<div class="table-scroll" tabindex="0" aria-label="排序和反转"><table><thead><tr><th>写法</th><th>结果</th><th>修改原对象？</th></tr></thead><tbody>
+<tr><td><code>nums.sort()</code></td><td>原地升序排序，返回 None</td><td>是；仅列表方法</td></tr>
+<tr><td><code>sorted(nums)</code></td><td>返回排好的新列表</td><td>否；也接受元组、字典等可迭代对象</td></tr>
+<tr><td><code>sorted(nums, reverse=True)</code></td><td>降序的新列表</td><td>否</td></tr>
+<tr><td><code>nums.reverse()</code> / <code>nums[::-1]</code></td><td>前者原地反转并返回 None；后者返回反转副本</td><td>前者是，后者否；反转不等于排序</td></tr>
+</tbody></table></div>
+<pre tabindex="0"><code class="language-python">nums = [3, 1, 2]
+ordered = sorted(nums)      # ordered=[1, 2, 3]，nums 仍为 [3, 1, 2]
+nums.sort(reverse=True)     # nums=[3, 2, 1]；不要写 nums = nums.sort()
+pairs = [(2, 3), (1, 5), (2, 1)]
+ordered = sorted(pairs, key=lambda p: (p[0], -p[1]))
+# [(1, 5), (2, 3), (2, 1)]：第一项升序，相同则第二项降序
+words = sorted(["pear", "a", "to"], key=len)  # 按字符串长度排序</code></pre>
+<p><code>key</code> 指定比较依据；<code>sort</code> 也支持 key 和 reverse。两者都是稳定排序：key 相同的元素保留原先相对顺序。列表排序时间为 O(n log n)（最坏）。</p>
+
+<h2 id="math">3. math 与基本数值运算</h2>
+<p>先写 <code>import math</code>；下面的 <code>abs</code>、<code>pow</code>、<code>round</code> 是内置函数，无需导入。</p>
+<div class="table-scroll" tabindex="0" aria-label="常用数学函数"><table><thead><tr><th>用途</th><th>写法与结果</th></tr></thead><tbody>
+<tr><td>平方根 / 整数平方根</td><td><code>math.sqrt(10)</code> ≈ 3.162；<code>math.isqrt(10)</code> → 3（非负整数平方根向下取整）</td></tr>
+<tr><td>向下 / 向上取整</td><td><code>math.floor(-1.2)</code> → -2；<code>math.ceil(-1.2)</code> → -1</td></tr>
+<tr><td>绝对值 / 幂</td><td><code>abs(-3)</code> → 3；<code>2 ** 3</code> → 8；<code>pow(2, 10, 1000)</code> → 24（幂取模）</td></tr>
+<tr><td>对数</td><td><code>math.log(1)</code> → 0.0（自然对数）；<code>math.log2(8)</code> → 3.0；<code>math.log10(100)</code> → 2.0</td></tr>
+<tr><td>最大公约数 / 最小公倍数</td><td><code>math.gcd(12, 18)</code> → 6；<code>math.lcm(12, 18)</code> → 36（Python 3.9+）</td></tr>
+<tr><td>阶乘 / 组合数</td><td><code>math.factorial(5)</code> → 120；<code>math.comb(5, 2)</code> → 10</td></tr>
+<tr><td>常量 / 浮点比较</td><td><code>math.pi</code>；<code>math.inf</code>、<code>-math.inf</code>；<code>math.isclose(0.1 + 0.2, 0.3)</code> → True</td></tr>
+</tbody></table></div>
+<p><code>7 // 3 == 2</code>，<code>7 % 3 == 1</code>，<code>divmod(7, 3) == (2, 1)</code>。<strong>// 向下取整：</strong><code>-7 // 3 == -3</code>；<code>int(-1.8) == -1</code> 则是向零截断。<code>round</code> 不应简单当作“四舍五入”：<code>round(2.5) == 2</code>、<code>round(3.5) == 4</code>（正好居中时取偶数）。</p>
+
+<h2 id="list">4. 列表与数组：索引、增删与复制</h2>
+<p>Hot100 中的“数组”通常直接用 Python <code>list</code> 表示，不必额外引入 NumPy。索引从 0 开始，<code>a[-1]</code> 是最后一个元素；切片 <code>a[start:end:step]</code> 左闭右开。</p>
+<pre tabindex="0"><code class="language-python">a = [10, 20, 30]
+a.append(40)          # 尾部加一个元素：[10, 20, 30, 40]
+a.extend([50, 60])    # 加入多个元素；append([50, 60]) 则加入一个子列表
+last = a.pop()        # 删除并返回末尾的 60
+item = a.pop(1)       # 删除并返回下标 1 的 20
+a.remove(30)          # 删除第一个值为 30 的元素；不存在则报错
+a.insert(0, 5)       # 在下标 0 前插入 5
+part = a[1:3]        # 取下标 1、2，不修改 a
+copy = a.copy()       # 浅复制；a[:] 也可以
+squares = [x*x for x in range(5) if x % 2 == 0]  # [0, 4, 16]</code></pre>
+<p>下标读写 O(1)，尾部 append/pop 摊还 O(1)；头部或中间插入、删除通常 O(n)，<code>x in a</code> 也通常 O(n)。<code>b = a</code> 只是指向同一列表；浅复制仍共享内部可变对象。</p>
+<pre tabindex="0"><code class="language-python">rows, cols = 2, 3
+matrix = [[0] * cols for _ in range(rows)]  # 每行是独立列表
+matrix[0][0] = 1
+# [[1, 0, 0], [0, 0, 0]]
+# 不要用 [[0] * cols] * rows：多行会引用同一列表</code></pre>
+<p>若确实需要标准库的同类型数值数组，可用 <code>from array import array</code>，再写 <code>a = array('i', [1, 2, 3])</code>；普通刷题使用 list 即可。</p>
+
+<h2 id="dict">5. 字典、计数与集合</h2>
+<pre tabindex="0"><code class="language-python">d = {"a": 2}
+d["b"] = 3                 # 新增或修改
+value = d.get("c", 0)       # 不存在时返回 0，不插入 c
+exists = "a" in d           # 检查的是键
+pairs = list(d.items())     # [("a", 2), ("b", 3)]
+keys, values = list(d.keys()), list(d.values())
+removed = d.pop("b", 0)     # 删除并返回；不存在则返回默认值 0
+for key, value in d.items():
+    print(key, value)
+
+from collections import Counter, defaultdict
+freq = Counter([1, 1, 2])   # {1: 2, 2: 1}；freq[9] 返回 0
+most = freq.most_common(1)  # [(1, 2)]，返回 (元素, 次数)
+groups = defaultdict(list)
+groups["a"].append(1)      # 缺失的键自动创建空列表</code></pre>
+<p>字典键必须可哈希：数字、字符串、元素都可哈希的元组可以；列表不可以。键的查找、插入、删除平均 O(1)。<code>sorted(d)</code> 得到排好的<strong>键列表</strong>；按值排序可写 <code>sorted(d.items(), key=lambda p: p[1])</code>。</p>
+<pre tabindex="0"><code class="language-python">seen = set()                # 空集合；{} 是空字典
+seen.add(3)
+seen.discard(4)              # 不存在也不报错；remove(4) 会报错
+exists = 3 in seen
+unique = set([1, 1, 2])      # {1, 2}，不保证遍历顺序
+common = {1, 2} &amp; {2, 3}     # {2}：交集；| 为并集，- 为差集</code></pre>
+
+<h2 id="queue">6. 栈与队列：list / deque</h2>
+<div class="table-scroll" tabindex="0" aria-label="栈和队列"><table><thead><tr><th>用途</th><th>写法</th><th>含义</th></tr></thead><tbody>
+<tr><td>栈</td><td><code>stack = []</code>；<code>stack.append(x)</code>；<code>stack.pop()</code></td><td>后进先出；<code>stack[-1]</code> 只看栈顶</td></tr>
+<tr><td>队列</td><td><code>q = deque()</code>；<code>q.append(x)</code>；<code>q.popleft()</code></td><td>先进先出，常用于 BFS；两端操作约 O(1)</td></tr>
+<tr><td>双端队列</td><td><code>q.appendleft(x)</code>；<code>q.pop()</code></td><td>也能从左入、从右出</td></tr>
+</tbody></table></div>
+<pre tabindex="0"><code class="language-python">from collections import deque
+q = deque([1, 2])
+q.append(3)
+first = q.popleft()  # 1；剩余 deque([2, 3])
+while q:            # 非空才取，避免空队列报错
+    item = q.popleft()</code></pre>
+<p>不要用列表的 <code>pop(0)</code> 频繁出队，每次都需移动后续元素。deque 适合两端操作，不适合频繁访问中间下标。</p>
+
+<h2 id="heap">7. heapq：最小堆与 Top K</h2>
+<p><code>heapq</code> 直接在列表上维护堆。默认小顶堆，<code>heap[0]</code> 最小，<strong>整个列表不一定有序</strong>。</p>
+<pre tabindex="0"><code class="language-python">import heapq
+heap = [3, 1, 4]
+heapq.heapify(heap)            # 原地建堆，O(n)，返回 None
+heapq.heappush(heap, 2)        # 入堆，O(log n)
+smallest = heap[0]            # 看最小值，O(1)
+smallest = heapq.heappop(heap) # 弹出最小值 1，O(log n)
+nums = [3, 1, 4, 2]
+top = heapq.nlargest(2, nums)  # [4, 3]
+bottom = heapq.nsmallest(2, nums)  # [1, 2]
+
+# 常见兼容写法：负数小顶堆模拟最大堆（针对数值）
+max_heap = [-x for x in nums]
+heapq.heapify(max_heap)
+largest = -heapq.heappop(max_heap)  # 4</code></pre>
+<p>Python 3.14+ 也提供 <code>heapify_max</code>、<code>heappush_max</code>、<code>heappop_max</code>。练习平台版本不确定时，数值最大堆可用上面的负数写法。空堆不能取 <code>heap[0]</code> 或 heappop；存 <code>(优先级, 元素)</code> 时，优先级相同会继续比较后面的元素。</p>
+<p>关联题：<a href="./lc-215.html">215 · 第 K 大</a>、<a href="./lc-347.html">347 · 前 K 个高频元素</a>。</p>
+
+<h2 id="builtins">8. 常用内置函数与遍历</h2>
+<div class="table-scroll" tabindex="0" aria-label="常用内置函数"><table><thead><tr><th>写法</th><th>用途或结果</th></tr></thead><tbody>
+<tr><td><code>len(a)</code>、<code>sum(a)</code>、<code>min(a)</code>、<code>max(a)</code></td><td>长度、求和、最小值、最大值；空序列 min/max 会报错，可指定 <code>default</code></td></tr>
+<tr><td><code>range(1, 6, 2)</code></td><td>迭代得到 1、3、5，右端点不包含</td></tr>
+<tr><td><code>enumerate(["a", "b"])</code></td><td>迭代得到 (0, "a")、(1, "b")，同时取下标和值</td></tr>
+<tr><td><code>zip([1, 2], ["a", "b"])</code></td><td>迭代得到 (1, "a")、(2, "b")；默认在最短序列结束时停止</td></tr>
+<tr><td><code>any([False, True])</code> / <code>all([False, True])</code></td><td>至少一个为真 → True；全部为真 → False</td></tr>
+<tr><td><code>" ".join(["a", "b"])</code> / <code>"a b".split()</code></td><td>拼成 "a b" / 拆成 ["a", "b"]；join 中的元素必须是字符串</td></tr>
+</tbody></table></div>
+<p class="metadata">官方用法参考：<a href="https://docs.python.org/3/library/random.html">random</a> · <a href="https://docs.python.org/3/library/math.html">math</a> · <a href="https://docs.python.org/3/tutorial/datastructures.html">数据结构</a> · <a href="https://docs.python.org/3/library/heapq.html">heapq</a> · <a href="https://docs.python.org/3/library/functions.html">内置函数</a>。</p>
+</article><nav class="neighbors" aria-label="前后篇"><a href="./tip-4.html"><small>← 上一篇</small>附录四 while 循环终止条件 left 小于 right 与 left 小于等于 right</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

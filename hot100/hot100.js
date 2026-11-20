@@ -23,7 +23,7 @@
   }
   for(const section of sections)section.hidden=![...section.querySelectorAll('li')].some(item=>!item.hidden);
   document.getElementById('result-count').textContent=`${problems} 道题 · ${tips} 篇技巧总结`;
-  document.getElementById('review-count').textContent=`已掌握 ${items.filter(i=>i.dataset.kind==='problem'&&status(i.dataset.id)==='done').length} / 96`;
+  document.getElementById('review-count').textContent=`已掌握 ${items.filter(i=>i.dataset.kind==='problem'&&status(i.dataset.id)==='done').length} / ${items.filter(i=>i.dataset.kind==='problem').length}`;
   document.getElementById('empty').hidden=problems+tips>0;
   // Hide jumps to filtered-out sections rather than leaving dead navigation.
   for(const link of document.querySelectorAll('.topic-links a'))link.hidden=document.getElementById(link.hash.slice(1)).hidden;

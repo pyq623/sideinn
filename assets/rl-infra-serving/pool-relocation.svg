@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="680" height="340" viewBox="0 0 680 340" role="img" aria-label="C从偏移8搬到4，逻辑编号不变，边界空闲区增长">
+<style>text{font-family:system-ui,-apple-system,"PingFang SC",sans-serif;fill:#254c43;font-size:17px}.small{font-size:14px;fill:#58736a}.title{font-size:21px;font-weight:700}</style>
+<text x="12" y="27" class="title" text-anchor="start">请求一直持有逻辑编号 C；更新的是位置映射</text>
+<rect x="12" y="44" width="260" height="42" rx="4" fill="#e8eee9" stroke="#a9bdb2"/>
+<text x="26" y="71" class="" text-anchor="start">整理前：C → 偏移 8</text>
+<rect x="345" y="44" width="307" height="42" rx="4" fill="#e8eee9" stroke="#a9bdb2"/>
+<text x="360" y="71" class="" text-anchor="start">整理后：C → 偏移 4</text>
+<text x="302" y="72" class="" text-anchor="middle">→</text>
+<rect x="12" y="124" width="102" height="42" rx="4" fill="#dfdef1" stroke="#a9bdb2"/>
+<text x="64.0" y="151" class="" text-anchor="middle">A</text>
+<rect x="116" y="124" width="102" height="42" rx="4" fill="#fff1cc" stroke="#a9bdb2"/>
+<text x="168.0" y="151" class="small" text-anchor="middle">B 已释放</text>
+<rect x="220" y="124" width="102" height="42" rx="4" fill="#dfdef1" stroke="#a9bdb2"/>
+<text x="272.0" y="151" class="" text-anchor="middle">C</text>
+<rect x="324" y="124" width="154" height="42" rx="4" fill="#f3f5f2" stroke="#a9bdb2"/>
+<text x="402.0" y="151" class="small" text-anchor="middle">边界空闲</text>
+<rect x="480" y="124" width="154" height="42" rx="4" fill="#d7ecdf" stroke="#a9bdb2"/>
+<text x="558.0" y="151" class="small" text-anchor="middle">另一子池</text>
+<text x="12" y="116" class="small" text-anchor="middle">0</text>
+<text x="116" y="116" class="small" text-anchor="middle">4</text>
+<text x="220" y="116" class="small" text-anchor="middle">8</text>
+<text x="324" y="116" class="small" text-anchor="middle">12</text>
+<text x="480" y="116" class="small" text-anchor="middle">18</text>
+<text x="636" y="116" class="small" text-anchor="middle">24</text>
+<rect x="12" y="236" width="102" height="42" rx="4" fill="#dfdef1" stroke="#a9bdb2"/>
+<text x="64.0" y="263" class="" text-anchor="middle">A</text>
+<rect x="116" y="236" width="102" height="42" rx="4" fill="#dfdef1" stroke="#a9bdb2"/>
+<text x="168.0" y="263" class="" text-anchor="middle">C</text>
+<rect x="220" y="236" width="258" height="42" rx="4" fill="#f3f5f2" stroke="#a9bdb2"/>
+<text x="350.0" y="263" class="small" text-anchor="middle">边界空闲扩大</text>
+<rect x="480" y="236" width="154" height="42" rx="4" fill="#d7ecdf" stroke="#a9bdb2"/>
+<text x="558.0" y="263" class="small" text-anchor="middle">另一子池</text>
+<text x="12" y="228" class="small" text-anchor="middle">0</text>
+<text x="116" y="228" class="small" text-anchor="middle">4</text>
+<text x="220" y="228" class="small" text-anchor="middle">8</text>
+<text x="324" y="228" class="small" text-anchor="middle">12</text>
+<text x="480" y="228" class="small" text-anchor="middle">18</text>
+<text x="636" y="228" class="small" text-anchor="middle">24</text>
+<path d="M272 173 C272 198 168 190 168 218" fill="none" stroke="#527c6b" stroke-width="2"/><path d="M163 211L168 218L173 211" fill="none" stroke="#527c6b" stroke-width="2"/>
+<text x="310" y="198" class="small" text-anchor="start">搬动 C：填入空洞，腾出区域边界</text>
+<text x="12" y="314" class="small" text-anchor="start">数字为偏移单位；整理前需确认可以搬动，之后再供新分配使用。</text>
+</svg>

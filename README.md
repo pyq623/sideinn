@@ -10,6 +10,10 @@ GitHub Pages 入口：https://pyq623.github.io/sideinn/ （自动跳转到正式
 
 ## 内容与功能
 
+- [AdaVDR](notes/adavdr.html)：视频 Agent、工具调用与 NASA-GRPO，8 章正文、3 组公式和原创图解。
+- [RL Infra 学习路线](notes/rl-infra-roadmap.html)：七个专题；数值一致性正文已补全，Megatron 完成第一章与 CPU 数学核对，Serving 完成前四章，其余为大纲。
+- [Hot100 算法练习](hot100/)：97 道题、5 篇技巧总结，包含独立快排练习和 Python 基础速查。
+
 - [Accio HRG 通用准备专栏](study/accio-hrg.html)：18 道练习题、简短首答模板、追问与公开来源；模板需按读者真实情况填写。
 
 - [模型架构](model-architecture/)：Qwen3.6-35B-A3B、Qwen3-30B-A3B、Qwen3-8B、Ling-2.6-flash、Qwen4 架构预览（Qwen3.8-Flash-Next）五款模型，每款两版可缩放图解，支持 SVG / PNG 导出；构建与来源说明见[维护文档](model-architecture/README.txt)。
@@ -29,6 +33,10 @@ GitHub Pages 入口：https://pyq623.github.io/sideinn/ （自动跳转到正式
 这是 GitHub Pages 静态版本，不需要服务器或数据库。在线评论暂未开放；旧平台的评论数据库没有包含在本仓库中，也没有被删除。更换网址后，旧网址下的浏览器草稿不会自动转移，迁移前应在旧页面下载修改稿。
 
 ## 更新与发布
+
+Hot100 以原始 DOCX 加 `content/hot100/supplements.json` 及同目录 HTML 为来源，运行 `python3 scripts/import-hot100.py /path/to/Hot100算法题复习手册.docx` 生成阅读页；请在来源层修改补充内容与勘误。清单和来源哈希见 `hot100/import-source.json`。
+
+AdaVDR 与 RL Infra 的正文位于根目录同名 Markdown，阅读入口位于 `notes/`，配图和来源清单位于 `assets/adavdr/`、`assets/rl-infra-megatron/` 和 `assets/rl-infra-serving/`。Megatron 第一章的 CPU 数学核对可运行 `python3 scripts/rl-infra-megatron-mlp-lab.py`。
 
 直接编辑 `notes.md`、`inference-infra.md` 和相应资源。公式变更时，同步更新 `assets/formulas.json` 或 `assets/infra-formulas.json`；笔记目录位于 `assets/notebook.json`。
 

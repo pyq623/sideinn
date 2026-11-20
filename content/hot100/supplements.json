@@ -1,0 +1,155 @@
+{
+  "lc-215": {
+    "keywords": "快速选择 quickselect 三路分区",
+    "label": "快速选择",
+    "intro": "<p id=\"quicksort\">本题学习<strong>快速选择</strong>：只寻找第 K 大。完整排序请单独复习<a href=\"./quicksort.html\">快速排序（快排）</a>。</p>",
+    "replacements": [
+      [
+        "为什么不用双指针分区",
+        "这份双指针分区为什么怕重复元素"
+      ],
+      [
+        "<strong>必须分三组，不能只分两组</strong>：只分成 <code>≤ pivot</code> 和 <code>&gt; pivot</code> 两组，大量重复元素时分区不均匀，退化到 O(n²) 超时",
+        "<strong>本题推荐三路分区处理重复值</strong>：上面的两路实现遇到大量相等元素会退化；并非所有两路分区都不能用，表现取决于边界与指针推进规则"
+      ],
+      [
+        "复杂度：快速选择平均 O(n)，空间 O(n)（三个列表）",
+        "复杂度：随机快速选择期望时间 O(n)，最坏 O(n²)。本列表版在分区较均衡时峰值额外空间 O(n)，最坏可达 O(n²)，递归期间会保留各层列表"
+      ],
+      [
+        "因为每轮只往一边递归，处理的数据量每轮大约砍半：",
+        "只沿目标所在的一边递归。用每轮分区较均衡的情况理解（不保证每轮对半）："
+      ],
+      [
+        "对比快排（O(n log n)）：快排每轮要处理<strong>两边</strong>，总共 n × log n 层。快速选择只处理<strong>一边</strong>，所以更快。",
+        "对比快排：分区较均衡时，快排要递归<strong>两边</strong>，每层合计 O(n) 工作量，共约 log n 层，平均时间 O(n log n)。完整排序见<a href=\"./quicksort.html\">快速排序独立题</a>。"
+      ]
+    ]
+  },
+  "lc-347": {
+    "intro": "<p>联动复习：本题按频率分区；<a href=\"./lc-215.html\">第 215 题的快速选择</a>按元素值找第 K 大；<a href=\"./quicksort.html\">快速排序</a>则把全部元素排好。</p>"
+  },
+  "quicksort": {
+    "after": "lc-215",
+    "title": "补充题 快速排序（快排）",
+    "file": "quicksort.html",
+    "keywords": "快排 快速排序 quicksort 三路分区 排序",
+    "label": "独立练习 · 三路分区"
+  },
+  "python-basics": {
+    "after": "tip-4",
+    "title": "Python 基础速查",
+    "appendix": true,
+    "file": "python-basics.html",
+    "keywords": "python 基础 random choice sample choices shuffle math sqrt floor ceil sort sorted list array 列表 数组 字典 dict set Counter defaultdict deque 队列 栈 heapq 堆 range enumerate zip",
+    "label": "随机 · 数学 · 排序 · 常用容器"
+  },
+  "lc-438": {
+    "replacements": [
+      [
+        "     from collections import Counter\nclass Solution:\n        def findAnagrams(self, s: str, p: str) -&gt; List[int]:\n            cnt_p = Counter(p)\n            cnt_s = Counter()  # 空的\n\n            n_s = len(s)\n            n_p = len(p)\n            res = []\n            for r_i, r_v in enumerate(s):\n                cnt_s[s[r_i]] += 1 # 右边赋值\n\n                l_i = r_i - n_p + 1\n                if l_i &lt; 0:  # 窗口长度不足 len(p)\n                    continue\n                if cnt_p == cnt_s:\n                    res.append(l_i)\n                cnt_s[s[l_i]] -= 1  # 左端点字母离开窗口\n            return res",
+        "from collections import Counter\n\n\nclass Solution:\n    def findAnagrams(self, s: str, p: str) -&gt; list[int]:\n        cnt_p = Counter(p)\n        cnt_s = Counter()  # 空的\n\n        n_s = len(s)\n        n_p = len(p)\n        res = []\n        for r_i, r_v in enumerate(s):\n            cnt_s[s[r_i]] += 1 # 右边赋值\n\n            l_i = r_i - n_p + 1\n            if l_i &lt; 0:  # 窗口长度不足 len(p)\n                continue\n            if cnt_p == cnt_s:\n                res.append(l_i)\n            cnt_s[s[l_i]] -= 1  # 左端点字母离开窗口\n        return res"
+      ],
+      [
+        "    class Solution:\n        def findAnagrams(self, s: str, p: str) -&gt; List[int]:\n            cnt = Counter(p)\n            res = []\n            l = 0\n            for r_i, r_v in enumerate(s):\n                cnt[r_v] -= 1\n                while cnt[r_v] &lt; 0:  # 当前字符多了，窗口不合法，收缩左边\n                    cnt[s[l]] += 1\n                    l += 1\n                if r_i - l + 1 == len(p):\n                    res.append(l)\n            return res",
+        "from collections import Counter\n\n\nclass Solution:\n    def findAnagrams(self, s: str, p: str) -&gt; list[int]:\n        cnt = Counter(p)\n        res = []\n        l = 0\n        for r_i, r_v in enumerate(s):\n            cnt[r_v] -= 1\n            while cnt[r_v] &lt; 0:  # 当前字符多了，窗口不合法，收缩左边\n                cnt[s[l]] += 1\n                l += 1\n            if r_i - l + 1 == len(p):\n                res.append(l)\n        return res"
+      ]
+    ]
+  },
+  "lc-560": {
+    "replacements": [
+      [
+        "<h2 id=\"section-4\">解法二 单次遍历</h2>",
+        "<p id=\"defaultdict-default\"><strong>Python 小知识：defaultdict 的默认值从哪里来？</strong> <code>defaultdict</code> 接收一个无参数函数；用 <code>cnt[key]</code> 访问缺失键时，调用这个函数生成默认值，并将键值对存入字典。<code>defaultdict(int)</code> 调用 <code>int()</code>，得到 0；要让默认值为 −1，可以传入 <code>lambda: -1</code>。</p>\n<pre tabindex=\"0\"><code class=\"language-python\">from collections import defaultdict\n\ncnt = defaultdict(lambda: -1)\ncnt[\"a\"]          # 返回 -1，同时插入 \"a\": -1\ncnt.get(\"b\")      # 返回 None，不触发默认值函数，也不插入 b\ncnt.get(\"b\", -1)  # 返回 -1，但仍不插入 b</code></pre>\n<p><strong>本题仍应使用 defaultdict(int)：</strong>未出现过的前缀和次数为 0，不能从 −1 开始计数。下面单次遍历中的 <code>cnt[0] = 1</code> 是单独记入一次空前缀，不是把所有键的默认值改成 1。</p>\n<h2 id=\"section-4\">解法二 单次遍历</h2>"
+      ]
+    ]
+  },
+  "lc-160": {
+    "replacements": [
+      [
+        "struct ListNode {\n    int val;\n    ListNode *next;\n    ListNode(int x) : val(x), next(NULL) {}\n};\nclass Solution:\n    def getIntersectionNode(self, headA: ListNode, headB: ListNode) -&gt; Optional[ListNode]:\n        A, B = headA, headB\n\n        while A != B:\n            A = A.next if A else headB\n            B = B.next if B else headA\n        return A",
+        "class ListNode:\n    def __init__(self, val=0, next=None):\n        self.val = val\n        self.next = next\n\n\nclass Solution:\n    def getIntersectionNode(self, headA: ListNode, headB: ListNode) -&gt; ListNode | None:\n        A, B = headA, headB\n\n        while A != B:\n            A = A.next if A else headB\n            B = B.next if B else headA\n        return A"
+      ]
+    ]
+  },
+  "lc-206": {
+    "replacements": [
+      [
+        "struct ListNode {\n    int val;\n    ListNode *next;\n    ListNode() : val(0), next(nullptr) {}\n    ListNode(int x) : val(x), next(nullptr) {}\n    ListNode(int x, ListNode *next) : val(x), next(next) {}\n};\nclass Solution:\n    def reverseList(self, head: Optional[ListNode]) -&gt; Optional[ListNode]:\n        cur, pre = head, None\n        while cur:\n            tmp = cur.next\n            cur.next = pre\n            pre = cur\n            cur = tmp\n        return pre",
+        "class ListNode:\n    def __init__(self, val=0, next=None):\n        self.val = val\n        self.next = next\n\n\nclass Solution:\n    def reverseList(self, head: ListNode | None) -&gt; ListNode | None:\n        cur, pre = head, None\n        while cur:\n            tmp = cur.next\n            cur.next = pre\n            pre = cur\n            cur = tmp\n        return pre"
+      ],
+      [
+        "class Solution:\n    def reverseList(self, head: Optional[ListNode]) -&gt; Optional[ListNode]:\n        def recur(cur, pre):\n            if cur is None:\n                return pre\n            res = recur(cur.next, cur)\n            cur.next = pre\n            return res\n\n        return recur(head, None)",
+        "class ListNode:\n    def __init__(self, val=0, next=None):\n        self.val = val\n        self.next = next\n\n\nclass Solution:\n    def reverseList(self, head: ListNode | None) -&gt; ListNode | None:\n        def recur(cur, pre):\n            if cur is None:\n                return pre\n            res = recur(cur.next, cur)\n            cur.next = pre\n            return res\n\n        return recur(head, None)"
+      ]
+    ]
+  },
+  "lc-141": {
+    "replacements": [
+      [
+        "class Solution:\n    def hasCycle(self, head: Optional[ListNode]) -&gt; bool:\n        slow, fast = head, head\n        while fast and fast.next:\n            slow = slow.next\n            fast = fast.next.next\n            if slow == fast:\n                return True\n        return False",
+        "class ListNode:\n    def __init__(self, val=0, next=None):\n        self.val = val\n        self.next = next\n\n\nclass Solution:\n    def hasCycle(self, head: ListNode | None) -&gt; bool:\n        slow, fast = head, head\n        while fast and fast.next:\n            slow = slow.next\n            fast = fast.next.next\n            if slow == fast:\n                return True\n        return False"
+      ]
+    ]
+  },
+  "lc-21": {
+    "replacements": [
+      [
+        "class Solution:\n    def mergeTwoLists(self, list1: Optional[ListNode], list2: Optional[ListNode]) -&gt; Optional[ListNode]:\n        cur = dum = ListNode(0)\n\n        while list1 and list2:\n            if list1.val &lt; list2.val:\n                cur.next = list1\n                list1 = list1.next\n            else:\n                cur.next = list2\n                list2 = list2.next\n            cur = cur.next\n\n        cur.next = list1 if list1 else list2\n        return dum.next",
+        "class ListNode:\n    def __init__(self, val=0, next=None):\n        self.val = val\n        self.next = next\n\n\nclass Solution:\n    def mergeTwoLists(self, list1: ListNode | None, list2: ListNode | None) -&gt; ListNode | None:\n        cur = dum = ListNode(0)\n\n        while list1 and list2:\n            if list1.val &lt; list2.val:\n                cur.next = list1\n                list1 = list1.next\n            else:\n                cur.next = list2\n                list2 = list2.next\n            cur = cur.next\n\n        cur.next = list1 if list1 else list2\n        return dum.next"
+      ]
+    ]
+  },
+  "lc-92": {
+    "replacements": [
+      [
+        "struct ListNode {\n    int val;\n    ListNode *next;\n    ListNode() : val(0), next(nullptr) {}\n    ListNode(int x) : val(x), next(nullptr) {}\n    ListNode(int x, ListNode *next) : val(x), next(next) {}\n};\nclass Solution:\n    def reverseBetween(self, head: Optional[ListNode], left: int, right: int) -&gt; Optional[ListNode]:\n        p0 = dum = ListNode(0, head)\n\n        for _ in range(left - 1):\n            p0 = p0.next\n\n        cur = p0.next\n        pre = None\n        for _ in range(right - left + 1):\n            tmp = cur.next\n            cur.next = pre\n            pre = cur\n            cur = tmp\n\n        p0.next.next = cur  # 原 left 节点（现尾）接上 right 后面的节点\n        p0.next = pre        # p0 指向反转段的新头\n        return dum.next",
+        "class ListNode:\n    def __init__(self, val=0, next=None):\n        self.val = val\n        self.next = next\n\n\nclass Solution:\n    def reverseBetween(self, head: ListNode | None, left: int, right: int) -&gt; ListNode | None:\n        p0 = dum = ListNode(0, head)\n\n        for _ in range(left - 1):\n            p0 = p0.next\n\n        cur = p0.next\n        pre = None\n        for _ in range(right - left + 1):\n            tmp = cur.next\n            cur.next = pre\n            pre = cur\n            cur = tmp\n\n        p0.next.next = cur  # 原 left 节点（现尾）接上 right 后面的节点\n        p0.next = pre        # p0 指向反转段的新头\n        return dum.next"
+      ]
+    ]
+  },
+  "lc-25": {
+    "replacements": [
+      [
+        "class Solution:\n    def reverseKGroup(self, head: Optional[ListNode], k: int) -&gt; Optional[ListNode]:\n        cur = head\n        dum = p0 = ListNode(0, head)\n        n = 0\n        while cur:\n            n += 1\n            cur = cur.next\n\n        pre = None\n        cur = head\n        while n &gt;= k:\n            n -= k\n            for _ in range(k):\n                tmp = cur.next\n                cur.next = pre\n                pre = cur\n                cur = tmp\n            # pre/cur 会随着每次反转变化，用 p0 记录每次反转的前驱节点\n            new_next = p0.next\n            p0.next.next = cur\n            p0.next = pre\n            p0 = new_next\n\n        return dum.next",
+        "class ListNode:\n    def __init__(self, val=0, next=None):\n        self.val = val\n        self.next = next\n\n\nclass Solution:\n    def reverseKGroup(self, head: ListNode | None, k: int) -&gt; ListNode | None:\n        cur = head\n        dum = p0 = ListNode(0, head)\n        n = 0\n        while cur:\n            n += 1\n            cur = cur.next\n\n        pre = None\n        cur = head\n        while n &gt;= k:\n            n -= k\n            for _ in range(k):\n                tmp = cur.next\n                cur.next = pre\n                pre = cur\n                cur = tmp\n            # pre/cur 会随着每次反转变化，用 p0 记录每次反转的前驱节点\n            new_next = p0.next\n            p0.next.next = cur\n            p0.next = pre\n            p0 = new_next\n\n        return dum.next"
+      ]
+    ]
+  },
+  "lc-23": {
+    "replacements": [
+      [
+        "import heapq\nListNode.__lt__ = lambda a, b: a.val &lt; b.val\n\nclass Solution:\n    def mergeKLists(self, lists: List[Optional[ListNode]]) -&gt; Optional[ListNode]:\n        cur = dum = ListNode(0)\n        h_list = [head for head in lists if head]\n        heapify(h_list)\n        while h_list:\n            s_node = heappop(h_list)\n            if s_node.next:\n                heappush(h_list, s_node.next)\n            cur.next = s_node\n            cur = cur.next\n        return dum.next",
+        "from heapq import heapify, heappop, heappush\n\n\nclass ListNode:\n    def __init__(self, val=0, next=None):\n        self.val = val\n        self.next = next\n\n\nListNode.__lt__ = lambda a, b: a.val &lt; b.val\n\nclass Solution:\n    def mergeKLists(self, lists: list[ListNode | None]) -&gt; ListNode | None:\n        cur = dum = ListNode(0)\n        h_list = [head for head in lists if head]\n        heapify(h_list)\n        while h_list:\n            s_node = heappop(h_list)\n            if s_node.next:\n                heappush(h_list, s_node.next)\n            cur.next = s_node\n            cur = cur.next\n        return dum.next"
+      ],
+      [
+        "class Solution:\n    def mergeKLists(self, lists: List[Optional[ListNode]]) -&gt; Optional[ListNode]:\n        cur = dum = ListNode(0)\n        h = [(head.val, i, head) for i, head in enumerate(lists) if head]\n        heapify(h)\n        while h:\n            _, i, node = heappop(h)\n            if node.next:\n                heappush(h, (node.next.val, i, node.next))\n            cur.next = node\n            cur = cur.next\n        return dum.next",
+        "from heapq import heapify, heappop, heappush\n\n\nclass ListNode:\n    def __init__(self, val=0, next=None):\n        self.val = val\n        self.next = next\n\n\nclass Solution:\n    def mergeKLists(self, lists: list[ListNode | None]) -&gt; ListNode | None:\n        cur = dum = ListNode(0)\n        h = [(head.val, i, head) for i, head in enumerate(lists) if head]\n        heapify(h)\n        while h:\n            _, i, node = heappop(h)\n            if node.next:\n                heappush(h, (node.next.val, i, node.next))\n            cur.next = node\n            cur = cur.next\n        return dum.next"
+      ]
+    ]
+  },
+  "lc-94": {
+    "replacements": [
+      [
+        "class Solution:\n    def inorderTraversal(self, root: Optional[TreeNode]) -&gt; List[int]:\n        WHITE, GRAY = 0, 1\n        res = []\n        stack = [(WHITE, root)]\n        while stack:\n            color, node = stack.pop()\n            if node == None:\n                continue\n            if color == WHITE:\n                stack.append((WHITE, node.right))\n                stack.append((GRAY, node))\n                stack.append((WHITE, node.left))\n            else:\n                res.append(node.val)\n        return res",
+        "class TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val\n        self.left = left\n        self.right = right\n\n\nclass Solution:\n    def inorderTraversal(self, root: TreeNode | None) -&gt; list[int]:\n        WHITE, GRAY = 0, 1\n        res = []\n        stack = [(WHITE, root)]\n        while stack:\n            color, node = stack.pop()\n            if node == None:\n                continue\n            if color == WHITE:\n                stack.append((WHITE, node.right))\n                stack.append((GRAY, node))\n                stack.append((WHITE, node.left))\n            else:\n                res.append(node.val)\n        return res"
+      ],
+      [
+        "class Solution:\n    def inorderTraversal(self, root: Optional[TreeNode]) -&gt; List[int]:\n        def dfs(node: Optional[TreeNode]):\n            if not node:\n                return\n            dfs(node.left)\n            ans.append(node.val)\n            dfs(node.right)\n        ans = []\n        dfs(root)\n        return ans",
+        "class TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val\n        self.left = left\n        self.right = right\n\n\nclass Solution:\n    def inorderTraversal(self, root: TreeNode | None) -&gt; list[int]:\n        def dfs(node: TreeNode | None):\n            if not node:\n                return\n            dfs(node.left)\n            ans.append(node.val)\n            dfs(node.right)\n        ans = []\n        dfs(root)\n        return ans"
+      ]
+    ]
+  },
+  "lc-104": {
+    "replacements": [
+      [
+        "struct TreeNode {\n    int val;\n    TreeNode *left;\n    TreeNode *right;\n    TreeNode() : val(0), left(nullptr), right(nullptr) {}\n    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}\n    TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}\n};\nclass Solution:\n    def maxDepth(self, root: Optional[TreeNode]) -&gt; int:\n        if not root:\n            return 0 # 没有节点直接返回0 终止条件\n        left = self.maxDepth(root.left)\n        right = self.maxDepth(root.right)\n        return max(left, right) + 1 # 一个节点就加1",
+        "class TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val\n        self.left = left\n        self.right = right\n\n\nclass Solution:\n    def maxDepth(self, root: TreeNode | None) -&gt; int:\n        if not root:\n            return 0 # 没有节点直接返回0 终止条件\n        left = self.maxDepth(root.left)\n        right = self.maxDepth(root.right)\n        return max(left, right) + 1 # 一个节点就加1\n\n\nif __name__ == &quot;__main__&quot;:\n    # 构造示例二叉树：\n    #       3\n    #      / \\\n    #     9  20\n    #       /  \\\n    #      15   7\n    root = TreeNode(\n        3,\n        left=TreeNode(9),\n        right=TreeNode(20, left=TreeNode(15), right=TreeNode(7)),\n    )\n\n    solution = Solution()\n    depth = solution.maxDepth(root)\n    print(depth)  # 输出 3：最长路径包含 3 个节点\n"
+      ],
+      [
+        "class Solution:\n    def maxDepth(self, root: Optional[TreeNode]) -&gt; int:\n        if not root:\n            return 0\n        res = 0\n        queue = []\n        queue.append(root)\n        while queue:\n            tmp = []\n            for node in queue:\n                if node.left:\n                    tmp.append(node.left)\n                if node.right:\n                    tmp.append(node.right)\n            queue = tmp\n            res += 1\n        return res",
+        "class TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val\n        self.left = left\n        self.right = right\n\n\nclass Solution:\n    def maxDepth(self, root: TreeNode | None) -&gt; int:\n        if not root:\n            return 0\n        res = 0\n        queue = []\n        queue.append(root)\n        while queue:\n            tmp = []\n            for node in queue:\n                if node.left:\n                    tmp.append(node.left)\n                if node.right:\n                    tmp.append(node.right)\n            queue = tmp\n            res += 1\n        return res"
+      ]
+    ]
+  }
+}

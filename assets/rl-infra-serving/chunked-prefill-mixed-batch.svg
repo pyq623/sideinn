@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="370" viewBox="0 0 860 370" role="img" aria-labelledby="title desc">
+<title id="title">A 的分块 prefill 与 B、C 的 decode 组成混合批次</title><desc id="desc">每一列为一次迭代。A 的前两轮处理两个输入块，第三轮进入 decode；B、C 在每轮各处理一个 decode token。A 的块之间通过 KV 保留依赖。</desc>
+<defs><marker id="arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0 0L6 3L0 6" fill="none" stroke="#536b62"/></marker></defs>
+<rect width="860" height="370" fill="#fffdf8"/>
+<g font-family="PingFang SC,Microsoft YaHei,sans-serif" fill="#263e36">
+<rect x="102" y="13" width="238" height="319" rx="10" fill="#f5f7f2" stroke="#ced9d1"/>
+<text x="221" y="43" text-anchor="middle" font-size="21" font-weight="bold">第 1 轮 · 一个批次</text>
+<rect x="347" y="13" width="238" height="319" rx="10" fill="#f5f7f2" stroke="#ced9d1"/>
+<text x="466" y="43" text-anchor="middle" font-size="21" font-weight="bold">第 2 轮 · 一个批次</text>
+<rect x="592" y="13" width="238" height="319" rx="10" fill="#f5f7f2" stroke="#ced9d1"/>
+<text x="711" y="43" text-anchor="middle" font-size="21" font-weight="bold">第 3 轮 · 一个批次</text>
+<text x="51" y="113" text-anchor="middle" font-size="20" font-weight="bold">请求 A</text>
+<text x="51" y="216" text-anchor="middle" font-size="20" font-weight="bold">请求 B</text>
+<text x="51" y="292" text-anchor="middle" font-size="20" font-weight="bold">请求 C</text>
+<rect x="110" y="63" width="222" height="97" rx="7" fill="#fbe5cf" stroke="#9bada2"/>
+<text x="221" y="88" text-anchor="middle" font-size="22" font-weight="bold">prefill 第一块</text>
+<text x="221" y="118" text-anchor="middle" font-size="20" font-weight="normal">处理 p₁、p₂</text>
+<text x="221" y="144" text-anchor="middle" font-size="16" font-weight="normal">保存这一块的 KV</text>
+<rect x="110" y="181" width="222" height="61" rx="7" fill="#dcecf7" stroke="#9bada2"/>
+<text x="221" y="206" text-anchor="middle" font-size="18" font-weight="bold">decode · 处理 1 个 token</text>
+<text x="221" y="230" text-anchor="middle" font-size="16" font-weight="normal">读取自身 KV，采样下一个</text>
+<rect x="110" y="257" width="222" height="61" rx="7" fill="#dcecf7" stroke="#9bada2"/>
+<text x="221" y="282" text-anchor="middle" font-size="18" font-weight="bold">decode · 处理 1 个 token</text>
+<text x="221" y="306" text-anchor="middle" font-size="16" font-weight="normal">读取自身 KV，采样下一个</text>
+<rect x="355" y="63" width="222" height="97" rx="7" fill="#fbe5cf" stroke="#9bada2"/>
+<text x="466" y="88" text-anchor="middle" font-size="22" font-weight="bold">prefill 第二块</text>
+<text x="466" y="118" text-anchor="middle" font-size="20" font-weight="normal">处理 p₃、p₄</text>
+<text x="466" y="144" text-anchor="middle" font-size="16" font-weight="normal">完成 prompt，采样 a₁</text>
+<rect x="355" y="181" width="222" height="61" rx="7" fill="#dcecf7" stroke="#9bada2"/>
+<text x="466" y="206" text-anchor="middle" font-size="18" font-weight="bold">decode · 处理 1 个 token</text>
+<text x="466" y="230" text-anchor="middle" font-size="16" font-weight="normal">读取自身 KV，采样下一个</text>
+<rect x="355" y="257" width="222" height="61" rx="7" fill="#dcecf7" stroke="#9bada2"/>
+<text x="466" y="282" text-anchor="middle" font-size="18" font-weight="bold">decode · 处理 1 个 token</text>
+<text x="466" y="306" text-anchor="middle" font-size="16" font-weight="normal">读取自身 KV，采样下一个</text>
+<rect x="600" y="63" width="222" height="97" rx="7" fill="#dcecf7" stroke="#9bada2"/>
+<text x="711" y="88" text-anchor="middle" font-size="22" font-weight="bold">decode</text>
+<text x="711" y="118" text-anchor="middle" font-size="20" font-weight="normal">输入 a₁ → 采样 a₂</text>
+<text x="711" y="144" text-anchor="middle" font-size="16" font-weight="normal">读取 A 自己的 KV</text>
+<rect x="600" y="181" width="222" height="61" rx="7" fill="#dcecf7" stroke="#9bada2"/>
+<text x="711" y="206" text-anchor="middle" font-size="18" font-weight="bold">decode · 处理 1 个 token</text>
+<text x="711" y="230" text-anchor="middle" font-size="16" font-weight="normal">读取自身 KV，采样下一个</text>
+<rect x="600" y="257" width="222" height="61" rx="7" fill="#dcecf7" stroke="#9bada2"/>
+<text x="711" y="282" text-anchor="middle" font-size="18" font-weight="bold">decode · 处理 1 个 token</text>
+<text x="711" y="306" text-anchor="middle" font-size="16" font-weight="normal">读取自身 KV，采样下一个</text>
+<path d="M333 113H352" stroke="#536b62" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M578 113H597" stroke="#536b62" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="430" y="357" text-anchor="middle" font-size="19" font-weight="normal">橙色：prefill　蓝色：decode　｜　A 横向顺序推进；每列混合三个请求</text>
+</g></svg>

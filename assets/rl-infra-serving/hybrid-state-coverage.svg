@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="650" height="300" viewBox="0 0 650 300" role="img" aria-labelledby="title desc"><title id="title">边界 8：按模型结构选择对应状态</title><desc id="desc">以下并列比较三类层，模型只需对应其实际层类型的状态。已处理 token 1 到 8。全注意力需要 1 到 8 的 KV；窗口含当前位置且长度为 4 的 SWA 需要 6 到 8 的 KV；递推层需要边界 8 的完整状态快照。下一步输入 token 9。</desc><style>text{font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;fill:#244c42;font-size:18px} .small{font-size:15px;fill:#587369} .strong{font-weight:650}</style><defs><marker id="arrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7" fill="#467c6a"/></marker></defs>
+<text x="12" y="25" class="strong" text-anchor="start">按模型结构选用：已处理 1–8，下一步输入 9</text>
+<text x="12" y="65" class="small" text-anchor="start">token 位置</text>
+<rect x="174" y="40" width="38" height="34" rx="7" fill="#f5f7f5" stroke="#9cbfa9"/>
+<text x="193" y="63" class="" text-anchor="middle">1</text>
+<rect x="220" y="40" width="38" height="34" rx="7" fill="#f5f7f5" stroke="#9cbfa9"/>
+<text x="239" y="63" class="" text-anchor="middle">2</text>
+<rect x="266" y="40" width="38" height="34" rx="7" fill="#f5f7f5" stroke="#9cbfa9"/>
+<text x="285" y="63" class="" text-anchor="middle">3</text>
+<rect x="312" y="40" width="38" height="34" rx="7" fill="#f5f7f5" stroke="#9cbfa9"/>
+<text x="331" y="63" class="" text-anchor="middle">4</text>
+<rect x="358" y="40" width="38" height="34" rx="7" fill="#f5f7f5" stroke="#9cbfa9"/>
+<text x="377" y="63" class="" text-anchor="middle">5</text>
+<rect x="404" y="40" width="38" height="34" rx="7" fill="#f5f7f5" stroke="#9cbfa9"/>
+<text x="423" y="63" class="" text-anchor="middle">6</text>
+<rect x="450" y="40" width="38" height="34" rx="7" fill="#f5f7f5" stroke="#9cbfa9"/>
+<text x="469" y="63" class="" text-anchor="middle">7</text>
+<rect x="496" y="40" width="38" height="34" rx="7" fill="#f5f7f5" stroke="#9cbfa9"/>
+<text x="515" y="63" class="" text-anchor="middle">8</text>
+<rect x="542" y="40" width="38" height="34" rx="7" fill="#fff0ce" stroke="#9cbfa9"/>
+<text x="561" y="63" class="" text-anchor="middle">9</text>
+<path d="M536,36 L536,280" fill="none" stroke="#467c6a" stroke-width="2" stroke-dasharray="4 4"/>
+<text x="542" y="94" class="small" text-anchor="start">待输入</text>
+<text x="12" y="134" class="strong" text-anchor="start">全注意力层 KV</text>
+<rect x="174" y="111" width="38" height="34" rx="7" fill="#e4f1e8" stroke="#9cbfa9"/>
+<text x="193" y="134" class="" text-anchor="middle">1</text>
+<rect x="220" y="111" width="38" height="34" rx="7" fill="#e4f1e8" stroke="#9cbfa9"/>
+<text x="239" y="134" class="" text-anchor="middle">2</text>
+<rect x="266" y="111" width="38" height="34" rx="7" fill="#e4f1e8" stroke="#9cbfa9"/>
+<text x="285" y="134" class="" text-anchor="middle">3</text>
+<rect x="312" y="111" width="38" height="34" rx="7" fill="#e4f1e8" stroke="#9cbfa9"/>
+<text x="331" y="134" class="" text-anchor="middle">4</text>
+<rect x="358" y="111" width="38" height="34" rx="7" fill="#e4f1e8" stroke="#9cbfa9"/>
+<text x="377" y="134" class="" text-anchor="middle">5</text>
+<rect x="404" y="111" width="38" height="34" rx="7" fill="#e4f1e8" stroke="#9cbfa9"/>
+<text x="423" y="134" class="" text-anchor="middle">6</text>
+<rect x="450" y="111" width="38" height="34" rx="7" fill="#e4f1e8" stroke="#9cbfa9"/>
+<text x="469" y="134" class="" text-anchor="middle">7</text>
+<rect x="496" y="111" width="38" height="34" rx="7" fill="#e4f1e8" stroke="#9cbfa9"/>
+<text x="515" y="134" class="" text-anchor="middle">8</text>
+<text x="12" y="190" class="strong" text-anchor="start">SWA 层 KV</text>
+<rect x="404" y="167" width="38" height="34" rx="7" fill="#e4f1e8" stroke="#9cbfa9"/>
+<text x="423" y="190" class="" text-anchor="middle">6</text>
+<rect x="450" y="167" width="38" height="34" rx="7" fill="#e4f1e8" stroke="#9cbfa9"/>
+<text x="469" y="190" class="" text-anchor="middle">7</text>
+<rect x="496" y="167" width="38" height="34" rx="7" fill="#e4f1e8" stroke="#9cbfa9"/>
+<text x="515" y="190" class="" text-anchor="middle">8</text>
+<text x="175" y="191" class="small" text-anchor="start">1–5：下一步不需要读取</text>
+<text x="12" y="249" class="strong" text-anchor="start">递推层状态</text>
+<rect x="357" y="225" width="168" height="42" rx="7" fill="#e8edf9" stroke="#aab5d7"/>
+<text x="441" y="252" class="" text-anchor="middle">边界 8 的完整快照</text>
+<text x="12" y="290" class="small" text-anchor="start">每行属于对应类型的层；窗口 W = 4 包含当前位置 9。</text>
+</svg>

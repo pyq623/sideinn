@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none">
+  <title>支线客栈 · 松间灯火</title>
+  <!-- An open landscape: pine, sweeping eaves, a warm doorway and a branching path. -->
+  <circle cx="49" cy="44" r="35" fill="#F1E8CE"/>
+  <path d="M16 52 30 28 44 47 61 20 81 52" stroke="#CCD4BC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="75" cy="23" r="5" fill="#D8AC60"/>
+  <path d="M14 68V29" stroke="#446652" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="m14 29-7 14h5l-8 14h8l-7 11h19l-8-11h8l-8-14h5z" fill="#65816A"/>
+  <!-- The slender tower echoes the inn in the homepage painting. -->
+  <path d="M61 30h13v37H61z" fill="#E4D4AE" stroke="#315748" stroke-width="2"/>
+  <path d="M67 11c-1 10-6 16-12 21 7 0 10-2 12-4 3 3 7 4 14 4-8-6-12-13-14-21Z" fill="#274E3E"/>
+  <path d="M67 12v-5" stroke="#274E3E" stroke-width="2" stroke-linecap="round"/>
+  <path d="M65 37h5v9h-5z" fill="#F6C76D"/>
+  <!-- Cream plaster and dark timber keep the mark readable at header size. -->
+  <path d="M29 46h39v27H29z" fill="#F7EBD0" stroke="#315748" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M49 28c-7 10-18 17-31 18l-3-5c2 10 19 14 34 3 13 10 29 8 34-1l-5 3C65 43 57 36 49 28Z" fill="#224C3C"/>
+  <path d="M24 47c8 1 17-2 25-8 8 6 17 9 25 9" stroke="#729078" stroke-width="1.6" stroke-linecap="round"/>
+  <path d="M29 56h39M38 51v22M59 51v22" stroke="#315748" stroke-width="2"/>
+  <path d="M44 73V62a5 5 0 0 1 10 0v11" fill="#E8B25B" stroke="#315748" stroke-width="2"/>
+  <path d="M49 61v12" stroke="#C38E41" stroke-width="1.2"/>
+  <path d="M32 60h3v6h-3zM62 60h3v6h-3z" fill="#D5A958"/>
+  <path d="M22 74h53" stroke="#315748" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M46 77c0 4-10 6-12 12h17c-2-6 7-8 7-12" fill="#DBC698"/>
+  <path d="M54 82c10 0 15-4 23-4" stroke="#DBC698" stroke-width="3" stroke-linecap="round"/>
+  <path d="m21 76-3-3m62 0 3-4" stroke="#739078" stroke-width="2" stroke-linecap="round"/>
+</svg>

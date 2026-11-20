@@ -1,0 +1,20 @@
+[
+  {
+    "number": 1,
+    "title": "原始过程奖励",
+    "wide": "R_t^{\\mathrm{proc}}=S_{s(t)}^{\\mathrm{evid}}\\,w_t^{\\mathrm{nec}}",
+    "narrow": "R_t^{\\mathrm{proc}}=S_{s(t)}^{\\mathrm{evid}}\\,w_t^{\\mathrm{nec}}"
+  },
+  {
+    "number": 2,
+    "title": "工具类型内均方根缩放",
+    "wide": "\\widetilde R_t^{\\mathrm{proc}}=\\frac{R_t^{\\mathrm{proc}}}{\\sqrt{\\operatorname{mean}_{j\\in\\mathcal B_{k(t)}}[(R_j^{\\mathrm{proc}})^2]+\\varepsilon}}",
+    "narrow": "\\widetilde R_t^{\\mathrm{proc}}=\\frac{R_t^{\\mathrm{proc}}}{\\sqrt{\\operatorname{mean}_{j\\in\\mathcal B_{k(t)}}[(R_j^{\\mathrm{proc}})^2]+\\varepsilon}}"
+  },
+  {
+    "number": 3,
+    "title": "结果与局部过程优势",
+    "wide": "A_i=A^{\\mathrm{out}}(\\tau)+\\lambda\\sum_t m_{t,i}A_t^{\\mathrm{proc}},\\qquad\\lambda=0.3",
+    "narrow": "\\begin{aligned}A_i&=A^{\\mathrm{out}}(\\tau)\\\\&\\quad+\\lambda\\sum_t m_{t,i}A_t^{\\mathrm{proc}},\\\\\\lambda&=0.3\\end{aligned}"
+  }
+]

@@ -1,0 +1,10 @@
+{
+  "source": "https://vllm.ai/blog/2025-09-05-anatomy-of-vllm",
+  "image": "https://vllm.ai/blog-assets/figures/2025-vllm-anatomy/chunked_pt1.png",
+  "figure": 5,
+  "author": "Aleksa Gordic",
+  "published": "2025-09-05",
+  "based_on_commit": "42172ad",
+  "accessed": "2026-11-02",
+  "changes": "None; original image displayed at constrained width."
+}

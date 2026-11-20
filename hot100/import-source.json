@@ -1,9 +1,12 @@
 {
+  "supplements": "content/hot100/supplements.json",
   "source": "Hot100算法题复习手册.docx",
   "sha256": "ef5b1dc00700d9bcdb64bdb26a73af98e80a71f2ed149b354e5910c35ed0e4b2",
-  "problems": 96,
+  "problems": 97,
+  "sourceProblems": 96,
+  "addedProblems": 1,
   "topics": 16,
-  "tips": 4,
+  "tips": 5,
   "images": 68,
   "imageOccurrences": 72,
   "codeBlocks": 535,
@@ -835,6 +838,18 @@
       "difficulty": "中等"
     },
     {
+      "id": "quicksort",
+      "href": "quicksort.html",
+      "title": "补充题 快速排序（快排）",
+      "category": "堆",
+      "categoryId": "topic-13",
+      "appendix": false,
+      "leetcode": "",
+      "subtitle": "",
+      "difficulty": "基础算法",
+      "localExercise": true
+    },
+    {
       "title": "第 75 题 前 K 个高频元素",
       "category": "堆",
       "categoryId": "topic-13",
@@ -1108,6 +1123,18 @@
       "href": "tip-4.html",
       "subtitle": "",
       "difficulty": "技巧"
+    },
+    {
+      "id": "python-basics",
+      "href": "python-basics.html",
+      "title": "Python 基础速查",
+      "category": "附录 技巧总结",
+      "categoryId": "topic-17",
+      "appendix": true,
+      "leetcode": "",
+      "subtitle": "",
+      "difficulty": "基础速查",
+      "localExercise": true
     }
   ]
 }

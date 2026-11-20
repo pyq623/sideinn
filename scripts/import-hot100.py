@@ -14,6 +14,7 @@ from pathlib import Path
 from zipfile import ZipFile
 
 from lxml import etree as ET
+from lxml import html as HTML
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -44,7 +45,7 @@ def shell(title, body, page_id=''):
     return f'''<!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{esc(title)} · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
-<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021-painted-logo"><script defer src="./hot100.js?v=20261021"></script></head>
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021-python-basics"><script defer src="./hot100.js?v=20261021-quicksort"></script></head>
 <body data-problem-id="{esc(page_id)}"><a class="skip" href="#main">跳到正文</a>
 <header class="top"><a class="brand" href="../"><img class="brand-logo" src="../assets/sideinn-logo-painted-v2-256.png" width="54" height="54" alt=""><span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
 {body}<footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>'''
@@ -56,6 +57,8 @@ def main():
     args = parser.parse_args()
     out = ROOT / 'hot100'
     (out / 'images').mkdir(parents=True, exist_ok=True)
+    supplement_dir = ROOT / 'content' / 'hot100'
+    supplements = json.loads((supplement_dir / 'supplements.json').read_text())
     archive = ZipFile(args.source)
     doc = ET.fromstring(archive.read('word/document.xml'))
     rels = {x.get('Id'): x.get('Target') for x in ET.fromstring(archive.read('word/_rels/document.xml.rels'))}
@@ -85,16 +88,36 @@ def main():
         entry['subtitle'] = subtitle
         meta = next((plain(p).strip() for p in entry['blocks'] if style(p) == '169'), '')
         entry['difficulty'] = next(iter(re.findall(r'难度\s+(简单|中等|困难)', meta)), '技巧')
-        entry['search'] = ' '.join([entry['title'], subtitle, entry['category'], meta])
+        extra = supplements.get(entry['id'], {})
+        entry['search'] = ' '.join([entry['title'], subtitle, entry['category'], meta, extra.get('keywords', '')])
+        entry['supplementLabel'] = extra.get('label', '')
 
     assert len(entries) == 100 and sum(not e['appendix'] for e in entries) == 96
     assert len({e['id'] for e in entries}) == len(entries)
+    standalone = {key: value for key, value in supplements.items() if value.get('after')}
+    assert set(supplements) - set(standalone) <= {e['id'] for e in entries}, 'Supplement references an unknown entry'
     bookmark_urls = {}
     for entry in entries:
         # Source heading bookmark names are used by Word's internal links.
         heading = next(b for b in blocks if style(b) == '4' and plain(b).strip() == entry['title'])
         for name in heading.xpath('.//w:bookmarkStart/@w:name', namespaces=NS):
             bookmark_urls[name] = './' + entry['href']
+
+    # Independent local exercises retain separate pages and review IDs.
+    for key, extra in standalone.items():
+        assert key not in {e['id'] for e in entries}, 'Duplicate exercise ID'
+        position = next(i for i, e in enumerate(entries) if e['id'] == extra['after'])
+        neighbor = entries[position]
+        entries.insert(position + 1, {
+            'id': key, 'href': key + '.html', 'title': extra['title'],
+            'category': neighbor['category'], 'categoryId': neighbor['categoryId'],
+            'blocks': [], 'appendix': extra.get('appendix', False), 'leetcode': '', 'subtitle': '',
+            'difficulty': '基础速查' if extra.get('appendix') else '基础算法', 'supplementLabel': extra.get('label', ''),
+            'search': extra['title'] + ' ' + extra.get('keywords', ''),
+            'localExercise': True,
+        })
+    problem_count = sum(not e['appendix'] for e in entries)
+    tip_count = sum(e['appendix'] for e in entries)
 
     media, image_occurrences, code_count, table_count = set(), 0, 0, 0
 
@@ -209,6 +232,24 @@ def main():
         # Adjacent source list paragraphs belong to the same list.
         content = content.replace('</ul><ul>', '').replace('</ol><ol>', '')
         content = content.replace('</code></pre><pre tabindex="0"><code>', '\n')
+        extra = supplements.get(entry['id'], {})
+        for old, new in extra.get('replacements', []):
+            if content.count(old) != 1:
+                raise ValueError('Source changed; review editorial replacement: ' + old)
+            content = content.replace(old, new, 1)
+            headings = [(hid, title.replace(old, new), level) for hid, title, level in headings]
+        if extra.get('file'):
+            addition = (supplement_dir / extra['file']).read_text()
+            tree = HTML.fragment_fromstring(addition, create_parent='div')
+            existing_ids = set(HTML.fragment_fromstring(content, create_parent='div').xpath('//@id'))
+            for heading in tree.xpath('.//h2 | .//h3'):
+                hid = heading.get('id')
+                if not hid or hid in existing_ids:
+                    raise ValueError('Missing or duplicate supplement heading ID: ' + str(hid))
+                existing_ids.add(hid)
+                headings.append((hid, heading.text_content(), '5' if heading.tag == 'h2' else '6'))
+            content += addition
+        content = extra.get('intro', '') + content
         toc = ''.join(f'<a class="level-{s}" href="#{hid}">{esc(t)}</a>' for hid, t, s in headings)
         nav = '<nav class="neighbors" aria-label="前后篇">'
         for j, label in [(i-1, '← 上一篇'), (i+1, '下一篇 →')]:
@@ -226,16 +267,16 @@ def main():
         items = [e for e in entries if e['categoryId'] == category['id']]
         cards = []
         for e in items:
-            cards.append(f'''<li data-search="{esc(e['search'])}" data-id="{e['id']}" data-topic="{category['id']}" data-kind="{'tip' if e['appendix'] else 'problem'}"><a href="./{e['href']}"><span class="problem-title">{esc(e['title'])}</span><span class="problem-meta">{('LeetCode '+e['leetcode']+' · ') if e['leetcode'] else ''}{e['difficulty']} <span class="status" data-status-for="{e['id']}"></span></span></a></li>''')
+            cards.append(f'''<li data-search="{esc(e['search'])}" data-id="{e['id']}" data-topic="{category['id']}" data-kind="{'tip' if e['appendix'] else 'problem'}"><a href="./{e['href']}"><span class="problem-title">{esc(e['title'])}</span><span class="problem-meta">{('LeetCode '+e['leetcode']+' · ') if e['leetcode'] else ''}{e['difficulty']}{(' · '+esc(e['supplementLabel'])) if e['supplementLabel'] else ''} <span class="status" data-status-for="{e['id']}"></span></span></a></li>''')
         intro = ''.join('<p class="topic-intro">'+esc(t)+'</p>' for t in category['intro'])
         sections.append(f'<section class="topic" id="{category["id"]}"><h2>{esc(category["title"])} <span>{len(items)} '+('篇' if items[0]['appendix'] else '题')+'</span></h2>'+intro+'<ul class="problem-list">'+''.join(cards)+'</ul></section>')
     options = ''.join(f'<option value="{c["id"]}">{esc(c["title"])}</option>' for c in categories)
     topic_links = ''.join(f'<a href="#{c["id"]}">{esc(c["title"])}</a>' for c in categories)
-    body = f'''<main id="main" class="catalog"><section class="catalog-intro"><div class="eyebrow">ALGORITHMS / PYTHON REVIEW</div><h1>Hot100 算法复习</h1><p>先独立想解法，再对照代码和易错点。沿用原手册的专题与题目顺序，点击题名即可进入正文。</p><div class="stats"><span><strong>96</strong> 道题</span><span><strong>16</strong> 个专题</span><span><strong>4</strong> 篇技巧总结</span></div><p class="source-note">含第 31 题前的补充题「反转链表 II」。网页目录直接对应正文，不使用原手册的纸面页码。</p></section>
+    body = f'''<main id="main" class="catalog"><section class="catalog-intro"><div class="eyebrow">ALGORITHMS / PYTHON REVIEW</div><h1>Hot100 算法复习</h1><p>先独立想解法，再对照代码和易错点。沿用原手册的专题与题目顺序，点击题名即可进入正文。</p><div class="stats"><span><strong>{problem_count}</strong> 道题</span><span><strong>16</strong> 个专题</span><span><strong>{tip_count}</strong> 篇技巧总结</span></div><p class="source-note">原手册 96 道题（含「反转链表 II」），另补独立练习「快速排序」，与第 215 题并列。网页目录直接对应正文，不使用原手册的纸面页码。</p><p><a href="./python-basics.html">Python 基础速查 →</a> 随机抽样、math、排序与常用容器。</p></section>
 <div class="filters"><label class="search-label">查找题目<input id="question-search" type="search" placeholder="题名、LeetCode 题号或关键词" autocomplete="off"></label><label>专题<select id="topic-filter"><option value="">全部专题</option>{options}</select></label><label>复习状态<select id="status-filter"><option value="">全部状态</option><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select></label></div>
-<div class="catalog-status"><span id="result-count" role="status">96 道题 · 4 篇技巧总结</span><span id="review-count"></span></div><nav class="topic-links" aria-label="专题直达">{topic_links}</nav><div id="questions">{''.join(sections)}</div><div id="empty" hidden><p>没有匹配的题目，试试其他关键词或专题。</p><button id="clear-filters">清空筛选</button></div><noscript>目录和题目均可直接阅读；搜索与复习标记需要启用 JavaScript。</noscript></main>'''
+<div class="catalog-status"><span id="result-count" role="status">{problem_count} 道题 · {tip_count} 篇技巧总结</span><span id="review-count"></span></div><nav class="topic-links" aria-label="专题直达">{topic_links}</nav><div id="questions">{''.join(sections)}</div><div id="empty" hidden><p>没有匹配的题目，试试其他关键词或专题。</p><button id="clear-filters">清空筛选</button></div><noscript>目录和题目均可直接阅读；搜索与复习标记需要启用 JavaScript。</noscript></main>'''
     (out / 'index.html').write_text(shell('Hot100 算法复习', body), encoding='utf-8')
-    manifest = {'source': args.source.name, 'sha256': hashlib.sha256(args.source.read_bytes()).hexdigest(), 'problems': 96, 'topics': 16, 'tips': 4, 'images': len(media), 'imageOccurrences': image_occurrences, 'codeBlocks': code_count, 'sourceTables': table_count, 'entries': [{k:v for k,v in e.items() if k not in ('blocks','search')} for e in entries]}
+    manifest = {'supplements': 'content/hot100/supplements.json', 'source': args.source.name, 'sha256': hashlib.sha256(args.source.read_bytes()).hexdigest(), 'problems': problem_count, 'sourceProblems': 96, 'addedProblems': problem_count - 96, 'topics': sum(any(not e['appendix'] for e in entries if e['categoryId'] == c['id']) for c in categories), 'tips': tip_count, 'images': len(media), 'imageOccurrences': image_occurrences, 'codeBlocks': code_count, 'sourceTables': table_count, 'entries': [{k:v for k,v in e.items() if k not in ('blocks','search','supplementLabel')} for e in entries]}
     (out / 'import-source.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2)+'\n', encoding='utf-8')
     print(json.dumps({k:v for k,v in manifest.items() if k!='entries'}, ensure_ascii=False, indent=2))
 
