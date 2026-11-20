@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>第 22 题 相交链表 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
-<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021-painted-logo"><script defer src="./hot100.js?v=20261021"></script></head>
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021-python-basics"><script defer src="./hot100.js?v=20261021-quicksort"></script></head>
 <body data-problem-id="lc-160"><a class="skip" href="#main">跳到正文</a>
 <header class="top"><a class="brand" href="../"><img class="brand-logo" src="../assets/sideinn-logo-painted-v2-256.png" width="54" height="54" alt=""><span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
 <div class="reading"><aside class="toc"><a href="./#topic-7">← 链表目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-5" href="#section-3">代码实现</a></nav></details></aside>
@@ -13,13 +13,14 @@
 输出： Intersected at &#x27;2&#x27;</code></pre><p>示例 3：</p><figure><a href="./images/image13.png" target="_blank" rel="noopener" aria-label="查看原图"><img src="./images/image13.png" width="382" height="241" loading="lazy" alt="第 22 题 相交链表 · 原笔记图示"></a><figcaption>原笔记图示 · 点击查看原图</figcaption></figure><pre tabindex="0"><code>输入： intersectVal = 0, listA = [2,6,4], listB = [1,5], skipA = 3, skipB = 2
 输出： No intersection
 解释： 从各自的表头开始算起，链表 A 为 [2,6,4]，链表 B 为 [1,5]。
-由于这两个链表不相交，所以 intersectVal 必须为 0，而 skipA 和 skipB 可以是任意值。</code></pre><p>提示：</p><ul><li><code>listA</code> 中节点数目为 <code>m</code></li><li><code>listB</code> 中节点数目为 <code>n</code></li><li><code>1 &lt;= m, n &lt;= 3 * 104</code></li><li><code>1 &lt;= Node.val &lt;= 105</code></li><li>如果 <code>listA</code> 和 <code>listB</code> 没有交点，<code>intersectVal</code> 为 <code>0</code></li><li>如果 <code>listA</code> 和 <code>listB</code> 有交点，<code>intersectVal == listA[skipA] == listB[skipB]</code></li></ul><p>进阶： 你能否设计一个时间复杂度 <code>O(m + n)</code> 、仅用 <code>O(1)</code> 内存的解决方案？</p><h2 id="section-2">思路</h2><ul><li>注意：题面中的 <code>skipA</code>、<code>skipB</code>、<code>intersectVal</code> 是<strong>测试系统用来构造链表的参数</strong>，不会传给你的函数。函数只接收两个头节点 <code>headA</code> 和 <code>headB</code>，不知道长度、不知道在哪相交、甚至不知道有没有交点，所以只能通过遍历来找</li><li>双指针等距法：让两个指针走<strong>相同的总路程</strong>，消除链表长度差，在交点相遇</li></ul><p>原笔记中的自定义题图文件未找到</p><ul><li>设「第一个公共节点」为 node，「链表 headA」的节点数量为 <code>a</code>，「链表 headB」的节点数量为 <code>b</code>，「两链表的公共尾部」的节点数量为 <code>c</code>，则有：</li><li>头节点 headA 到 node 前，共有 <code>a - c</code> 个节点</li><li>头节点 headB 到 node 前，共有 <code>b - c</code> 个节点</li><li>构建两个指针 A、B 分别指向 headA、headB：</li><li>指针 A 先遍历完链表 headA，再开始遍历链表 headB，当走到 node 时，共走步数为：a + (b - c)</li><li>指针 B 先遍历完链表 headB，再开始遍历链表 headA，当走到 node 时，共走步数为：b + (a - c)</li><li>此时指针 A、B 重合：a + (b - c) = b + (a - c)，有两种情况：</li><li>若两链表<strong>有</strong>公共尾部（即 c &gt; 0）：指针 A、B 同时指向「第一个公共节点」node</li><li>若两链表<strong>无</strong>公共尾部（即 c = 0）：指针 A、B 同时指向 null</li><li>因此返回 A 即可</li><li><code>A = A.next if A else headB</code>：如果 A 还没走到头，正常走下一步；如果走到了 None（链表末尾），切换到另一条链表的头</li></ul><h2 id="section-3">代码实现</h2><pre tabindex="0"><code>struct ListNode {
-    int val;
-    ListNode *next;
-    ListNode(int x) : val(x), next(NULL) {}
-};
+由于这两个链表不相交，所以 intersectVal 必须为 0，而 skipA 和 skipB 可以是任意值。</code></pre><p>提示：</p><ul><li><code>listA</code> 中节点数目为 <code>m</code></li><li><code>listB</code> 中节点数目为 <code>n</code></li><li><code>1 &lt;= m, n &lt;= 3 * 104</code></li><li><code>1 &lt;= Node.val &lt;= 105</code></li><li>如果 <code>listA</code> 和 <code>listB</code> 没有交点，<code>intersectVal</code> 为 <code>0</code></li><li>如果 <code>listA</code> 和 <code>listB</code> 有交点，<code>intersectVal == listA[skipA] == listB[skipB]</code></li></ul><p>进阶： 你能否设计一个时间复杂度 <code>O(m + n)</code> 、仅用 <code>O(1)</code> 内存的解决方案？</p><h2 id="section-2">思路</h2><ul><li>注意：题面中的 <code>skipA</code>、<code>skipB</code>、<code>intersectVal</code> 是<strong>测试系统用来构造链表的参数</strong>，不会传给你的函数。函数只接收两个头节点 <code>headA</code> 和 <code>headB</code>，不知道长度、不知道在哪相交、甚至不知道有没有交点，所以只能通过遍历来找</li><li>双指针等距法：让两个指针走<strong>相同的总路程</strong>，消除链表长度差，在交点相遇</li></ul><p>原笔记中的自定义题图文件未找到</p><ul><li>设「第一个公共节点」为 node，「链表 headA」的节点数量为 <code>a</code>，「链表 headB」的节点数量为 <code>b</code>，「两链表的公共尾部」的节点数量为 <code>c</code>，则有：</li><li>头节点 headA 到 node 前，共有 <code>a - c</code> 个节点</li><li>头节点 headB 到 node 前，共有 <code>b - c</code> 个节点</li><li>构建两个指针 A、B 分别指向 headA、headB：</li><li>指针 A 先遍历完链表 headA，再开始遍历链表 headB，当走到 node 时，共走步数为：a + (b - c)</li><li>指针 B 先遍历完链表 headB，再开始遍历链表 headA，当走到 node 时，共走步数为：b + (a - c)</li><li>此时指针 A、B 重合：a + (b - c) = b + (a - c)，有两种情况：</li><li>若两链表<strong>有</strong>公共尾部（即 c &gt; 0）：指针 A、B 同时指向「第一个公共节点」node</li><li>若两链表<strong>无</strong>公共尾部（即 c = 0）：指针 A、B 同时指向 null</li><li>因此返回 A 即可</li><li><code>A = A.next if A else headB</code>：如果 A 还没走到头，正常走下一步；如果走到了 None（链表末尾），切换到另一条链表的头</li></ul><h2 id="section-3">代码实现</h2><pre tabindex="0"><code>class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+
 class Solution:
-    def getIntersectionNode(self, headA: ListNode, headB: ListNode) -&gt; Optional[ListNode]:
+    def getIntersectionNode(self, headA: ListNode, headB: ListNode) -&gt; ListNode | None:
         A, B = headA, headB
 
         while A != B:

@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="680" height="310" viewBox="0 0 680 310" role="img" aria-label="固定分区只能接纳两个请求，共享容量可以接纳五个请求">
+<style>text{font-family:system-ui,-apple-system,"PingFang SC",sans-serif;fill:#254c43;font-size:17px}.small{font-size:14px;fill:#58736a}.title{font-size:21px;font-weight:700}</style>
+<text x="12" y="27" class="title" text-anchor="start">同样 32 单位空间，每个请求占：状态 4 + KV 2</text>
+<text x="12" y="64" class="" text-anchor="start">固定分区：接纳 2 个请求，状态区已满</text>
+<rect x="12" y="78" width="19" height="42" rx="4" fill="#dfdef1" stroke="#a9bdb2"/>
+<rect x="32" y="78" width="19" height="42" rx="4" fill="#dfdef1" stroke="#a9bdb2"/>
+<rect x="52" y="78" width="19" height="42" rx="4" fill="#dfdef1" stroke="#a9bdb2"/>
+<rect x="72" y="78" width="19" height="42" rx="4" fill="#dfdef1" stroke="#a9bdb2"/>
+<rect x="92" y="78" width="19" height="42" rx="4" fill="#dfdef1" stroke="#a9bdb2"/>
+<rect x="112" y="78" width="19" height="42" rx="4" fill="#dfdef1" stroke="#a9bdb2"/>
+<rect x="132" y="78" width="19" height="42" rx="4" fill="#dfdef1" stroke="#a9bdb2"/>
+<rect x="152" y="78" width="19" height="42" rx="4" fill="#dfdef1" stroke="#a9bdb2"/>
+<rect x="172" y="78" width="19" height="42" rx="4" fill="#d7ecdf" stroke="#a9bdb2"/>
+<rect x="192" y="78" width="19" height="42" rx="4" fill="#d7ecdf" stroke="#a9bdb2"/>
+<rect x="212" y="78" width="19" height="42" rx="4" fill="#d7ecdf" stroke="#a9bdb2"/>
+<rect x="232" y="78" width="19" height="42" rx="4" fill="#d7ecdf" stroke="#a9bdb2"/>
+<rect x="252" y="78" width="19" height="42" rx="4" fill="#f3f5f2" stroke="#a9bdb2"/>
+<rect x="272" y="78" width="19" height="42" rx="4" fill="#f3f5f2" stroke="#a9bdb2"/>
+<rect x="292" y="78" width="19" height="42" rx="4" fill="#f3f5f2" stroke="#a9bdb2"/>
+<rect x="312" y="78" width="19" height="42" rx="4" fill="#f3f5f2" stroke="#a9bdb2"/>
+<rect x="332" y="78" width="19" height="42" rx="4" fill="#f3f5f2" stroke="#a9bdb2"/>
+<rect x="352" y="78" width="19" height="42" rx="4" fill="#f3f5f2" stroke="#a9bdb2"/>
+<rect x="372" y="78" width="19" height="42" rx="4" fill="#f3f5f2" stroke="#a9bdb2"/>
+<rect x="392" y="78" width="19" height="42" rx="4" fill="#f3f5f2" stroke="#a9bdb2"/>
+<rect x="412" y="78" width="19" height="42" rx="4" fill="#f3f5f2" stroke="#a9bdb2"/>
+<rect x="432" y="78" width="19" height="42" rx="4" fill="#f3f5f2" stroke="#a9bdb2"/>
+<rect x="452" y="78" width="19" height="42" rx="4" fill="#f3f5f2" stroke="#a9bdb2"/>
+<rect x="472" y="78" width="19" height="42" rx="4" fill="#f3f5f2" stroke="#a9bdb2"/>
+<rect x="492" y="78" width="19" height="42" rx="4" fill="#f3f5f2" stroke="#a9bdb2"/>
+<rect x="512" y="78" width="19" height="42" rx="4" fill="#f3f5f2" stroke="#a9bdb2"/>
+<rect x="532" y="78" width="19" height="42" rx="4" fill="#f3f5f2" stroke="#a9bdb2"/>
+<rect x="552" y="78" width="19" height="42" rx="4" fill="#f3f5f2" stroke="#a9bdb2"/>
+<rect x="572" y="78" width="19" height="42" rx="4" fill="#f3f5f2" stroke="#a9bdb2"/>
+<rect x="592" y="78" width="19" height="42" rx="4" fill="#f3f5f2" stroke="#a9bdb2"/>
+<rect x="612" y="78" width="19" height="42" rx="4" fill="#f3f5f2" stroke="#a9bdb2"/>
+<rect x="632" y="78" width="19" height="42" rx="4" fill="#f3f5f2" stroke="#a9bdb2"/>
+<path d="M172 72V128" stroke="#956c3b" stroke-width="2" stroke-dasharray="4 3"/>
+<text x="92" y="144" class="small" text-anchor="middle">状态 8 / 8</text>
+<text x="412" y="144" class="small" text-anchor="middle">KV 用 4，闲置 20（不能借给状态区）</text>
+<text x="12" y="185" class="" text-anchor="start">共享容量：接纳 5 个请求，尚余 2 单位</text>
+<rect x="12" y="199" width="19" height="42" rx="4" fill="#dfdef1" stroke="#a9bdb2"/>
+<rect x="32" y="199" width="19" height="42" rx="4" fill="#dfdef1" stroke="#a9bdb2"/>
+<rect x="52" y="199" width="19" height="42" rx="4" fill="#dfdef1" stroke="#a9bdb2"/>
+<rect x="72" y="199" width="19" height="42" rx="4" fill="#dfdef1" stroke="#a9bdb2"/>
+<rect x="92" y="199" width="19" height="42" rx="4" fill="#dfdef1" stroke="#a9bdb2"/>
+<rect x="112" y="199" width="19" height="42" rx="4" fill="#dfdef1" stroke="#a9bdb2"/>
+<rect x="132" y="199" width="19" height="42" rx="4" fill="#dfdef1" stroke="#a9bdb2"/>
+<rect x="152" y="199" width="19" height="42" rx="4" fill="#dfdef1" stroke="#a9bdb2"/>
+<rect x="172" y="199" width="19" height="42" rx="4" fill="#dfdef1" stroke="#a9bdb2"/>
+<rect x="192" y="199" width="19" height="42" rx="4" fill="#dfdef1" stroke="#a9bdb2"/>
+<rect x="212" y="199" width="19" height="42" rx="4" fill="#dfdef1" stroke="#a9bdb2"/>
+<rect x="232" y="199" width="19" height="42" rx="4" fill="#dfdef1" stroke="#a9bdb2"/>
+<rect x="252" y="199" width="19" height="42" rx="4" fill="#dfdef1" stroke="#a9bdb2"/>
+<rect x="272" y="199" width="19" height="42" rx="4" fill="#dfdef1" stroke="#a9bdb2"/>
+<rect x="292" y="199" width="19" height="42" rx="4" fill="#dfdef1" stroke="#a9bdb2"/>
+<rect x="312" y="199" width="19" height="42" rx="4" fill="#dfdef1" stroke="#a9bdb2"/>
+<rect x="332" y="199" width="19" height="42" rx="4" fill="#dfdef1" stroke="#a9bdb2"/>
+<rect x="352" y="199" width="19" height="42" rx="4" fill="#dfdef1" stroke="#a9bdb2"/>
+<rect x="372" y="199" width="19" height="42" rx="4" fill="#dfdef1" stroke="#a9bdb2"/>
+<rect x="392" y="199" width="19" height="42" rx="4" fill="#dfdef1" stroke="#a9bdb2"/>
+<rect x="412" y="199" width="19" height="42" rx="4" fill="#f3f5f2" stroke="#a9bdb2"/>
+<rect x="432" y="199" width="19" height="42" rx="4" fill="#f3f5f2" stroke="#a9bdb2"/>
+<rect x="452" y="199" width="19" height="42" rx="4" fill="#d7ecdf" stroke="#a9bdb2"/>
+<rect x="472" y="199" width="19" height="42" rx="4" fill="#d7ecdf" stroke="#a9bdb2"/>
+<rect x="492" y="199" width="19" height="42" rx="4" fill="#d7ecdf" stroke="#a9bdb2"/>
+<rect x="512" y="199" width="19" height="42" rx="4" fill="#d7ecdf" stroke="#a9bdb2"/>
+<rect x="532" y="199" width="19" height="42" rx="4" fill="#d7ecdf" stroke="#a9bdb2"/>
+<rect x="552" y="199" width="19" height="42" rx="4" fill="#d7ecdf" stroke="#a9bdb2"/>
+<rect x="572" y="199" width="19" height="42" rx="4" fill="#d7ecdf" stroke="#a9bdb2"/>
+<rect x="592" y="199" width="19" height="42" rx="4" fill="#d7ecdf" stroke="#a9bdb2"/>
+<rect x="612" y="199" width="19" height="42" rx="4" fill="#d7ecdf" stroke="#a9bdb2"/>
+<rect x="632" y="199" width="19" height="42" rx="4" fill="#d7ecdf" stroke="#a9bdb2"/>
+<text x="212" y="265" class="small" text-anchor="middle">状态 20</text>
+<text x="432" y="265" class="small" text-anchor="middle">空闲 2</text>
+<text x="552" y="265" class="small" text-anchor="middle">KV 10</text>
+<text x="12" y="299" class="small" text-anchor="start">教学设定：忽略对齐、元数据和共享前缀；每格是相同字节量。</text>
+</svg>

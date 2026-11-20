@@ -1,0 +1,69 @@
+{
+  "checked_on": "2026-11-02",
+  "commit": "5be9626709af2722333bf54797c954c09edeada3",
+  "scope": "Chapter 1; native non-SP/SP dense MLP, CP communication choices, ordinary/distributed optimizer ownership and all-to-all MoE dispatcher. No GPU execution.",
+  "files": [
+    {
+      "url": "https://github.com/NVIDIA/Megatron-LM/blob/5be9626709af2722333bf54797c954c09edeada3/megatron/core/parallel_state.py",
+      "sha256": "1f6e23a01022c06be3b67f930095898e5032f6ff93695f8da5aae3b5a546dcf0"
+    },
+    {
+      "url": "https://github.com/NVIDIA/Megatron-LM/blob/5be9626709af2722333bf54797c954c09edeada3/megatron/core/tensor_parallel/layers.py",
+      "sha256": "f5595009869615446cbe4dcc27d70553b5a5328bf42e5ef5fdc8c5e1d29c413a"
+    },
+    {
+      "url": "https://github.com/NVIDIA/Megatron-LM/blob/5be9626709af2722333bf54797c954c09edeada3/megatron/core/tensor_parallel/mappings.py",
+      "sha256": "a91d34138309d7873d7d58914f8082c89546b4222183b165c2d001ed41968641"
+    },
+    {
+      "url": "https://github.com/NVIDIA/Megatron-LM/blob/5be9626709af2722333bf54797c954c09edeada3/megatron/core/transformer/transformer_config.py",
+      "sha256": "3b0843377e6c827b1e2e389edec30392d3c288ab5c58d168167d0c85a26949ee"
+    },
+    {
+      "url": "https://github.com/NVIDIA/Megatron-LM/blob/5be9626709af2722333bf54797c954c09edeada3/megatron/core/transformer/moe/token_dispatcher.py",
+      "sha256": "7af2746153268f5c5f7f03d7a340092541b633fbc8faa10f666d6ddbdf98be0a"
+    },
+    {
+      "url": "https://github.com/NVIDIA/Megatron-LM/blob/5be9626709af2722333bf54797c954c09edeada3/megatron/core/distributed/finalize_model_grads.py",
+      "sha256": "4b9cfce7c55487a606d3c5192b8da8044a6383bcc670e0ded18846b6d3221c1b"
+    },
+    {
+      "url": "https://github.com/NVIDIA/Megatron-LM/blob/5be9626709af2722333bf54797c954c09edeada3/megatron/core/distributed/param_and_grad_buffer.py",
+      "sha256": "065661bc10c66e577abe85d6e901176a973fef9239de1467652cf81156fe4b0b"
+    },
+    {
+      "url": "https://github.com/NVIDIA/Megatron-LM/blob/5be9626709af2722333bf54797c954c09edeada3/megatron/core/distributed/distributed_data_parallel.py",
+      "sha256": "0c98de1a2a07d32c27df1f82767885524a2890adb8c89d948767dd5800f24b84"
+    },
+    {
+      "url": "https://github.com/NVIDIA/Megatron-LM/blob/5be9626709af2722333bf54797c954c09edeada3/megatron/core/optimizer/distrib_optimizer.py",
+      "sha256": "40cae307ccb2a3f484ebd5d28ee8549eb572d1b0ba6e91dc5661c137bf560907"
+    },
+    {
+      "url": "https://github.com/NVIDIA/Megatron-LM/blob/5be9626709af2722333bf54797c954c09edeada3/megatron/core/models/gpt/gpt_layer_specs.py",
+      "sha256": "af25c83f516b704a85ab93148a10d1ef3af707fd5eff28e32200b15c5274d0f4"
+    }
+  ],
+  "reproduce_math": "python3 scripts/rl-infra-megatron-mlp-lab.py",
+  "rebuild_figures": "python3 scripts/draw-megatron-chapter1.py",
+  "official_figures": [
+    {
+      "file": "nvidia-nemo-2507-ddp.gif",
+      "source_url": "https://docs.nvidia.com/nemo-framework/user-guide/25.07/_images/ddp.gif",
+      "document": "https://docs.nvidia.com/nemo-framework/user-guide/25.07/nemotoolkit/features/parallelisms.html",
+      "document_version": "25.07",
+      "accessed_on": "2026-11-03",
+      "sha256": "c1f2c903f2526b5a067c575ceea68c71037779203b8b00fb9cc21732d4c3b8e0",
+      "modifications": "none"
+    },
+    {
+      "file": "nvidia-nemo-2507-tp.png",
+      "source_url": "https://docs.nvidia.com/nemo-framework/user-guide/25.07/_images/tp2.png",
+      "document": "https://docs.nvidia.com/nemo-framework/user-guide/25.07/nemotoolkit/features/parallelisms.html",
+      "document_version": "25.07",
+      "accessed_on": "2026-11-03",
+      "sha256": "2ed2f41e24437f5db1876b96cd58f9e874226fe8e21db192c268239bd6a5ffe2",
+      "modifications": "none"
+    }
+  ]
+}

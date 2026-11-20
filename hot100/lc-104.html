@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>第 37 题 二叉树的最大深度 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
-<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021-painted-logo"><script defer src="./hot100.js?v=20261021"></script></head>
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021-python-basics"><script defer src="./hot100.js?v=20261021-quicksort"></script></head>
 <body data-problem-id="lc-104"><a class="skip" href="#main">跳到正文</a>
 <header class="top"><a class="brand" href="../"><img class="brand-logo" src="../assets/sideinn-logo-painted-v2-256.png" width="54" height="54" alt=""><span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
 <div class="reading"><aside class="toc"><a href="./#topic-8">← 二叉树目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-5" href="#section-3">代码实现</a><a class="level-5" href="#section-4">解法二 BFS 层序遍历</a><a class="level-6" href="#section-5">思路</a><a class="level-6" href="#section-6">代码实现</a></nav></details></aside>
@@ -28,22 +28,47 @@ def maxDepth(root):
 核心区别：
 - 中序遍历的问题是&quot;经过每个节点时收集值&quot;——不需要子树返回任何东西
 - 最大深度的问题是&quot;这棵树有多深&quot;——**必须先知道左右子树的深度，才能算自己的答案**
-- 这就是之前学的**反向递归**（工作在自调用之后）：先递到底拿结果，回来时才算当前层。`+1` 就是&quot;回来时做的事&quot;——加上自己这一层</code></pre><ul><li><strong>终止条件为什么是 `return 0` 不是 `return 1`？</strong> 因为 <code>not root</code> 时 root 是 None——根本没有节点，深度是 0。<code>+1</code> 在 <code>return max(left, right) + 1</code> 里，代表的是&quot;当前这个真实存在的节点&quot;。空节点给一个起点 0，有一个节点就 0 + 1 = 1</li></ul><h2 id="section-3">代码实现</h2><pre tabindex="0"><code>struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode() : val(0), left(nullptr), right(nullptr) {}
-    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
-    TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
-};
+- 这就是之前学的**反向递归**（工作在自调用之后）：先递到底拿结果，回来时才算当前层。`+1` 就是&quot;回来时做的事&quot;——加上自己这一层</code></pre><ul><li><strong>终止条件为什么是 `return 0` 不是 `return 1`？</strong> 因为 <code>not root</code> 时 root 是 None——根本没有节点，深度是 0。<code>+1</code> 在 <code>return max(left, right) + 1</code> 里，代表的是&quot;当前这个真实存在的节点&quot;。空节点给一个起点 0，有一个节点就 0 + 1 = 1</li></ul><h2 id="section-3">代码实现</h2><pre tabindex="0"><code>class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+
 class Solution:
-    def maxDepth(self, root: Optional[TreeNode]) -&gt; int:
+    def maxDepth(self, root: TreeNode | None) -&gt; int:
         if not root:
             return 0 # 没有节点直接返回0 终止条件
         left = self.maxDepth(root.left)
         right = self.maxDepth(root.right)
-        return max(left, right) + 1 # 一个节点就加1</code></pre><ul><li>复杂度：时间 O(n)，空间 O(n)（递归调用栈，最坏情况链状树）</li></ul><h2 id="section-4">解法二 BFS 层序遍历</h2><h3 id="section-5">思路</h3><ul><li><code>queue</code> 里始终存的是<strong>当前这一层的所有节点</strong></li><li><code>for node in queue</code> 遍历当前层，把下一层的所有子节点收集到 <code>tmp</code></li><li><code>queue = tmp</code> 整层替换，进入下一层</li><li>每处理完一层 <code>res += 1</code>，走完所有层 <code>res</code> 就是最大深度</li><li>易错点：</li></ul><ol><li><strong>必须判断 `if node.left` / `if node.right` 再 append</strong>：不判断的话 <code>None</code> 会被加进 <code>tmp</code>，下一轮遍历到 <code>None</code> 时 <code>None.left</code> 直接 AttributeError；而且 <code>tmp</code> 里全是 <code>None</code> 也不为空，<code>while queue</code> 永远为 True，死循环</li><li><strong>`tmp.append(node.left)` 和 `tmp.append(node.right)` 的顺序不影响结果</strong>：这题只关心层数，不关心层内顺序。但第 41 题（层序遍历）要输出每层的值时，就要求先 left 后 right</li></ol><h3 id="section-6">代码实现</h3><pre tabindex="0"><code>class Solution:
-    def maxDepth(self, root: Optional[TreeNode]) -&gt; int:
+        return max(left, right) + 1 # 一个节点就加1
+
+
+if __name__ == &quot;__main__&quot;:
+    # 构造示例二叉树：
+    #       3
+    #      / \
+    #     9  20
+    #       /  \
+    #      15   7
+    root = TreeNode(
+        3,
+        left=TreeNode(9),
+        right=TreeNode(20, left=TreeNode(15), right=TreeNode(7)),
+    )
+
+    solution = Solution()
+    depth = solution.maxDepth(root)
+    print(depth)  # 输出 3：最长路径包含 3 个节点
+</code></pre><ul><li>复杂度：时间 O(n)，空间 O(n)（递归调用栈，最坏情况链状树）</li></ul><h2 id="section-4">解法二 BFS 层序遍历</h2><h3 id="section-5">思路</h3><ul><li><code>queue</code> 里始终存的是<strong>当前这一层的所有节点</strong></li><li><code>for node in queue</code> 遍历当前层，把下一层的所有子节点收集到 <code>tmp</code></li><li><code>queue = tmp</code> 整层替换，进入下一层</li><li>每处理完一层 <code>res += 1</code>，走完所有层 <code>res</code> 就是最大深度</li><li>易错点：</li></ul><ol><li><strong>必须判断 `if node.left` / `if node.right` 再 append</strong>：不判断的话 <code>None</code> 会被加进 <code>tmp</code>，下一轮遍历到 <code>None</code> 时 <code>None.left</code> 直接 AttributeError；而且 <code>tmp</code> 里全是 <code>None</code> 也不为空，<code>while queue</code> 永远为 True，死循环</li><li><strong>`tmp.append(node.left)` 和 `tmp.append(node.right)` 的顺序不影响结果</strong>：这题只关心层数，不关心层内顺序。但第 41 题（层序遍历）要输出每层的值时，就要求先 left 后 right</li></ol><h3 id="section-6">代码实现</h3><pre tabindex="0"><code>class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+
+class Solution:
+    def maxDepth(self, root: TreeNode | None) -&gt; int:
         if not root:
             return 0
         res = 0

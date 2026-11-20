@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>第 10 题 和为 K 的子数组 · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
-<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021-painted-logo"><script defer src="./hot100.js?v=20261021"></script></head>
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021-python-basics"><script defer src="./hot100.js?v=20261021-quicksort"></script></head>
 <body data-problem-id="lc-560"><a class="skip" href="#main">跳到正文</a>
 <header class="top"><a class="brand" href="../"><img class="brand-logo" src="../assets/sideinn-logo-painted-v2-256.png" width="54" height="54" alt=""><span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
 <div class="reading"><aside class="toc"><a href="./#topic-4">← 子串目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#section-1">题面</a><a class="level-5" href="#section-2">思路</a><a class="level-5" href="#section-3">解法一 两次遍历</a><a class="level-5" href="#section-4">解法二 单次遍历</a></nav></details></aside>
@@ -31,7 +31,15 @@
         for s_j in s:
             res = res + cnt[s_j - k]
             cnt[s_j] += 1
-        return res</code></pre><h2 id="section-4">解法二 单次遍历</h2><ul><li>思想：可以一边计算前缀和，一边查找哈希表，不需要先把前缀和数组算完再遍历</li><li>对比两次遍历的代码循环了 n+1 次（遍历 <code>s[0]</code> 到 <code>s[n]</code>），单次遍历循环了 n 次。少的那一次就是对 <code>s[0] = 0</code> 的统计——所以在遍历之前，手动 <code>cnt[0] = 1</code>，相当于提前把 <code>s[0]</code> 的那一轮处理掉了</li></ul><pre tabindex="0"><code>class Solution:
+        return res</code></pre><p id="defaultdict-default"><strong>Python 小知识：defaultdict 的默认值从哪里来？</strong> <code>defaultdict</code> 接收一个无参数函数；用 <code>cnt[key]</code> 访问缺失键时，调用这个函数生成默认值，并将键值对存入字典。<code>defaultdict(int)</code> 调用 <code>int()</code>，得到 0；要让默认值为 −1，可以传入 <code>lambda: -1</code>。</p>
+<pre tabindex="0"><code class="language-python">from collections import defaultdict
+
+cnt = defaultdict(lambda: -1)
+cnt["a"]          # 返回 -1，同时插入 "a": -1
+cnt.get("b")      # 返回 None，不触发默认值函数，也不插入 b
+cnt.get("b", -1)  # 返回 -1，但仍不插入 b</code></pre>
+<p><strong>本题仍应使用 defaultdict(int)：</strong>未出现过的前缀和次数为 0，不能从 −1 开始计数。下面单次遍历中的 <code>cnt[0] = 1</code> 是单独记入一次空前缀，不是把所有键的默认值改成 1。</p>
+<h2 id="section-4">解法二 单次遍历</h2><ul><li>思想：可以一边计算前缀和，一边查找哈希表，不需要先把前缀和数组算完再遍历</li><li>对比两次遍历的代码循环了 n+1 次（遍历 <code>s[0]</code> 到 <code>s[n]</code>），单次遍历循环了 n 次。少的那一次就是对 <code>s[0] = 0</code> 的统计——所以在遍历之前，手动 <code>cnt[0] = 1</code>，相当于提前把 <code>s[0]</code> 的那一轮处理掉了</li></ul><pre tabindex="0"><code>class Solution:
     def subarraySum(self, nums: List[int], k: int) -&gt; int:
         cnt = defaultdict(int)
         cnt[0] = 1  # 提前统计 s[0]=0，即空前缀的元素和等于 0

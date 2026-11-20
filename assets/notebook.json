@@ -1,5 +1,27 @@
 [
   {
+    "id": "adavdr",
+    "coverLabel": "ADAVDR",
+    "href": "./notes/adavdr.html",
+    "title": "AdaVDR · 视频 Agent 与 NASA-GRPO",
+    "english": "Adaptive Tool Use & Reflection for Video Deep Research",
+    "category": "Agent 与后训练",
+    "tags": [
+      "AdaVDR",
+      "Accio",
+      "NASA-GRPO",
+      "Agentic RL",
+      "多模态",
+      "工具调用",
+      "Infra"
+    ],
+    "summary": "从视频证据与外部检索讲起，拆解工具必要性、过程奖励和 token 归因；配合三组公式与手算，核对 v2 实验结果，延伸到 rollout 长尾和训练系统问题。",
+    "updated": "2026-11-03",
+    "details": "8 章 · 3 组公式 · 原创图解 · 面试口述",
+    "coverFooter": "PAPER & POST-TRAINING",
+    "readLabel": "阅读论文专栏"
+  },
+  {
     "id": "accio-hrg",
     "coverLabel": "HRG",
     "href": "./study/accio-hrg.html",
@@ -124,6 +146,44 @@
     "readLabel": "查看架构图"
   },
   {
+    "id": "rl-infra-roadmap",
+    "coverLabel": "RL MAP",
+    "href": "./notes/rl-infra-roadmap.html",
+    "title": "00 · RL Infra 进阶学习路线",
+    "english": "Post-training Infrastructure · Learning Roadmap",
+    "category": "RL Infra 进阶学习",
+    "tags": [
+      "路线规划",
+      "源码阅读",
+      "CPU 实验"
+    ],
+    "summary": "串联七个 RL Infra 专题：数值一致性正文已补全，Megatron 完成第一章与 CPU 数学核对，Serving 完成前四章，其余专题保留大纲与验收标准。",
+    "updated": "2026-11-20",
+    "details": "7 个专题 · 1 篇完整正文 · 2 篇部分正文",
+    "coverFooter": "LEARNING ROADMAP",
+    "readLabel": "查看学习路线"
+  },
+  {
+    "id": "rl-infra-scaling",
+    "coverLabel": "RL 01",
+    "href": "./notes/rl-infra-scaling.html",
+    "title": "01 · RL 优化与 Scaling",
+    "english": "RL Objectives & Compute Scaling",
+    "category": "RL Infra 进阶学习",
+    "tags": [
+      "待写入",
+      "ScaleRL",
+      "SAPO",
+      "GRPO",
+      "GSPO"
+    ],
+    "summary": "待写入：从优化目标、估计偏差与损失聚合，推导 RL 计算预算如何转化为有效学习。",
+    "updated": "2026-10-29",
+    "details": "待写入 · 7 章大纲",
+    "coverFooter": "OUTLINE · 待写入",
+    "readLabel": "查看大纲"
+  },
+  {
     "id": "rl-infra-numerics",
     "coverLabel": "RL 02",
     "href": "./notes/rl-infra-numerics.html",
@@ -143,6 +203,109 @@
     "details": "7 章 · 14 组编号公式 · 5 组 CPU 实验",
     "coverFooter": "NUMERICS · 正文已补全",
     "readLabel": "阅读专题"
+  },
+  {
+    "id": "rl-infra-megatron",
+    "coverLabel": "RL 03",
+    "href": "./notes/rl-infra-megatron.html",
+    "title": "03 · Megatron 分布式训练与恢复",
+    "english": "Megatron Parallelism, Memory & Recovery",
+    "category": "RL Infra 进阶学习",
+    "tags": [
+      "第一章已补全",
+      "Megatron",
+      "TP",
+      "PP",
+      "CP",
+      "EP"
+    ],
+    "summary": "第一章已补全：用两层 MLP 的前反向串起 TP、SP、CP、参数更新与 MoE token 分发。其余章节为大纲。",
+    "updated": "2026-11-02",
+    "details": "第一章 · 6 节正文 · 4 张教学图",
+    "coverFooter": "MEGATRON · 第一章已补全",
+    "readLabel": "阅读专题"
+  },
+  {
+    "id": "rl-infra-serving",
+    "coverLabel": "RL 04",
+    "href": "./notes/rl-infra-serving.html",
+    "title": "04 · vLLM / SGLang 调度与混合状态缓存",
+    "english": "Serving Schedulers & Hybrid State Caches",
+    "category": "RL Infra 进阶学习",
+    "tags": [
+      "持续更新",
+      "vLLM",
+      "SGLang",
+      "Radix Cache",
+      "PD"
+    ],
+    "summary": "第一至四章已补全：请求生命周期、混合状态复用、统一内存分配，以及 PD 分离的状态交接与延迟。其余章节为大纲。",
+    "updated": "2026-11-20",
+    "details": "已补全 4 章 · 共 7 章",
+    "coverFooter": "READING · 持续更新",
+    "readLabel": "阅读笔记"
+  },
+  {
+    "id": "rl-infra-moe",
+    "coverLabel": "RL 05",
+    "href": "./notes/rl-infra-moe.html",
+    "title": "05 · MoE 通信、GPU 执行与弹性并行",
+    "english": "MoE Communication, GPU Execution & Elastic EP",
+    "category": "RL Infra 进阶学习",
+    "tags": [
+      "待写入",
+      "MoE",
+      "All-to-All",
+      "CUDA Graph",
+      "Elastic EP"
+    ],
+    "summary": "待写入：围绕 expert dispatch/combine、负载偏斜、计算通信重叠和弹性 EP 建立成本模型。",
+    "updated": "2026-10-29",
+    "details": "待写入 · 7 章大纲",
+    "coverFooter": "OUTLINE · 待写入",
+    "readLabel": "查看大纲"
+  },
+  {
+    "id": "rl-infra-async",
+    "coverLabel": "RL 06",
+    "href": "./notes/rl-infra-async.html",
+    "title": "06 · 异步 RL、资源调度与权重同步",
+    "english": "Async RL, Scheduling & Weight Synchronization",
+    "category": "RL Infra 进阶学习",
+    "tags": [
+      "待写入",
+      "slime",
+      "verl",
+      "AReaL",
+      "Dressage",
+      "Staleness"
+    ],
+    "summary": "待写入：从队列、策略版本与固定资源预算，拆解异步 rollout、背压、权重发布和恢复协议。",
+    "updated": "2026-10-29",
+    "details": "待写入 · 7 章大纲",
+    "coverFooter": "OUTLINE · 待写入",
+    "readLabel": "查看大纲"
+  },
+  {
+    "id": "rl-infra-reports",
+    "coverLabel": "RL 07",
+    "href": "./notes/rl-infra-reports.html",
+    "title": "07 · 大厂训练报告与系统设计综合",
+    "english": "Technical Reports & End-to-End System Design",
+    "category": "RL Infra 进阶学习",
+    "tags": [
+      "待写入",
+      "Nemotron",
+      "Kimi",
+      "DeepSeek",
+      "Qwen",
+      "ScaleRL"
+    ],
+    "summary": "待写入：统一拆解大厂技术报告，最终形成长轨迹 MoE Agent RL 的系统设计与消融方案。",
+    "updated": "2026-10-29",
+    "details": "待写入 · 7 章大纲",
+    "coverFooter": "OUTLINE · 待写入",
+    "readLabel": "查看大纲"
   },
   {
     "id": "coding-practice",
@@ -225,9 +388,9 @@
       "数据结构",
       "刷题复习"
     ],
-    "summary": "按 16 个专题复习题面、思路、Python 代码和易错点，保留原笔记配图与 4 篇技巧总结。题名与 LeetCode 题号可搜索，目录直接跳转正文，支持标记待巩固与已掌握。",
+    "summary": "按 16 个专题复习题面、思路、Python 代码和易错点，保留原笔记配图与 4 篇技巧总结，另附 Python 基础速查。题名与 LeetCode 题号可搜索，目录直接跳转正文，支持标记待巩固与已掌握。",
     "updated": "2026-10-21",
-    "details": "96 道题（含 1 道补充题）· 16 个专题 · 4 篇技巧总结",
+    "details": "97 道题（原手册 96 道 + 快排）· 16 个专题 · 5 篇技巧总结",
     "coverFooter": "ALGORITHM PRACTICE",
     "readLabel": "开始复习"
   },

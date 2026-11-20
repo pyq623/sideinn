@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>补充题 快速排序（快排） · 支线客栈</title><meta name="description" content="Hot100 算法复习：题面、思路、Python 代码、易错点与技巧总结。按专题和题号直接定位。">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="./hot100.css?v=20261021-python-basics"><script defer src="./hot100.js?v=20261021-quicksort"></script></head>
+<body data-problem-id="quicksort"><a class="skip" href="#main">跳到正文</a>
+<header class="top"><a class="brand" href="../"><img class="brand-logo" src="../assets/sideinn-logo-painted-v2-256.png" width="54" height="54" alt=""><span>支线客栈</span></a><nav><a href="../#notebooks">所有笔记</a><a href="./">Hot100 目录</a></nav></header>
+<div class="reading"><aside class="toc"><a href="./#topic-13">← 堆目录</a><details open><summary>本题导航</summary><nav><a class="level-5" href="#quicksort">题面</a><a class="level-5" href="#quicksort-idea">思路：分区，再递归排序两边</a><a class="level-6" href="#quicksort-example">同一个数组，两种后续处理</a><a class="level-6" href="#quicksort-code">代码：保留分区循环，递归两边</a><a class="level-6" href="#quicksort-complexity">为什么一个平均 O(n)，一个平均 O(n log n)？</a><a class="level-6" href="#quicksort-mistake">易错点：只分区就返回，漏了递归</a><a class="level-6" href="#quicksort-review">复习时抓住这几处</a></nav></details></aside>
+<main id="main" class="paper"><div class="eyebrow">HOT100 / 堆</div><h1>补充题 快速排序（快排）</h1><div class="review-controls"><label for="review-status">复习状态</label><select id="review-status"><option value="new">未复习</option><option value="review">待巩固</option><option value="done">已掌握</option></select><span id="save-state" role="status"></span></div><article><section aria-labelledby="quicksort">
+<h2 id="quicksort">题面</h2>
+<p>对应练习：<a href="https://leetcode.cn/problems/sort-an-array/description/" target="_blank" rel="noopener">LeetCode 912 · 排序数组 ↗</a>。该题要求实现升序排序，不限定必须使用快排。</p>
+<p>给定整数数组 <code>nums</code>，用快速排序将所有元素按升序排列，返回排序后的数组。不要直接调用 <code>sorted()</code> 或 <code>sort()</code>。本练习允许使用额外列表。</p>
+<p>示例：<code>[3, 2, 1, 5, 3, 4]</code> → <code>[1, 2, 3, 3, 4, 5]</code>。</p>
+<h2 id="quicksort-idea">思路：分区，再递归排序两边</h2>
+<p>随机选一个基准值 pivot，把数组分成 small（小于）、equal（等于）、big（大于）。分别递归排好 small 和 big，再按 <code>small → equal → big</code> 拼接。数组长度不超过 1 时，直接返回。<strong>快速选择只递归目标所在的一边；快排递归两边。</strong> 两者可对照复习，但解决的是不同问题。</p>
+<div class="table-scroll" tabindex="0" aria-label="快速选择与快速排序对照表"><table>
+<thead><tr><th scope="col">比较点</th><th scope="col">快速选择：第 215 题</th><th scope="col">快速排序</th></tr></thead>
+<tbody>
+<tr><td>共同步骤</td><td colspan="2">随机选 pivot，分成 small（小于）、equal（等于）、big（大于）</td></tr>
+<tr><td>分完以后</td><td>第 K 大在 big 就递归 big；在 equal 就返回；在 small 就调整排名后递归 small</td><td>递归排序 small、big；equal 中的值都相等，无需再排</td></tr>
+<tr><td>返回什么</td><td>一个数：第 K 大的值</td><td><code>quick_sort(small) + equal + quick_sort(big)</code></td></tr>
+<tr><td>是否需要 k</td><td>需要；k 从 1 开始计数</td><td>不需要，要排好全部元素</td></tr>
+</tbody></table></div>
+
+<h3 id="quicksort-example">同一个数组，两种后续处理</h3>
+<p>取 <code>nums = [3, 2, 1, 5, 3, 4]</code>，这一轮选 <code>pivot = 3</code>。分区后的组内还没有排序：</p>
+<pre tabindex="0"><code>small = [2, 1]     equal = [3, 3]     big = [5, 4]
+
+找第 2 大：只在 big = [5, 4] 中继续找第 2 大 → 返回 4
+          small 和 equal 不必排序。
+
+做升序快排：
+    quick_sort([2, 1]) → [1, 2]
+    equal             → [3, 3]    （直接保留，不递归）
+    quick_sort([5, 4]) → [4, 5]
+    拼接结果          → [1, 2] + [3, 3] + [4, 5]
+                      = [1, 2, 3, 3, 4, 5]</code></pre>
+<p><strong>分区只保证 small &lt; pivot &lt; big；递归负责让两侧内部有序。</strong> 因此直接返回 <code>small + equal + big</code> 还不算完成排序。</p>
+
+<h3 id="quicksort-code">代码：保留分区循环，递归两边</h3>
+<pre tabindex="0"><code class="language-python">import random
+
+
+def quick_sort(nums):
+    if len(nums) &lt;= 1:
+        return nums[:]  # 空数组、单元素数组已经有序
+
+    pivot = random.choice(nums)
+    small, equal, big = [], [], []
+    for num in nums:
+        if num &lt; pivot:
+            small.append(num)
+        elif num &gt; pivot:
+            big.append(num)
+        else:
+            equal.append(num)
+
+    return quick_sort(small) + equal + quick_sort(big)
+
+
+print(quick_sort([3, 2, 1, 5, 3, 4]))
+# [1, 2, 3, 3, 4, 5]</code></pre>
+<p>对比<a href="./lc-215.html#section-8">第 215 题的快速选择代码</a>：去掉 <code>target</code> 与判断排名的三个分支，补上长度不超过 1 的终止条件，再用最后一行排序并拼接两边。<strong>这是返回新列表的版本，不修改原数组，也不是原地快排。</strong></p>
+
+<p>Python 用法速查：<a href="./python-basics.html#random">choice / sample / choices 的区别</a> · <a href="./python-basics.html#sort">sort 与 sorted</a>。</p>
+<h3 id="quicksort-complexity">为什么一个平均 O(n)，一个平均 O(n log n)？</h3>
+<p>一次分区要扫描当前数组。用分区较均衡的情况理解：快速选择只沿一条分支走，工作量约为 <code>n + n/2 + n/4 + … = O(n)</code>。</p>
+<p>这里用的是<strong>等比数列求和</strong>。首项为 a<sub>1</sub>、公比为 q 时，前 k 项之和为 <strong>S<sub>k</sub> = a<sub>1</sub>(1 − q<sup>k</sup>) / (1 − q)</strong>（q ≠ 1）。代入 a<sub>1</sub> = n、q = 1/2，得到 <strong>S<sub>k</sub> = 2n(1 − 2<sup>−k</sup>) &lt; 2n</strong>，所以总工作量是 O(n)：虽然递归多轮，但每轮处理的元素越来越少，总量不到两遍原数组。</p>
+<p>快排两边都处理，同一递归层的总工作量约为 O(n)，约有 log n 层，因此为 O(n log n)。随机选 pivot 不保证每轮恰好对半分，这是平均／期望复杂度的直观解释。</p>
+<div class="table-scroll" tabindex="0" aria-label="随机快速选择与快速排序复杂度"><table>
+<thead><tr><th scope="col">指标</th><th scope="col">随机快速选择</th><th scope="col">随机快速排序</th></tr></thead>
+<tbody><tr><td>平均／期望时间</td><td>O(n)</td><td>O(n log n)</td></tr>
+<tr><td>最坏时间</td><td>O(n²)</td><td>O(n²)</td></tr>
+<tr><td>这两种列表版的额外空间</td><td colspan="2">分区较均衡时峰值 O(n)；极端不均衡时，递归栈保留多层列表，最坏可达 O(n²)。不是原地算法的空间口径。</td></tr></tbody></table></div>
+<p>最坏情况是连续选到极端值，使待处理部分每次只减少一个元素：<code>n + (n−1) + … + 1 = O(n²)</code>。三路分区会一次排除全部 equal 元素，所以全相等的数组只扫描一轮，时间为 O(n)。</p>
+
+<h3 id="quicksort-mistake">易错点：只分区就返回，漏了递归</h3>
+<p><strong>本次实测错误：</strong>输入 <code>[5, 2, 3, 1]</code>，如果选到 <code>pivot = 3</code>，分区得到 <code>small = [2, 1]</code>、<code>equal = [3]</code>、<code>big = [5]</code>。此时直接拼接会返回 <code>[2, 1, 3, 5]</code>，而正确结果应为 <code>[1, 2, 3, 5]</code>。</p>
+<pre tabindex="0"><code class="language-python"># 错误：两侧内部仍可能无序
+return small + equal + big
+
+# 正确：递归排好两侧，再拼接
+return quick_sort(small) + equal + quick_sort(big)</code></pre>
+<p><strong>分区只保证左右两组与 pivot 的大小关系；递归才保证每组内部有序。</strong> equal 中的值都相等，不需要递归。本次练习记录：补上两侧递归后，LeetCode 912 提交通过。</p>
+
+<h3 id="quicksort-review">复习时抓住这几处</h3>
+<ul>
+<li><strong>equal 不能丢：</strong> 重复值也要留在排序结果里；第 K 大同样把重复元素计入排名。</li>
+<li><strong>equal 不再递归：</strong> pivot 来自当前数组，equal 至少有一个元素，两边递归的问题规模才会缩小。</li>
+<li><strong>升序拼 small → equal → big：</strong> 想改为降序，应在每层递归都使用 big → equal → small 的拼接顺序。</li>
+<li><strong>原地写法是下一步：</strong> 若面试要求原地排序，要用下标和交换在原数组内分区，再递归两侧区间；不能把这里创建三个列表的代码称为原地快排。</li>
+</ul>
+<p>再联系<a href="./lc-347.html">第 347 题：前 K 个高频元素</a>：它也可沿用分区思路，但比较的是<strong>出现频率</strong>，返回的是一组元素。对照记忆：<strong><a href="./lc-215.html">215 找一个排名</a>，347 取前 K 个，快排排好全部。</strong></p>
+</section>
+</article><nav class="neighbors" aria-label="前后篇"><a href="./lc-215.html"><small>← 上一篇</small>第 74 题 数组中的第K个最大元素</a><a href="./lc-347.html"><small>下一篇 →</small>第 75 题 前 K 个高频元素</a></nav></main></div><footer class="footer">支线客栈 · 算法与 Hot100 <span>复习标记仅保存在当前浏览器</span></footer></body></html>

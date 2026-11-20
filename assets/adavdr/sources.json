@@ -1,0 +1,11 @@
+{
+  "checked_at": "2026-11-03",
+  "paper_version": "2608.25559v2",
+  "paper": "https://arxiv.org/html/2608.25559v2",
+  "project": "https://accio-lab.github.io/AdaVDR/",
+  "repository": "https://github.com/Accio-Lab/AdaVDR",
+  "original_assets": [
+    "learning-map.svg"
+  ],
+  "notes": "作者结果未独立复现；手算和 Infra 分析为本站教学内容；仓库发布状态按检索日记录。"
+}

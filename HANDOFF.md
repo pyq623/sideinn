@@ -311,3 +311,10 @@ TTL 为 10 分钟；`CNAME` 文件只有 `sideinn.ink`。HTTPS 由 GitHub Pages 
 - 新增 `model-architecture/qwen4-preview/`，两版基于官方 Figure 1 的可编辑 SVG 与阅读页；对应 Qwen3.8-Flash-Next，不是 Qwen4-Max。
 - 改进版单列首组 4 层、后续 11 组，标明 48 层编号、N-gram Embedding Layer 仅在第 2 层接入、四条 Expanded Residual 分支以及 GR Read 内含归一化。
 - 构建 `python3 model-architecture/build-qwen4.py`；快照与来源在模型目录。专栏与首页增加第 5 个模型入口。
+
+
+## 2026-11-20 多工作区公开内容汇总
+
+以最新 main 为基线汇总原工作区遗留内容：Hot100 补充与勘误、AdaVDR、RL Infra 路线及六个专题入口、配图与来源清单。Hot100 保留 DOCX 与 supplements 两层来源，生成结果为 97 道题和 5 篇技巧总结；RL Infra 明确区分完整正文、部分正文和待写大纲。构建命令与来源位置见 README。
+
+本次核对了原工作区及四个已有发布 worktree；后四者无未提交改动。已上线的模型架构、HRG 通用版和 DeepInfer CED 视频保持不变。原工作区私人 HRG 稿、旧 study 样式与导入清单、私人维护记录不纳入此次发布。早期首页插图资源一并保存，当前首页继续使用现有设计。

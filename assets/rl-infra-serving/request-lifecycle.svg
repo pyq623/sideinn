@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="460" height="530" viewBox="0 0 460 530" role="img" aria-labelledby="title desc">
+<title id="title">请求生命周期：教学模型</title><desc id="desc">请求进入等待队列，资源允许后运行；反复调度和计算，直到完成或取消。资源不足时可以抢占，保留 token 并回到等待。等待中的请求也可以取消。</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10Z" fill="#417568"/></marker></defs>
+<style>text{font-family:Arial,"PingFang SC","Microsoft YaHei",sans-serif;fill:#25463e;text-anchor:middle;font-size:18px}.sub{font-size:15px;fill:#61786e}.box{fill:#eff7f1;stroke:#90b6a2;stroke-width:1.5}.line{fill:none;stroke:#417568;stroke-width:2;marker-end:url(#arrow)}.label{font-size:15px;fill:#795b2c}</style>
+<text x="230" y="27" font-weight="bold">状态不等于计算阶段</text>
+<rect class="box" x="50" y="48" width="255" height="66" rx="9"/><text x="177" y="74">等待队列</text><text class="sub" x="177" y="98">新请求，或被抢占后等待恢复</text>
+<path class="line" d="M177 114V163"/><text class="label" x="243" y="143">资源允许</text>
+<rect class="box" x="50" y="166" width="255" height="72" rx="9"/><text x="177" y="194">进入运行集合</text><text class="sub" x="177" y="218">每轮仍要检查预算与缓存</text>
+<path class="line" d="M177 238V278"/>
+<rect class="box" x="50" y="281" width="255" height="90" rx="9"/><text x="177" y="308">选择 → 执行 → 处理结果</text><text class="sub" x="177" y="332">prefill 分块 / decode 步</text><text class="sub" x="177" y="354">更新 token、进度与缓存引用</text>
+<path class="line" d="M50 327H24V202H50"/><text class="sub" x="18" y="255" transform="rotate(-90 18 255)">继续下一轮</text>
+<path class="line" d="M305 202H367V123"/><rect x="319" y="63" width="126" height="58" rx="9" fill="#fff5e2" stroke="#c9a76b"/><text x="382" y="87">抢占／回退</text><text class="sub" x="382" y="109">保留 token</text><path class="line" d="M319 81H305"/>
+<text class="label" x="380" y="164">资源不足</text>
+<path class="line" d="M177 371V427"/><text class="label" x="242" y="402">完成或取消</text>
+<rect class="box" x="50" y="430" width="255" height="72" rx="9"/><text x="177" y="459">结束并交付结果</text><text class="sub" x="177" y="482">解除请求持有的资源</text>
+<text class="sub" x="230" y="524">释放请求占用 ≠ 清空所有可复用前缀</text>
+</svg>
