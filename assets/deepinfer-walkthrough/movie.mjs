@@ -137,7 +137,7 @@ async function init(){await MathJax.startup.promise;await prepare();ready=true;$
  $('speed').addEventListener('change',()=>{speed=Number($('speed').value);});$('timeline').addEventListener('input',()=>{stop();const v=Number($('timeline').value),i=Math.min(frames.length-1,Math.floor(v));update(v>=frames.length?duration:starts[i]+(v-i)*frames[i][3],true);});
  document.querySelectorAll('[data-jump]').forEach(b=>b.addEventListener('click',()=>{jump(Number(b.dataset.jump));}));
  $('zoom').addEventListener('click',()=>{const on=$('screen').classList.toggle('zoomed');$('zoom').setAttribute('aria-pressed',String(on));$('zoom').textContent=on?'适应宽度':'放大画面';});
- document.addEventListener('keydown',e=>{if(e.target.closest('input,select,textarea,a'))return;if(e.key==='ArrowRight'){e.preventDefault();jump(frame+1);}if(e.key==='ArrowLeft'){e.preventDefault();jump(frame-1);}});
+ document.addEventListener('keydown',e=>{if(e.target.closest('input,select,textarea,a,video'))return;if(e.key==='ArrowRight'){e.preventDefault();jump(frame+1);}if(e.key==='ArrowLeft'){e.preventDefault();jump(frame-1);}});
  document.addEventListener('visibilitychange',()=>{if(document.hidden)stop();});
  if(reduced)$('motion-note').textContent='已尊重“减少动态效果”设置，可逐幕查看。';
  $('board').dataset.ready='true';

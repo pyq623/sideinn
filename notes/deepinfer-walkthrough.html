@@ -1,17 +1,17 @@
 <!doctype html><html lang="zh-CN"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>看 prompt 怎样走过模型 · CED 连贯动画 · 支线客栈</title>
-<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="../assets/deepinfer-walkthrough/movie.css?v=20261023-6">
+<link rel="stylesheet" href="../theme.css?v=20261019"><link rel="stylesheet" href="../assets/deepinfer-walkthrough/movie.css?v=20261120-ced-video">
 <script>window.MathJax={startup:{typeset:false},svg:{fontCache:'none'},options:{enableMenu:false}};</script>
 <script defer src="../assets/vendor/tex-svg.js"></script>
-<script type="module" src="../assets/deepinfer-walkthrough/movie.mjs?v=20261030-ced-links"></script>
+<script type="module" src="../assets/deepinfer-walkthrough/movie.mjs?v=20261120-ced-video"></script>
 </head><body>
 <header><a href="./deepinfer.html#section-3-1">← 回到 DeepInfer 笔记</a><span>支线客栈 · 动画讲解</span></header>
 <main>
 <p class="eyebrow">先看数据怎样走，再看数字怎样算</p>
 <h1>这段 prompt，究竟经过了什么？</h1>
 <p class="opening">看同一批编号方块经过 encoder、分成两路，再进入 decoder。<strong>编号一直代表同一个输入位置；变化的是它携带的隐藏状态。</strong> 点击“下一页”播放一个动作后停住，或选择“自动放映”连续观看。</p>
-<p class="scope">缩小教学例：8 个位置、6 层、窗口 3。配置和数值为人工设定；不是 DeepSeek 权重或语言能力复现。<a href="#audit">查看核对结果与依据 ↓</a></p>
+<p class="scope">缩小教学例：8 个位置、6 层、窗口 3。配置和数值为人工设定；不是 DeepSeek 权重或语言能力复现。<a href="#ced-video">看 92 秒配音版 ↓</a> · <a href="#audit">查看核对结果与依据 ↓</a></p>
 <section class="player" aria-label="CED 与有限重放动画">
 <div class="transport"><button id="restart" aria-label="从头播放">↶ 从头</button><button id="prev" aria-label="上一页">← 上一页</button><button id="play" class="primary">自动放映</button><button id="next" aria-label="下一页">下一页 →</button><label>速度 <select id="speed"><option value="0.75">0.75×</option><option value="1" selected>1×</option><option value="1.5">1.5×</option><option value="2">2×</option></select></label><span id="frame-count"></span></div>
 <div class="chapter-nav" aria-label="动画段落"><button data-jump="0">① 输入与 encoder</button><button data-jump="5">② 两路进入 decoder</button><button data-jump="14">③ 继续生成</button><button data-jump="19">④ 前缀复用与重放</button></div>
@@ -24,6 +24,17 @@
 <label class="timeline-label" for="timeline">放映进度 · 可拖动回看</label><input id="timeline" type="range" min="0" max="23" step="0.01" value="0" aria-label="动画进度">
 <p class="player-foot"><span id="source-label"></span> · 动画顺序用于解释；同一层的 prompt 位置可并行计算。<span id="motion-note"></span></p>
 <p id="error" role="alert" hidden>动画加载失败，请刷新重试。</p>
+</section>
+<section class="ced-video" id="ced-video" aria-labelledby="ced-video-title">
+<div>
+<h2 id="ced-video-title">CED 配音动画</h2>
+<p>1 分 32 秒，含普通话旁白和中文字幕。</p>
+<p>跟着 8 个输入位置，看全长怎样写入缓存、尾部怎样继续计算，以及后半段怎样选地址、读内容。</p>
+</div>
+<video controls playsinline preload="none" width="1080" height="1920" poster="../assets/deepinfer-walkthrough/ced-video-poster.jpg" aria-labelledby="ced-video-title">
+<source src="../assets/deepinfer-walkthrough/ced-video.mp4" type="video/mp4">
+<a href="../assets/deepinfer-walkthrough/ced-video.mp4">下载 CED 动画（MP4）</a>
+</video>
 </section>
 <section class="audit" id="audit">
 <h2>这次核对了什么</h2>
