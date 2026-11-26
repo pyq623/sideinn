@@ -239,6 +239,28 @@
     "readLabel": "阅读专题"
   },
   {
+    "id": "rl-infra-memory-budget",
+    "coverLabel": "MEM",
+    "href": "./notes/rl-infra-memory-budget.html",
+    "title": "MoE 训练显存估算",
+    "english": "MoE Training Memory Budget",
+    "category": "RL Infra 进阶学习",
+    "tags": [
+      "Megatron",
+      "Qwen3-30B-A3B",
+      "MoE",
+      "32K",
+      "显存"
+    ],
+    "summary": "用 Qwen3-30B-A3B 的 8 卡、32K 配置拆算静态训练状态、激活和通信缓冲，并估算 SGLang rollout 的显存和传输量。",
+    "updated": "2026-11-23",
+    "chapters": 5,
+    "formulas": 18,
+    "details": "5 章 · 18 个公式 · 训推算例",
+    "coverFooter": "MEGATRON · 显存预算",
+    "readLabel": "阅读笔记"
+  },
+  {
     "id": "rl-infra-serving",
     "coverLabel": "RL 04",
     "href": "./notes/rl-infra-serving.html",

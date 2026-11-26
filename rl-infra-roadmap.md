@@ -16,6 +16,8 @@
 | RL 06 | [06 · 异步 RL、资源调度与权重同步](./rl-infra-async.html) | 第 8–9 周 | 待写入 |
 | RL 07 | [07 · 大厂训练报告与系统设计综合](./rl-infra-reports.html) | 第 10 周 | 待写入 |
 
+第 03 篇的配套笔记 [MoE 训练显存估算](./rl-infra-memory-budget.html) 给出 Qwen3-30B-A3B 的 8 卡显存算例。
+
 节奏按约十周安排，可根据每篇验收结果调整；无需同时通读所有框架。起步顺序：ScaleRL → slime policy loss → 训练推理一致性。
 
 ## 第 2 章 每篇笔记如何写

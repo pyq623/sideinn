@@ -1,0 +1,92 @@
+[
+  {
+    "number": 1,
+    "wide": "\\underbrace{2}_{\\text{BF16 权重}}+\\underbrace{4}_{\\text{FP32 梯度缓冲}}+\\frac{\\underbrace{4}_{\\text{FP32 主权重}}+\\underbrace{4}_{\\text{AdamW }m}+\\underbrace{4}_{\\text{AdamW }v}}{\\underbrace{D}_{\\text{对应 DP 组大小}}}=6+\\frac{12}{D}",
+    "narrow": "\\begin{aligned}\n&\\underbrace{2}_{\\text{BF16 权重}}+\\underbrace{4}_{\\text{FP32 梯度}}\\\\\n&\\quad+\\frac{\\underbrace{4}_{\\text{主权重}}+\\underbrace{4}_{m}+\\underbrace{4}_{v}}{\\underbrace{D}_{\\text{DP 组大小}}}\n=6+\\frac{12}{D}\n\\end{aligned}"
+  },
+  {
+    "number": 2,
+    "wide": "\\underbrace{\\frac{28.991\\cdot10^9}{8\\times1}}_{\\text{专家参数量}\\,\\div\\,\\text{EP 8}\\,\\div\\,\\text{ETP 1}}\\times\\underbrace{\\left(6+\\frac{12}{1}\\right)}_{\\text{专家 DP 1，每参数 18 字节}}\\;\\approx\\;60.75\\ \\mathrm{GiB}",
+    "narrow": "\\begin{aligned}\n&\\underbrace{\\frac{28.991\\cdot10^9}{8\\times1}}_{\\text{专家参数}\\,\\div\\,\\text{EP 8}\\,\\div\\,\\text{ETP 1}}\\\\\n&\\quad\\times\\underbrace{\\left(6+\\frac{12}{1}\\right)}_{\\text{专家 DP 1，18 字节／参数}}\\\\\n&\\quad\\approx60.75\\ \\mathrm{GiB}\n\\end{aligned}"
+  },
+  {
+    "number": 3,
+    "wide": "\\left(\\underbrace{\\frac{1.52830\\cdot10^9}{4\\times1}}_{\\text{全模型可切分参数量}\\,\\div\\,(\\text{TP 4}\\times\\text{PP 1})}+\\underbrace{0.01279\\cdot10^9}_{\\text{本卡复制参数量}}\\right)\\times\\underbrace{\\left(6+\\frac{12}{2}\\right)}_{\\text{普通 DP 2，每参数 12 字节}}\\;\\approx\\;4.41\\ \\mathrm{GiB}",
+    "narrow": "\\begin{aligned}\n&\\Biggl(\\underbrace{\\frac{1.52830\\cdot10^9}{4\\times1}}_{\\text{可切分参数}\\,\\div\\,(\\text{TP 4}\\times\\text{PP 1})}\\\\\n&\\qquad+\\underbrace{0.01279\\cdot10^9}_{\\text{本卡复制参数}}\\Biggr)\\\\\n&\\quad\\times\\underbrace{\\left(6+\\frac{12}{2}\\right)}_{\\text{普通 DP 2，12 字节／参数}}\n\\;\\approx\\;4.41\\ \\mathrm{GiB}\n\\end{aligned}"
+  },
+  {
+    "number": 4,
+    "wide": "\\underbrace{\\frac{B_\\mu}{\\mathrm{DP}}}_{\\text{本副本的序列数}}\\times\\underbrace{\\frac{L}{\\mathrm{PP}}}_{\\text{模型总层数}\\,\\div\\,\\text{PP stage 数}}\\times\\underbrace{\\frac{S}{\\mathrm{CP}\\,\\mathrm{TP}_{\\mathrm{SP}}}}_{\\text{每条序列本卡保存的 token}}\\times\\underbrace{H}_{\\text{每 token 维度}}\\times\\underbrace{2}_{\\text{BF16 字节}}",
+    "narrow": "\\begin{aligned}\n&\\underbrace{\\frac{B_\\mu}{\\mathrm{DP}}}_{\\text{本副本序列数}}\\times\\underbrace{\\frac{L}{\\mathrm{PP}}}_{\\text{模型总层数}\\,\\div\\,\\text{PP}}\\\\\n&\\quad\\times\\underbrace{\\frac{S}{\\mathrm{CP}\\,\\mathrm{TP}_{\\mathrm{SP}}}}_{\\text{每序列本卡 token}}\\times\\underbrace{H}_{\\text{隐藏维度}}\\times\\underbrace{2}_{\\text{BF16 字节}}\n\\end{aligned}"
+  },
+  {
+    "number": 5,
+    "wide": "\\underbrace{\\frac{B_\\mu}{\\mathrm{DP}}}_{\\text{本副本的序列数}}\\times\\underbrace{\\frac{S}{\\mathrm{CP}}}_{\\text{每条序列本卡处理的 token}}\\times\\underbrace{\\frac{V}{\\mathrm{TP}}}_{\\text{本卡负责的词表大小}}\\times\\underbrace{2}_{\\text{BF16 字节}}",
+    "narrow": "\\begin{aligned}\n&\\underbrace{\\frac{B_\\mu}{\\mathrm{DP}}}_{\\text{本副本序列数}}\\times\\underbrace{\\frac{S}{\\mathrm{CP}}}_{\\text{每序列本卡 token}}\\\\\n&\\quad\\times\\underbrace{\\frac{V}{\\mathrm{TP}}}_{\\text{本卡词表}}\\times\\underbrace{2}_{\\text{BF16 字节}}\n\\end{aligned}"
+  },
+  {
+    "number": 6,
+    "wide": "\\underbrace{\\min\\left(C,\\frac{B_\\mu}{\\mathrm{DP}}\\frac{S}{\\mathrm{CP}}\\right)}_{\\text{本次分块实际处理的 token}}\\times\\underbrace{\\frac{V}{\\mathrm{TP}}}_{\\text{本卡负责的词表大小}}\\times\\underbrace{b_{\\mathrm{logit}}}_{\\text{每个 logit 的字节数}}",
+    "narrow": "\\begin{aligned}\n&\\underbrace{\\min\\left(C,\\frac{B_\\mu}{\\mathrm{DP}}\\frac{S}{\\mathrm{CP}}\\right)}_{\\text{本块实际处理的 token}}\\\\\n&\\quad\\times\\underbrace{\\frac{V}{\\mathrm{TP}}}_{\\text{本卡词表}}\\times\\underbrace{b_{\\mathrm{logit}}}_{\\text{每个 logit 的字节数}}\n\\end{aligned}"
+  },
+  {
+    "number": 7,
+    "wide": "N_{\\mathrm{send}}=\\underbrace{\\frac{B_\\mu}{\\mathrm{DP}}}_{\\text{本副本的序列数}}\\times\\underbrace{\\frac{S}{\\mathrm{CP}\\,\\mathrm{TP}_{\\mathrm{SP}}}}_{\\text{每条序列在本卡的 token}}\\times\\underbrace{K}_{\\text{每 token 选几个专家}}",
+    "narrow": "\\begin{aligned}\nN_{\\mathrm{send}}={}&\\underbrace{\\frac{B_\\mu}{\\mathrm{DP}}}_{\\text{本副本序列数}}\\times\\underbrace{\\frac{S}{\\mathrm{CP}\\,\\mathrm{TP}_{\\mathrm{SP}}}}_{\\text{每序列本卡 token}}\\\\\n&\\times\\underbrace{K}_{\\text{每 token 选几个专家}}\n\\end{aligned}"
+  },
+  {
+    "number": 8,
+    "wide": "N_{\\mathrm{recv,avg}}=\\underbrace{\\frac{B_\\mu}{\\mathrm{DP}}}_{\\text{每副本的序列数}}\\times\\underbrace{D_g}_{\\text{EP 组覆盖的普通 DP 副本数}}\\times\\underbrace{S}_{\\text{每条序列的 token}}\\times\\frac{\\underbrace{K}_{\\text{每 token 选几个专家}}}{\\underbrace{\\mathrm{EP}}_{\\text{几个 EP rank 均分}}}",
+    "narrow": "\\begin{aligned}\nN_{\\mathrm{recv,avg}}={}&\\underbrace{\\frac{B_\\mu}{\\mathrm{DP}}}_{\\text{每副本序列数}}\\times\\underbrace{D_g}_{\\text{组内 DP 副本数}}\\\\\n&\\times\\underbrace{S}_{\\text{每序列 token}}\\times\\frac{\\underbrace{K}_{\\text{每 token 专家数}}}{\\underbrace{\\mathrm{EP}}_{\\text{均分的 rank 数}}}\n\\end{aligned}"
+  },
+  {
+    "number": 9,
+    "wide": "\\underbrace{(N_{\\mathrm{send}}+N_{\\mathrm{recv}})}_{\\text{同时存放的发送和接收条目数}}\\times\\underbrace{H}_{\\text{每条记录携带的隐藏维度}}\\times\\underbrace{2}_{\\text{每个 BF16 元素的字节数}}",
+    "narrow": "\\begin{aligned}\n&\\underbrace{(N_{\\mathrm{send}}+N_{\\mathrm{recv}})}_{\\text{同时存放的收发条目数}}\\\\\n&\\quad\\times\\underbrace{H}_{\\text{隐藏维度}}\\times\\underbrace{2}_{\\text{BF16 字节}}\n\\end{aligned}"
+  },
+  {
+    "number": 10,
+    "wide": "\\underbrace{\\frac{B_\\mu}{\\mathrm{DP}}}_{\\text{本副本的序列数}}\\times\\underbrace{\\frac{S}{\\mathrm{CP}}}_{\\text{每条序列聚合后的 token}}\\times\\underbrace{H}_{\\text{每 token 维度}}\\times\\underbrace{2}_{\\text{每个 BF16 元素的字节数}}",
+    "narrow": "\\begin{aligned}\n&\\underbrace{\\frac{B_\\mu}{\\mathrm{DP}}}_{\\text{本副本序列数}}\\times\\underbrace{\\frac{S}{\\mathrm{CP}}}_{\\text{每序列聚合后 token}}\\\\\n&\\quad\\times\\underbrace{H}_{\\text{隐藏维度}}\\times\\underbrace{2}_{\\text{BF16 字节}}\n\\end{aligned}"
+  },
+  {
+    "number": 11,
+    "wide": "\\underbrace{P_{\\mathrm{local}}}_{\\text{本卡 DP 同步的参数元素数}}\\times\\underbrace{b}_{\\text{每个梯度或权重元素的字节数}}\\times\\underbrace{\\frac{D_c-1}{D_c}}_{\\text{通信组 }D_c\\text{ 个 rank 的环形系数}}",
+    "narrow": "\\begin{aligned}\n&\\underbrace{P_{\\mathrm{local}}}_{\\text{本卡同步的元素数}}\\times\\underbrace{b}_{\\text{每个元素的字节数}}\\\\\n&\\quad\\times\\underbrace{\\frac{D_c-1}{D_c}}_{\\text{通信组的环形系数}}\n\\end{aligned}"
+  },
+  {
+    "number": 12,
+    "wide": "\\underbrace{\\frac{B_\\mu}{\\mathrm{DP}}}_{\\text{本副本的序列数}}\\times\\underbrace{\\frac{S}{\\mathrm{CP}}}_{\\text{一个 CP 分片的 token 数}}\\times\\underbrace{n_{\\mathrm{KV,local}}\\,d_{\\mathrm{head}}}_{\\text{本卡 KV head 数}\\times\\text{每 head 宽度}}\\times\\underbrace{2}_{\\text{K 和 V 各一份}}\\times\\underbrace{b_{\\mathrm{KV}}}_{\\text{每个元素的字节数}}",
+    "narrow": "\\begin{aligned}\n&\\underbrace{\\frac{B_\\mu}{\\mathrm{DP}}}_{\\text{本副本序列数}}\\times\\underbrace{\\frac{S}{\\mathrm{CP}}}_{\\text{CP 分片 token 数}}\\\\\n&\\quad\\times\\underbrace{n_{\\mathrm{KV,local}}\\,d_{\\mathrm{head}}}_{\\text{本卡 KV head 数}\\times\\text{每 head 宽度}}\\\\\n&\\quad\\times\\underbrace{2}_{\\text{K、V 各一份}}\\times\\underbrace{b_{\\mathrm{KV}}}_{\\text{每元素字节}}\n\\end{aligned}"
+  },
+  {
+    "number": 13,
+    "wide": "\\underbrace{\\frac{B_\\mu}{\\mathrm{DP}}}_{\\text{本副本的序列数}}\\times\\underbrace{\\frac{S}{\\mathrm{CP}\\,\\mathrm{TP}_{\\mathrm{SP}}}}_{\\text{每条序列在本卡的 token}}\\times\\underbrace{H_{\\mathrm{PP}}}_{\\text{跨 stage 的每 token 维度}}\\times\\underbrace{b_{\\mathrm{PP}}}_{\\text{每个传输元素的字节数}}",
+    "narrow": "\\begin{aligned}\n&\\underbrace{\\frac{B_\\mu}{\\mathrm{DP}}}_{\\text{本副本序列数}}\\times\\underbrace{\\frac{S}{\\mathrm{CP}\\,\\mathrm{TP}_{\\mathrm{SP}}}}_{\\text{每序列本卡 token}}\\\\\n&\\quad\\times\\underbrace{H_{\\mathrm{PP}}}_{\\text{每 token 维度}}\\times\\underbrace{b_{\\mathrm{PP}}}_{\\text{每元素字节}}\n\\end{aligned}"
+  },
+  {
+    "number": 14,
+    "wide": "\\left(\\underbrace{\\frac{P_{\\mathrm{shard}}}{\\mathrm{TP}\\times\\mathrm{PP}}}_{\\text{全模型可切分参数量}\\,\\div\\,(\\text{TP}\\times\\text{PP})}+\\underbrace{P^{(s)}_{\\mathrm{replica}}}_{\\text{本卡复制参数量}}\\right)\\times\\underbrace{2}_{\\text{每个 BF16 权重的字节数}}",
+    "narrow": "\\begin{aligned}\n&\\left(\\underbrace{\\frac{P_{\\mathrm{shard}}}{\\mathrm{TP}\\times\\mathrm{PP}}}_{\\text{全模型可切分参数}\\,\\div\\,(\\text{TP}\\times\\text{PP})}+\\underbrace{P^{(s)}_{\\mathrm{replica}}}_{\\text{本卡复制参数}}\\right)\\\\\n&\\quad\\times\\underbrace{2}_{\\text{每个 BF16 权重的字节数}}\n\\end{aligned}"
+  },
+  {
+    "number": 15,
+    "wide": "\\underbrace{T_{\\mathrm{cache}}}_{\\text{本副本当前缓存的 token}}\\times\\underbrace{L_s}_{\\text{本 PP stage 的层数}}\\times\\underbrace{2}_{\\text{K、V 各一份}}\\times\\underbrace{n_{\\mathrm{KV,local}}\\,d_{\\mathrm{head}}}_{\\text{本卡 KV head 数}\\times\\text{每 head 宽度}}\\times\\underbrace{b_{\\mathrm{KV}}}_{\\text{每个 KV 元素的字节数}}",
+    "narrow": "\\begin{aligned}\n&\\underbrace{T_{\\mathrm{cache}}}_{\\text{本副本缓存的 token}}\\times\\underbrace{L_s}_{\\text{本 stage 层数}}\\times\\underbrace{2}_{\\text{K、V 各一份}}\\\\\n&\\quad\\times\\underbrace{n_{\\mathrm{KV,local}}\\,d_{\\mathrm{head}}}_{\\text{本卡 KV head 数}\\times\\text{每 head 宽度}}\\times\\underbrace{b_{\\mathrm{KV}}}_{\\text{每元素字节}}\n\\end{aligned}"
+  },
+  {
+    "number": 16,
+    "wide": "\\underbrace{M_{\\mathrm{KV,pool}}}_{\\text{预计的 KV 池预算}}\\;\\approx\\;\\underbrace{f}_{\\text{SGLang 静态显存比例}}\\times\\underbrace{M_{\\mathrm{GPU}}}_{\\text{本卡显存容量}}\\;-\\;\\underbrace{M_{\\mathrm{weights}}}_{\\text{本卡权重显存}}",
+    "narrow": "\\begin{aligned}\nM_{\\mathrm{KV,pool}}\\approx{}&\\underbrace{f}_{\\text{静态显存比例}}\\times\\underbrace{M_{\\mathrm{GPU}}}_{\\text{本卡显存容量}}\\\\\n&-\\underbrace{M_{\\mathrm{weights}}}_{\\text{本卡权重显存}}\n\\end{aligned}"
+  },
+  {
+    "number": 17,
+    "wide": "\\underbrace{T_{\\mathrm{step}}}_{\\text{这轮实际调度的 token 数}}\\times\\underbrace{H}_{\\text{每个 token 的隐藏维度}}\\times\\underbrace{2}_{\\text{每个 BF16 元素的字节数}}",
+    "narrow": "\\underbrace{T_{\\mathrm{step}}}_{\\text{本轮 token}}\\times\\underbrace{H}_{\\text{隐藏维度}}\\times\\underbrace{2}_{\\text{BF16 字节}}"
+  },
+  {
+    "number": 18,
+    "wide": "\\underbrace{T_{\\mathrm{step}}\\,H\\,b}_{\\text{要归约的本地 hidden state 字节数}}\\times\\underbrace{\\frac{2(\\mathrm{TP}-1)}{\\mathrm{TP}}}_{\\text{环形 Reduce-Scatter 与 All-Gather 各一轮}}",
+    "narrow": "\\begin{aligned}\n&\\underbrace{T_{\\mathrm{step}}\\,H\\,b}_{\\text{本地 hidden state 字节数}}\\\\\n&\\quad\\times\\underbrace{\\frac{2(\\mathrm{TP}-1)}{\\mathrm{TP}}}_{\\text{Ring All-Reduce 系数}}\n\\end{aligned}"
+  }
+]
