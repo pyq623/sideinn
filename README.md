@@ -14,7 +14,6 @@ GitHub Pages 入口：https://pyq623.github.io/sideinn/ （自动跳转到正式
 - [RL Infra 学习路线](notes/rl-infra-roadmap.html)：七个专题；数值一致性正文已补全，Megatron 完成第一章与 CPU 数学核对，Serving 完成前四章，其余为大纲。
 - [Hot100 算法练习](hot100/)：97 道题、5 篇技巧总结，包含独立快排练习和 Python 基础速查。
 
-- [Accio HRG 通用准备专栏](study/accio-hrg.html)：18 道练习题、简短首答模板、追问与公开来源；模板需按读者真实情况填写。
 
 - [模型架构](model-architecture/)：Qwen3.6-35B-A3B、Qwen3-30B-A3B、Qwen3-8B、Ling-2.6-flash、Qwen4 架构预览（Qwen3.8-Flash-Next）五款模型，每款两版可缩放图解，支持 SVG / PNG 导出；构建与来源说明见[维护文档](model-architecture/README.txt)。
 

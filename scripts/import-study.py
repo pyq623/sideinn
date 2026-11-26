@@ -23,6 +23,11 @@ for name in required:
         raise SystemExit('Missing built page: ' + str(docs / name))
 revision = subprocess.check_output(['git', '-C', str(source), 'rev-parse', 'HEAD'], text=True).strip()
 destination.mkdir(exist_ok=True)
+retired_pages = ('accio-hrg.html', 'accio-hrg.md', 'wxg-ai-infra.html', 'wxg-ai-infra.md', 'assets/hrg.css')
+for name in retired_pages:
+    if (docs / name).exists():
+        raise SystemExit('Rebuild the public source without retired notes: ' + name)
+    (destination / name).unlink(missing_ok=True)
 shutil.copytree(docs, destination, dirs_exist_ok=True)
 old_brand = '<a class="brand" href="index.html">AI学习与面试笔记</a>'
 new_brand = '<a class="brand" href="../" aria-label="返回支线客栈笔记目录"><img class="brand-logo" src="../assets/sideinn-logo-painted-v2-256.png" width="54" height="54" alt=""><span>支线客栈<small>论文 · 实验 · 学习连载</small></span></a>'
@@ -30,7 +35,7 @@ nav = '<nav class="site-nav" aria-label="全站导航">'
 notice = '<p>本专题由 pyq623 整理，合并至支线客栈时统一了导航与阅读样式，讲义与题目保持原样。旧网址的答题与口述记录不会自动转移，请在旧站导出留存。</p>'
 for page in destination.glob('*.html'):
     content = page.read_text()
-    if page.name.startswith('coding-') or page.name == 'wxg-ai-infra.html':
+    if page.name.startswith('coding-'):
         content = content.replace('href="https://sideinn.ink/', 'href="../')
     if old_brand not in content or nav not in content:
         raise SystemExit('Source navigation changed; review importer: ' + page.name)

@@ -51,3 +51,4 @@
 
 .note-card[data-note-id="architecture-qwen4-preview"] .note-cover strong{font-size:30px;letter-spacing:-1px}
 @media(max-width:760px){.note-card[data-note-id="architecture-qwen4-preview"] .note-cover strong{font-size:18px;letter-spacing:-.5px}}
+.header-actions{display:flex;align-items:center;justify-content:flex-end;gap:clamp(12px,3vw,32px)}.header-actions .header-link{white-space:nowrap}
