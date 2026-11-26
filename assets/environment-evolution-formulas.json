@@ -1,0 +1,20 @@
+[
+  {
+    "number": 1,
+    "title": "组内平均奖励与中心化信号",
+    "wide": "\\bar r=\\frac{1}{B}\\sum_{b=1}^{B}r_b,\\qquad a_b=r_b-\\bar r",
+    "narrow": "\\begin{aligned}\\bar r&=\\frac{1}{B}\\sum_{b=1}^{B}r_b\\\\a_b&=r_b-\\bar r\\end{aligned}"
+  },
+  {
+    "number": 2,
+    "title": "一条高层解法的参考难度",
+    "wide": "D_{\\mathcal T}(\\xi)=\\sum_{t=1}^{L}\\left[-\\log p_{\\mathcal T}(\\sigma_{t-1}\\mid q)-\\log p_{\\mathcal T}(\\kappa_t\\mid\\sigma_{t-1},q)\\right]",
+    "narrow": "\\begin{aligned}D_{\\mathcal T}(\\xi)&=\\sum_{t=1}^{L}\\bigl[-\\log p_{\\mathcal T}(\\sigma_{t-1}\\mid q)\\\\&\\quad-\\log p_{\\mathcal T}(\\kappa_t\\mid\\sigma_{t-1},q)\\bigr]\\end{aligned}"
+  },
+  {
+    "number": 3,
+    "title": "调度器的通过率与推进条件",
+    "wide": "\\widehat p_u(E)=\\frac{1}{B}\\sum_{b=1}^{B}r_{u,b},\\qquad \\widehat p_u(E)>\\tau",
+    "narrow": "\\begin{aligned}\\widehat p_u(E)&=\\frac{1}{B}\\sum_{b=1}^{B}r_{u,b}\\\\\\widehat p_u(E)&>\\tau\\end{aligned}"
+  }
+]

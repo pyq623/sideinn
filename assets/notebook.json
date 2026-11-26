@@ -1,5 +1,62 @@
 [
   {
+    "id": "qwengyre",
+    "coverLabel": "GYRE",
+    "href": "./notes/qwengyre.html",
+    "title": "QwenGyre · 长程 Agent 的弹性在线训练",
+    "english": "QwenGyre: An Elastic Reinforcement Learning Framework for Training xLong-Horizon Agents",
+    "category": "Agent 与后训练",
+    "tags": [
+      "长程 Agent RL",
+      "Qwen",
+      "弹性调度",
+      "策略滞后",
+      "2.4T"
+    ],
+    "summary": "从数小时 rollout 的长尾讲到 GPU 弹性切换和分支轨迹去重，拆解 122B 对照与 2.4T 端到端实验。",
+    "updated": "2026-11-26",
+    "details": "7 章 · 4 组公式 · 5 张论文原图",
+    "coverFooter": "AGENTIC RL"
+  },
+  {
+    "id": "environment-evolution",
+    "coverLabel": "ENV",
+    "href": "./notes/environment-evolution.html",
+    "title": "Environment Evolution · 让终端 Agent 的训练环境逐步变难",
+    "english": "Environment Evolution for Terminal Agents",
+    "category": "Agent 与后训练",
+    "tags": [
+      "长程 Agent RL",
+      "腾讯混元",
+      "GRPO",
+      "可验证环境",
+      "27B"
+    ],
+    "summary": "从 GRPO 的组内信号出发，拆解可验证终端环境怎样演化与调度，并解读 27B 稠密模型的受控对照。",
+    "updated": "2026-11-26",
+    "details": "6 章 · 3 组公式 · 6 张论文原图",
+    "coverFooter": "AGENTIC RL"
+  },
+  {
+    "id": "lvrl",
+    "coverLabel": "LVRL",
+    "href": "./notes/lvrl.html",
+    "title": "LVRL · 给长程 Agent 的每一步分配优势",
+    "english": "LLM Value Functions for Credit Assignment in Agentic RL",
+    "category": "Agent 与后训练",
+    "tags": [
+      "长程 Agent RL",
+      "信用分配",
+      "冻结 critic",
+      "GRPO",
+      "32B"
+    ],
+    "summary": "用例子讲清冻结 critic 的事后估值、起终点锚定和逐步优势，核对蒙特卡洛验证及 32B 实验。",
+    "updated": "2026-11-26",
+    "details": "7 章 · 9 组公式 · 4 张论文原图",
+    "coverFooter": "AGENTIC RL"
+  },
+  {
     "id": "adavdr",
     "coverLabel": "ADAVDR",
     "href": "./notes/adavdr.html",

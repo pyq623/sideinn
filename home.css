@@ -52,3 +52,6 @@
 .note-card[data-note-id="architecture-qwen4-preview"] .note-cover strong{font-size:30px;letter-spacing:-1px}
 @media(max-width:760px){.note-card[data-note-id="architecture-qwen4-preview"] .note-cover strong{font-size:18px;letter-spacing:-.5px}}
 .header-actions{display:flex;align-items:center;justify-content:flex-end;gap:clamp(12px,3vw,32px)}.header-actions .header-link{white-space:nowrap}
+
+.note-card:is([data-note-id="qwengyre"],[data-note-id="environment-evolution"],[data-note-id="lvrl"]) .note-cover strong{font-size:33px;letter-spacing:-1px}
+@media(max-width:760px){.note-card:is([data-note-id="qwengyre"],[data-note-id="environment-evolution"],[data-note-id="lvrl"]) .note-cover strong{font-size:24px;letter-spacing:-.5px}}

@@ -1,0 +1,56 @@
+[
+  {
+    "number": 1,
+    "title": "同组平均回报与传统 GRPO 的轨迹优势",
+    "wide": "\\mu_G=\\frac{1}{G}\\sum_{j=1}^{G}R(\\tau_j),\\qquad A_i^{\\mathrm{GRPO}}=\\frac{R(\\tau_i)-\\mu_G}{\\sigma_G}",
+    "narrow": "\\begin{aligned}\\mu_G&=\\frac{1}{G}\\sum_{j=1}^{G}R(\\tau_j),\\\\ A_i^{\\mathrm{GRPO}}&=\\frac{R(\\tau_i)-\\mu_G}{\\sigma_G}.\\end{aligned}"
+  },
+  {
+    "number": 2,
+    "title": "用实测结果固定起点和终点",
+    "wide": "v_{i,0}=\\mu_G,\\qquad v_{i,T_i}=R(\\tau_i)",
+    "narrow": "v_{i,0}=\\mu_G,\\qquad v_{i,T_i}=R(\\tau_i)"
+  },
+  {
+    "number": 3,
+    "title": "相邻状态的价值变化",
+    "wide": "\\bar A_{i,t}=v_{i,t+1}-v_{i,t}",
+    "narrow": "\\bar A_{i,t}=v_{i,t+1}-v_{i,t}"
+  },
+  {
+    "number": 4,
+    "title": "用组内所有有效步骤的标准差缩放",
+    "wide": "A_{i,t}=\\frac{\\bar A_{i,t}}{\\sigma_{\\mathrm{step}}}",
+    "narrow": "A_{i,t}=\\frac{\\bar A_{i,t}}{\\sigma_{\\mathrm{step}}}"
+  },
+  {
+    "number": 5,
+    "title": "整条轨迹的未缩放优势和",
+    "wide": "\\sum_{t=0}^{T_i-1}\\bar A_{i,t}=v_{i,T_i}-v_{i,0}=R(\\tau_i)-\\mu_G",
+    "narrow": "\\begin{aligned}\\sum_{t=0}^{T_i-1}\\bar A_{i,t}&=v_{i,T_i}-v_{i,0}\\\\&=R(\\tau_i)-\\mu_G.\\end{aligned}"
+  },
+  {
+    "number": 6,
+    "title": "一个已采样 token 的概率比",
+    "wide": "\\rho_{i,t,u}=\\frac{\\pi_\\theta(y_{i,t,u}\\mid h_{i,t,u})}{\\pi_{\\mathrm{old}}(y_{i,t,u}\\mid h_{i,t,u})}",
+    "narrow": "\\rho_{i,t,u}=\\frac{\\pi_\\theta(y_{i,t,u}\\mid h_{i,t,u})}{\\pi_{\\mathrm{old}}(y_{i,t,u}\\mid h_{i,t,u})}"
+  },
+  {
+    "number": 7,
+    "title": "PPO 裁剪损失按有效动作 token 平均",
+    "wide": "\\mathcal L_{\\mathrm{LVRL}}=-\\frac{1}{|\\mathcal M|}\\sum_{(i,t,u)\\in\\mathcal M}\\min\\!\\left(\\rho_{i,t,u}A_{i,t},\\,\\operatorname{clip}(\\rho_{i,t,u},1-\\epsilon,1+\\epsilon)A_{i,t}\\right)",
+    "narrow": "\\begin{aligned}\\mathcal L_{\\mathrm{LVRL}}=-\\frac{1}{|\\mathcal M|}\\sum_{(i,t,u)\\in\\mathcal M}\\min\\bigl\\{&\\rho_{i,t,u}A_{i,t},\\\\&\\operatorname{clip}(\\rho_{i,t,u},1-\\epsilon,1+\\epsilon)A_{i,t}\\bigr\\}.\\end{aligned}"
+  },
+  {
+    "number": 8,
+    "title": "从同一个状态续跑，估计成功概率",
+    "wide": "\\widehat V_{\\mathrm{MC}}(s_t)=\\frac{m_t}{M},\\qquad\\Delta_t^{\\mathrm{MC}}=\\widehat V_{\\mathrm{MC}}(s_{t+1})-\\widehat V_{\\mathrm{MC}}(s_t)",
+    "narrow": "\\begin{aligned}\\widehat V_{\\mathrm{MC}}(s_t)&=\\frac{m_t}{M},\\\\ \\Delta_t^{\\mathrm{MC}}&=\\widehat V_{\\mathrm{MC}}(s_{t+1})-\\widehat V_{\\mathrm{MC}}(s_t).\\end{aligned}"
+  },
+  {
+    "number": 9,
+    "title": "负优势决定教师监督的位置和强度",
+    "wide": "g(A_{i,t})=\\max(-A_{i,t},0),\\qquad \\mathcal L_{\\mathrm{LVOPD}}=\\mathcal L_{\\mathrm{LVRL}}+\\beta\\,\\mathcal L_{\\mathrm{VD}}",
+    "narrow": "\\begin{aligned}g(A_{i,t})&=\\max(-A_{i,t},0),\\\\ \\mathcal L_{\\mathrm{LVOPD}}&=\\mathcal L_{\\mathrm{LVRL}}+\\beta\\,\\mathcal L_{\\mathrm{VD}}.\\end{aligned}"
+  }
+]

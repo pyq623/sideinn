@@ -1,0 +1,26 @@
+[
+  {
+    "number": 1,
+    "title": "派发深度与平均调度滞后",
+    "wide": "Q_{\\mathrm b}=(\\varphi+\\mu)B,\\qquad \\mathbb E[d]=\\varphi+\\frac{\\mu-1}{2}",
+    "narrow": "\\begin{aligned}Q_{\\mathrm b}&=(\\varphi+\\mu)B\\\\\\mathbb E[d]&=\\varphi+\\frac{\\mu-1}{2}\\end{aligned}"
+  },
+  {
+    "number": 2,
+    "title": "采样容量与单元切换条件",
+    "wide": "C_R(t)=C_s+(K-k(t))C_e,\\qquad w(t)\\le C_R(t)-C_e",
+    "narrow": "\\begin{aligned}C_R(t)&=C_s+(K-k(t))C_e\\\\w(t)&\\le C_R(t)-C_e\\end{aligned}"
+  },
+  {
+    "number": 3,
+    "title": "token 与执行级概率比",
+    "wide": "\\rho_u(\\theta)=\\frac{\\pi_\\theta(y_u\\mid c_u)}{p_u^{\\mathrm{roll}}},\\qquad s_i(\\theta)=\\operatorname{sg}\\!\\left[\\exp\\!\\left(\\frac{1}{L_i}\\sum_{u\\in\\mathcal T_i}\\log\\rho_u(\\theta)\\right)\\right]",
+    "narrow": "\\begin{aligned}\\rho_u(\\theta)&=\\frac{\\pi_\\theta(y_u\\mid c_u)}{p_u^{\\mathrm{roll}}}\\\\s_i(\\theta)&=\\operatorname{sg}\\!\\left[\\exp\\!\\left(\\frac{1}{L_i}\\sum_{u\\in\\mathcal T_i}\\log\\rho_u(\\theta)\\right)\\right]\\end{aligned}"
+  },
+  {
+    "number": 4,
+    "title": "先按执行平均，再按原始批次平均",
+    "wide": "\\mathcal L_i(\\theta)=\\frac{1}{L_i}\\sum_{u\\in\\mathcal T_i}\\ell_u(\\theta),\\qquad \\mathcal L(\\theta)=\\frac{1}{BN}\\sum_{q=1}^{B}\\sum_{j=1}^{N}\\mathcal L_{i(q,j)}(\\theta)",
+    "narrow": "\\begin{aligned}\\mathcal L_i(\\theta)&=\\frac{1}{L_i}\\sum_{u\\in\\mathcal T_i}\\ell_u(\\theta)\\\\\\mathcal L(\\theta)&=\\frac{1}{BN}\\sum_{q=1}^{B}\\sum_{j=1}^{N}\\mathcal L_{i(q,j)}(\\theta)\\end{aligned}"
+  }
+]
