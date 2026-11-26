@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width,initial-scale=1">
+ <meta name="robots" content="noindex,nofollow">
+ <meta name="referrer" content="no-referrer">
+ <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; form-action 'none'; base-uri 'none'">
+ <title>私密笔记 · 支线客栈</title>
+ <link rel="stylesheet" href="../theme.css">
+ <link rel="stylesheet" href="./vault.css">
+ <script type="module" src="./password-visibility.mjs"></script>
+ <script type="module" src="./vault.mjs"></script>
+</head>
+<body>
+ <header class="vault-header"><a href="../">支线客栈</a><button type="button" id="lock" hidden>锁定</button></header>
+ <main>
+  <section id="locked">
+   <h1>私密笔记</h1>
+   <form id="unlock" method="post">
+    <label for="password">访问密码</label>
+    <input id="password" type="password" autocomplete="current-password" maxlength="256" required>
+    <label class="password-visibility"><input type="checkbox" data-password-visibility="password" disabled> 显示密码</label>
+    <button id="unlock-button" type="submit" disabled>解锁</button>
+   </form>
+   <p id="status" role="status"></p>
+  </section>
+  <section id="unlocked" hidden>
+   <div class="vault-actions"><button id="back" type="button" hidden>← 返回私密目录</button><a id="download" hidden>下载 Markdown</a></div>
+   <div id="content"></div>
+  </section>
+ </main>
+</body>
+</html>

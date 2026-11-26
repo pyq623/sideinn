@@ -1,0 +1,32 @@
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:#f7f4eb;color:#243b33;font:16px system-ui,sans-serif}
+.vault-header{min-height:69px;display:flex;justify-content:space-between;align-items:center;padding:0 max(20px,calc((100vw - 860px)/2));border-bottom:1px solid #d7ded6;background:#fffef9}
+a{color:#205c50}
+.vault-header a{font-size:20px;font-weight:700;text-decoration:none}
+main{max-width:900px;margin:0 auto;padding:0 20px 60px}
+main h1{margin:0 0 21px;font-size:clamp(28px,5vw,42px);line-height:1.2}
+#locked{max-width:430px;padding:clamp(22px,5vw,34px);margin:clamp(45px,12vh,110px) auto 0;background:#fffef9;border:1px solid #d7ded6;border-radius:13px}
+#unlock label{display:block;margin:0 0 7px}
+#password{width:100%;padding:11px 12px;border:1px solid #91a49a;border-radius:6px;font:inherit;background:white}
+#unlock .password-visibility{display:flex;align-items:center;gap:6px;margin-top:10px;font-size:14px}
+button{font:inherit;cursor:pointer;color:#205c50;background:#fffef9;border:1px solid #c2cec4;border-radius:6px;padding:8px 12px}
+#unlock-button{width:100%;margin-top:15px;color:#fff;background:#205c50;border-color:#205c50}
+#status{font-size:14px;margin-bottom:0;color:#665c4f}
+#status:empty{display:none}
+#unlocked{padding-top:24px}
+.vault-actions{display:flex;gap:14px;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap}
+.vault-actions:empty{display:none}
+.vault-notes{display:grid;gap:11px;margin:0;padding:0;list-style:none}
+.vault-notes button{width:100%;text-align:left;padding:16px 18px;font-weight:650}
+.vault-article{padding:clamp(18px,5vw,37px);border:1px solid #d7ded6;border-radius:12px;background:#fffef9;overflow-wrap:anywhere;line-height:1.75}
+.vault-article h2,.vault-article h3{line-height:1.42;margin-top:1.55em}
+.vault-article li+li{margin-top:.4em}
+.vault-article a{text-underline-offset:3px}
+.vault-article pre,.vault-article table{max-width:100%;overflow:auto}
+.vault-article table{display:block;border-collapse:collapse}
+.vault-article td,.vault-article th{border:1px solid #d7ded6;text-align:left;padding:7px 10px}
+.vault-article pre{background:#edf1ec;padding:12px;border-radius:6px}
+.vault-article img{max-width:100%;height:auto}
+.vault-article details{border:1px solid #d7ded6;padding:10px 14px;border-radius:7px;margin:9px 0}
+.vault-article summary{cursor:pointer;font-weight:650}
