@@ -1,0 +1,62 @@
+[
+  {
+    "number": 1,
+    "wide": "\\begin{aligned}\n\\delta_t &= u_t+\\gamma V_{\\rm old}(s_{t+1})-V_{\\rm old}(s_t),\\\\\n\\hat A_t &= \\delta_t+\\gamma\\lambda\\hat A_{t+1},\\\\\n\\hat V_t &= V_{\\rm old}(s_t)+\\hat A_t.\n\\end{aligned}",
+    "narrow": "\\begin{aligned}\n\\delta_t &= u_t+\\gamma V_{\\rm old}(s_{t+1})-V_{\\rm old}(s_t),\\\\\n\\hat A_t &= \\delta_t+\\gamma\\lambda\\hat A_{t+1},\\\\\n\\hat V_t &= V_{\\rm old}(s_t)+\\hat A_t.\n\\end{aligned}"
+  },
+  {
+    "number": 2,
+    "wide": "\\rho_t=\\exp\\!\\bigl(\\log\\pi_\\theta(y_t\\mid s_t)-\\log\\pi_{\\rm old}(y_t\\mid s_t)\\bigr)",
+    "narrow": "\\begin{aligned}\n\\rho_t &= \\exp\\!\\bigl(\\log\\pi_\\theta(y_t\\mid s_t)\\\\\n       &\\qquad-\\log\\pi_{\\rm old}(y_t\\mid s_t)\\bigr)\n\\end{aligned}"
+  },
+  {
+    "number": 3,
+    "wide": "\\begin{aligned}\nM_\\epsilon(\\rho,A)&=\\min\\{\\rho A,\\ c_\\epsilon(\\rho)A\\},\\\\\nL_{\\rm actor}&=-\\operatorname{mean}_{\\rm tokens} M_\\epsilon(\\rho_t,\\hat A_t).\n\\end{aligned}",
+    "narrow": "\\begin{aligned}\nM_\\epsilon(\\rho,A)&=\\min\\{\\rho A,\\ c_\\epsilon(\\rho)A\\},\\\\\nL_{\\rm actor}&=-\\operatorname{mean}_{\\rm tokens} M_\\epsilon(\\rho_t,\\hat A_t).\n\\end{aligned}"
+  },
+  {
+    "number": 4,
+    "wide": "\\begin{aligned}\nL_V &= \\operatorname{mean}_{\\rm tokens}\n       \\bigl(V_\\phi(s_t)-\\hat V_t\\bigr)^2,\\\\\nL_{\\rm PPO} &= L_{\\rm actor}+c_V L_V-c_H\\bar H.\n\\end{aligned}",
+    "narrow": "\\begin{aligned}\nL_V &= \\operatorname{mean}_{\\rm tokens}\n       \\bigl(V_\\phi(s_t)-\\hat V_t\\bigr)^2,\\\\\nL_{\\rm PPO} &= L_{\\rm actor}+c_V L_V-c_H\\bar H.\n\\end{aligned}"
+  },
+  {
+    "number": 5,
+    "wide": "\\hat A_i=\\frac{R_i-\\bar R}{\\sigma_R+\\eta}",
+    "narrow": "\\hat A_i=\\frac{R_i-\\bar R}{\\sigma_R+\\eta}"
+  },
+  {
+    "number": 6,
+    "wide": "\\begin{aligned}\nL_{\\rm GRPO}\n&=\\operatorname{mean}_{x}\\frac{1}{G}\n  \\sum_{i=1}^{G}\\frac{1}{N_i}\\sum_{t=1}^{N_i}\n  \\bigl[-M_\\epsilon(\\rho_{i,t},\\hat A_i)+\\beta k_{i,t}\\bigr].\n\\end{aligned}",
+    "narrow": "\\begin{aligned}\nL_{\\rm GRPO}\n&=\\operatorname{mean}_{x}\\frac{1}{G}\n  \\sum_{i=1}^{G}\\frac{1}{N_i}\\sum_{t=1}^{N_i}\\\\\n&\\quad\\bigl[-M_\\epsilon(\\rho_{i,t},\\hat A_i)+\\beta k_{i,t}\\bigr].\n\\end{aligned}"
+  },
+  {
+    "number": 7,
+    "wide": "D_{\\rm KL}(p\\Vert r)=\\sum_{v\\in\\mathcal V}p(v)\\bigl[\\log p(v)-\\log r(v)\\bigr].",
+    "narrow": "\\begin{gathered}\nD_{\\rm KL}(p\\Vert r)=\\\\\n\\sum_{v\\in\\mathcal V}p(v)\\bigl[\\log p(v)-\\log r(v)\\bigr].\n\\end{gathered}"
+  },
+  {
+    "number": 8,
+    "wide": "\\begin{aligned}\nq_{i,t}&=\\frac{\\pi_{\\rm ref}(y_{i,t}\\mid s_{i,t})}\n                  {\\pi_\\theta(y_{i,t}\\mid s_{i,t})},\\\\\nk_{i,t}&=q_{i,t}-\\log q_{i,t}-1.\n\\end{aligned}",
+    "narrow": "\\begin{aligned}\nq_{i,t}&=\\frac{\\pi_{\\rm ref}(y_{i,t}\\mid s_{i,t})}\n                  {\\pi_\\theta(y_{i,t}\\mid s_{i,t})},\\\\\nk_{i,t}&=q_{i,t}-\\log q_{i,t}-1.\n\\end{aligned}"
+  },
+  {
+    "number": 9,
+    "wide": "\\begin{aligned}\n\\ell_m(y\\mid x)&=\\sum_{t=1}^{N}\\log\\pi_m(y_t\\mid s_t),\\\\\nd(y)&=\\ell_\\theta(y\\mid x)-\\ell_{\\rm ref}(y\\mid x).\n\\end{aligned}",
+    "narrow": "\\begin{aligned}\n\\ell_m(y\\mid x)&=\\sum_{t=1}^{N}\\log\\pi_m(y_t\\mid s_t),\\\\\nd(y)&=\\ell_\\theta(y\\mid x)-\\ell_{\\rm ref}(y\\mid x).\n\\end{aligned}"
+  },
+  {
+    "number": 10,
+    "wide": "\\begin{aligned}\nz &= \\beta_{\\rm DPO}\\,[d(y^+)-d(y^-)],\\\\\nL_{\\rm DPO} &= -\\operatorname{mean}_{\\rm pairs}\\log\\sigma(z).\n\\end{aligned}",
+    "narrow": "\\begin{aligned}\nz &= \\beta_{\\rm DPO}\\,[d(y^+)-d(y^-)],\\\\\nL_{\\rm DPO} &= -\\operatorname{mean}_{\\rm pairs}\\log\\sigma(z).\n\\end{aligned}"
+  },
+  {
+    "number": 11,
+    "wide": "\\begin{aligned}\nD_{\\rm KL}(p_t\\Vert q_t)\n&=\\sum_{v\\in\\mathcal V}p_t(v)\\log\\frac{p_t(v)}{q_t(v)},\\\\\nL_{\\rm OPD}&=\\operatorname{mean}_{\\rm tokens}D_{\\rm KL}(p_t\\Vert q_t).\n\\end{aligned}",
+    "narrow": "\\begin{aligned}\nD_{\\rm KL}(p_t\\Vert q_t)\n&=\\sum_{v\\in\\mathcal V}p_t(v)\\log\\frac{p_t(v)}{q_t(v)},\\\\\nL_{\\rm OPD}&=\\operatorname{mean}_{\\rm tokens}D_{\\rm KL}(p_t\\Vert q_t).\n\\end{aligned}"
+  },
+  {
+    "number": 12,
+    "wide": "\\begin{aligned}\na_t &= \\operatorname{sg}\\!\\bigl(\n  \\log\\pi_{\\rm T}(y_t\\mid s_t)-\\log\\pi_{\\rm old}(y_t\\mid s_t)\n  \\bigr),\\\\\nL_{\\rm sampled}&=-\\operatorname{mean}_{\\rm tokens}(\\rho_t a_t).\n\\end{aligned}",
+    "narrow": "\\begin{aligned}\na_t &= \\operatorname{sg}\\!\\bigl(\\log\\pi_{\\rm T}(y_t\\mid s_t)\\\\\n    &\\qquad-\\log\\pi_{\\rm old}(y_t\\mid s_t)\\bigr),\\\\\nL_{\\rm sampled}&=-\\operatorname{mean}_{\\rm tokens}(\\rho_t a_t).\n\\end{aligned}"
+  }
+]

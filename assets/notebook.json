@@ -1,5 +1,24 @@
 [
   {
+    "id": "llm-post-training-loss",
+    "coverLabel": "LOSS",
+    "href": "./notes/llm-post-training-loss.html",
+    "title": "PPO、GRPO、DPO、OPD 的 Loss 怎么算？",
+    "english": "Four Post-Training Losses, Worked by Hand",
+    "category": "Agent 与后训练",
+    "tags": [
+      "PPO",
+      "GRPO",
+      "DPO",
+      "OPD",
+      "Loss 手算"
+    ],
+    "summary": "用同一套符号比较四种训练信号，手算 PPO 的优势、裁剪和总 loss，并解释 GRPO 的全词表 KL 与单 token 估计。",
+    "updated": "2026-11-27",
+    "details": "4 章 · 12 组公式 · 3 张图解",
+    "coverFooter": "POST-TRAINING"
+  },
+  {
     "id": "qwengyre",
     "coverLabel": "GYRE",
     "href": "./notes/qwengyre.html",
