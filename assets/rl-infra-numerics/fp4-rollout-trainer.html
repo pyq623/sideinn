@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FP4 Rollout 与 Trainer 评分 · 支线客栈</title>
+  <link rel="stylesheet" href="../../theme.css?v=20261019">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      --background: var(--paper);
+      --foreground: var(--ink);
+      --muted-foreground: var(--muted);
+      --viz-series-1: var(--teal);
+      --viz-series-2: var(--gold);
+      --font-size-base: 14px;
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 4px;
+      background: var(--paper);
+      color: var(--ink);
+      font: 14px/1.55 "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    }
+    h2, h3, p { margin: 0; }
+    h2 { font-size: 19px; }
+    h3 { font-size: 16px; }
+    .text-small { font-size: 12px; }
+    .text-muted { color: var(--muted); }
+    code {
+      font: inherit;
+      font-family: ui-monospace, Consolas, monospace;
+      padding: 2px 4px;
+      border-radius: 3px;
+      background: var(--surface-soft);
+      overflow-wrap: anywhere;
+    }
+    button[data-example] {
+      min-height: 32px;
+      padding: 4px 9px;
+      border: 1px solid var(--border-strong);
+      border-radius: 6px;
+      color: var(--teal);
+      background: var(--paper);
+      font: inherit;
+      cursor: pointer;
+    }
+    button[data-example]:hover,
+    button[data-example][aria-pressed="true"] { background: var(--surface-green); }
+    button[data-example]:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+    @media (pointer: coarse) { button[data-example] { min-height: 44px; } }
+    @media print { button[data-example] { display: none; } }
+  </style>
+</head>
+<body>
+<div id="fp4-worker-flow" aria-labelledby="fp4-worker-title">
+  <style>
+    #fp4-worker-flow {
+      --u: var(--font-size-base, 14px);
+      --rollout: var(--viz-series-1, var(--blue));
+      --trainer: var(--viz-series-2, var(--orange));
+      --rail: color-mix(in srgb, var(--foreground) 32%, var(--background));
+      --gap: calc(var(--u) * .85);
+      color: var(--foreground);
+      display: grid;
+      gap: calc(var(--u) * .75);
+      min-width: 0;
+    }
+    #fp4-worker-flow .diagram {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 1fr);
+      gap: 0 var(--gap);
+    }
+    #fp4-worker-flow .lane {
+      display: grid;
+      gap: calc(var(--u) * .65);
+      padding-block: var(--gap);
+      min-width: 0;
+    }
+    #fp4-worker-flow .rollout {
+      grid-column: 1 / -1;
+      --lane-color: var(--rollout);
+    }
+    #fp4-worker-flow .trainer {
+      grid-column: 1;
+      --lane-color: var(--trainer);
+    }
+    #fp4-worker-flow .lane-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      column-gap: var(--gap);
+      row-gap: calc(var(--u) * .3);
+    }
+    #fp4-worker-flow .lane-heading h3 {
+      display: flex;
+      align-items: center;
+      gap: calc(var(--u) * .5);
+      font-weight: 500;
+    }
+    #fp4-worker-flow .lane-heading h3::before {
+      content: "";
+      inline-size: calc(var(--u) * .5);
+      block-size: calc(var(--u) * 1.15);
+      border-radius: 2px;
+      background: var(--lane-color);
+    }
+    #fp4-worker-flow .route {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) var(--u) minmax(0, 1fr) var(--u) minmax(0, 1fr);
+      align-items: stretch;
+      gap: calc(var(--u) * .25);
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      min-width: 0;
+    }
+    #fp4-worker-flow .node {
+      display: grid;
+      align-content: start;
+      gap: calc(var(--u) * .3);
+      min-width: 0;
+      padding: calc(var(--u) * .55) calc(var(--u) * .65);
+      border-block-start: 2px solid var(--lane-color);
+      background: color-mix(in srgb, var(--lane-color) 7%, var(--background));
+    }
+    #fp4-worker-flow .node b { font-weight: 500; }
+    #fp4-worker-flow .node-value {
+      display: block;
+      font-family: ui-monospace, Consolas, monospace;
+      overflow-wrap: anywhere;
+    }
+    #fp4-worker-flow .node-caption { color: var(--muted-foreground); }
+    #fp4-worker-flow .shaft {
+      position: relative;
+      align-self: start;
+      margin-block-start: var(--u);
+      block-size: 1px;
+      background: var(--rail);
+    }
+    #fp4-worker-flow .shaft::after,
+    #fp4-worker-flow .down::after {
+      content: "";
+      position: absolute;
+      inline-size: 5px;
+      block-size: 5px;
+      border: solid var(--rail);
+      border-width: 1px 1px 0 0;
+    }
+    #fp4-worker-flow .shaft::after {
+      inset-inline-end: 0;
+      inset-block-start: -2px;
+      transform: rotate(45deg);
+    }
+    #fp4-worker-flow .down {
+      display: block;
+      position: relative;
+      justify-self: center;
+      inline-size: 1px;
+      min-block-size: calc(var(--u) * .85);
+      background: var(--rail);
+    }
+    #fp4-worker-flow .down::after {
+      inset-inline-start: -2px;
+      inset-block-end: 0;
+      transform: rotate(135deg);
+    }
+    #fp4-worker-flow .transfer {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 1fr);
+      column-gap: var(--gap);
+      text-align: center;
+      min-width: 0;
+    }
+    #fp4-worker-flow .source {
+      grid-column: 1 / -1;
+      display: grid;
+      justify-items: start;
+    }
+    #fp4-worker-flow .source .stem {
+      display: block;
+      margin-inline-start: 83.333%;
+      block-size: calc(var(--u) * .8);
+      border-inline-start: 1px solid var(--rail);
+    }
+    #fp4-worker-flow .transfer-leg {
+      position: relative;
+      display: grid;
+      justify-items: center;
+      align-content: start;
+      min-width: 0;
+    }
+    #fp4-worker-flow .transfer-leg::before {
+      content: "";
+      block-size: 1px;
+      position: absolute;
+      inset-block-start: 0;
+      background: var(--rail);
+    }
+    #fp4-worker-flow .transfer-leg.tokens::before {
+      inset-inline: 15% calc(var(--gap) * -1);
+    }
+    #fp4-worker-flow .transfer-leg.tokens { padding-inline-end: 70%; }
+    #fp4-worker-flow .transfer-leg.logp::before {
+      inset-inline: 0 50%;
+    }
+    #fp4-worker-flow .transfer-leg code {
+      margin-block: calc(var(--u) * .25);
+      font-weight: 500;
+    }
+    #fp4-worker-flow .transfer-leg p { margin: 0; }
+    #fp4-worker-flow .bypass {
+      display: grid;
+      justify-items: center;
+      min-height: 0;
+    }
+    #fp4-worker-flow .bypass .down {
+      block-size: 100%;
+      border-inline-start: 1px dashed var(--rail);
+      background: none;
+    }
+    #fp4-worker-flow .score {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 1fr);
+      column-gap: var(--gap);
+      text-align: center;
+      grid-column: 1 / -1;
+    }
+    #fp4-worker-flow .score-path {
+      position: relative;
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      align-content: start;
+      justify-items: center;
+      gap: calc(var(--u) * .25);
+      min-width: 0;
+    }
+    #fp4-worker-flow .score-path .stem {
+      block-size: calc(var(--u) * .75);
+      border-inline-start: 1px solid var(--rail);
+    }
+    #fp4-worker-flow .score-path::after {
+      content: "";
+      position: absolute;
+      inset-block-end: 0;
+      block-size: 1px;
+      background: var(--rail);
+    }
+    #fp4-worker-flow .score-path:first-child::after {
+      inset-inline: 85% calc(var(--gap) * -1);
+    }
+    #fp4-worker-flow .score-path:first-child { padding-inline-start: 70%; }
+    #fp4-worker-flow .score-path:nth-child(2)::after {
+      inset-inline: 0 50%;
+    }
+    #fp4-worker-flow .join {
+      grid-column: 2;
+      justify-self: center;
+    }
+    #fp4-worker-flow .diagram-title {
+      display: grid;
+      gap: calc(var(--u) * .25);
+    }
+    #fp4-worker-flow .loss-stage {
+      grid-column: 2;
+      justify-self: center;
+      align-self: start;
+      display: grid;
+      gap: calc(var(--u) * .15);
+      margin-block: calc(var(--u) * .25);
+      padding: calc(var(--u) * .35) calc(var(--u) * .15);
+      border-block: 1px solid var(--rail);
+    }
+    #fp4-worker-flow .loss-stage b {
+      font-weight: 500;
+    }
+    #fp4-worker-flow .trainer [data-step="dequantize"],
+    #fp4-worker-flow .trainer .node.is-example {
+      background: color-mix(in srgb, var(--trainer) 16%, var(--background));
+    }
+    @media (max-width: 510px) {
+      #fp4-worker-flow { --gap: calc(var(--u) * .5); }
+      #fp4-worker-flow .diagram,
+      #fp4-worker-flow .transfer,
+      #fp4-worker-flow .score { grid-template-columns: minmax(0, 5fr) minmax(0, 3fr); }
+      #fp4-worker-flow .route {
+        grid-template-columns: minmax(0, 1fr);
+        gap: calc(var(--u) * .2);
+      }
+      #fp4-worker-flow .route .shaft {
+        justify-self: center;
+        block-size: calc(var(--u) * .65);
+        inline-size: 1px;
+        margin-block-start: 0;
+      }
+      #fp4-worker-flow .route .shaft::after {
+        inset-inline-start: -2px;
+        inset-block: auto 0;
+        transform: rotate(135deg);
+      }
+      #fp4-worker-flow .source .stem { margin-inline-start: 50%; }
+      #fp4-worker-flow .transfer-leg.tokens { padding-inline-end: 0; }
+      #fp4-worker-flow .score-path:first-child { padding-inline-start: 0; }
+      #fp4-worker-flow .transfer-leg.tokens::before,
+      #fp4-worker-flow .score-path:first-child::after { inset-inline-start: 50%; }
+    }
+  </style>
+
+  <div class="diagram-title">
+    <h2 id="fp4-worker-title">Rollout 生成与 Trainer 评分</h2>
+    <span class="text-small text-muted">PPO-clip · 复用 rollout logp 作为 old logp</span>
+  </div>
+
+  <div class="diagram">
+    <section class="lane rollout" aria-labelledby="fp4-rollout-label">
+      <div class="lane-heading">
+        <h3 id="fp4-rollout-label">Rollout worker</h3>
+        <span class="text-small text-muted">用原生 FP4 生成</span>
+      </div>
+      <ol class="route">
+        <li class="node">
+          <b>量化权重与激活</b>
+          <span class="node-value">FP4 + scale</span>
+          <span class="text-small node-caption">权重可预先转换，激活在前向时量化</span>
+        </li>
+        <li class="shaft" aria-hidden="true"></li>
+        <li class="node">
+          <b>原生 FP4 矩阵乘法</b>
+          <span class="node-value">FP4 GEMM</span>
+          <span class="text-small node-caption">内核应用尺度，无需展开成 BF16 输入矩阵</span>
+        </li>
+        <li class="shaft" aria-hidden="true"></li>
+        <li class="node">
+          <b>采样并记录概率</b>
+          <span class="node-value">token + rollout logp</span>
+          <span class="text-small node-caption">逐 token 生成并保存采样分数</span>
+        </li>
+      </ol>
+    </section>
+
+    <div class="transfer" role="group" aria-label="样本交接分为两条数据路径">
+      <div class="source" aria-hidden="true"><span class="stem"></span></div>
+      <div class="transfer-leg tokens">
+        <span class="down" aria-hidden="true"></span>
+        <code>token IDs</code>
+        <p class="text-small text-muted">带上下文送入 trainer</p>
+      </div>
+      <div class="transfer-leg logp">
+        <span class="down" aria-hidden="true"></span>
+        <code>rollout logp</code>
+        <p class="text-small text-muted">保留采样时的值</p>
+      </div>
+    </div>
+
+    <section class="lane trainer" aria-labelledby="fp4-trainer-label">
+      <div class="lane-heading">
+        <h3 id="fp4-trainer-label">Trainer worker</h3>
+        <button class="btn btn-ghost" type="button" aria-pressed="false" aria-controls="fp4-trainer-steps" data-example>看数值例子</button>
+      </div>
+      <ol class="route" id="fp4-trainer-steps" aria-live="polite">
+        <li class="node" data-step="quantize">
+          <b>量化</b>
+          <span class="node-value" data-value>BF16 → FP4 网格</span>
+          <span class="text-small node-caption" data-quantize-caption>除以尺度，舍入到 FP4 网格</span>
+        </li>
+        <li class="shaft" aria-hidden="true"></li>
+        <li class="node" data-step="dequantize">
+          <b>立即反量化</b>
+          <span class="node-value" data-value>FP4 → BF16 近似值</span>
+          <span class="text-small node-caption">乘回尺度，保留 FP4 舍入误差</span>
+        </li>
+        <li class="shaft" aria-hidden="true"></li>
+        <li class="node" data-step="gemm">
+          <b>BF16 矩阵乘法</b>
+          <span class="node-value" data-value>BF16 GEMM</span>
+          <span class="text-small node-caption">直接用近似值，误差会传到 logits</span>
+        </li>
+      </ol>
+    </section>
+
+    <div class="bypass" aria-hidden="true"><span class="down"></span></div>
+
+    <div class="score" role="group" aria-label="两种 logp 先计算重要性比值，再计算 actor loss">
+      <div class="score-path">
+        <span class="down" aria-hidden="true"></span>
+        <code>current logp</code>
+        <span class="text-small text-muted">提供分子概率<br>梯度传回 Trainer</span>
+        <span class="stem" aria-hidden="true"></span>
+      </div>
+      <div class="score-path">
+        <span class="down" aria-hidden="true"></span>
+        <code>rollout logp</code>
+        <span class="text-small text-muted">提供分母概率<br>采样记录，固定值</span>
+        <span class="stem" aria-hidden="true"></span>
+      </div>
+      <span class="down join" aria-hidden="true"></span>
+      <div class="loss-stage">
+        <b>Importance ratio</b>
+        <span class="text-small text-muted">当前概率 ÷ 采样概率</span>
+      </div>
+      <span class="down join" aria-hidden="true"></span>
+      <div class="loss-stage">
+        <b>Actor loss</b>
+        <span class="text-small text-muted">结合优势与裁剪</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      const root = document.getElementById("fp4-worker-flow");
+      const button = root.querySelector("[data-example]");
+      const quantizeCaption = root.querySelector("[data-quantize-caption]");
+      const defaultCaption = quantizeCaption.textContent;
+      const nodes = [...root.querySelectorAll("[data-step]")];
+      const labels = nodes.map(node => node.querySelector("[data-value]"));
+      const defaults = labels.map(label => label.textContent);
+      const example = ["5.2 ÷ 2 = 2.6", "3 × 2 = 6.0", "BF16(6.0)"];
+      let showingExample = false;
+
+      function showExample(enabled) {
+        showingExample = enabled;
+        button.setAttribute("aria-pressed", String(enabled));
+        button.textContent = enabled ? "返回格式视图" : "看数值例子";
+        quantizeCaption.textContent = enabled ? "2.6 舍入到 FP4 网格上的 3" : defaultCaption;
+        labels.forEach((label, index) => {
+          label.textContent = (enabled ? example : defaults)[index];
+          nodes[index].classList.toggle("is-example", enabled);
+        });
+      }
+
+      button.addEventListener("click", () => showExample(!showingExample));
+    })();
+  </script>
+</div>
+
+</body>
+</html>

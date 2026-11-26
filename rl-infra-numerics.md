@@ -279,7 +279,7 @@ $$
 | 比较方式 | 优先检查的方向 |
 | --- | --- |
 | 同配置重复评分 | 执行随机性、缓存或其他状态变化 |
-| 固定目标请求，改变批次组成 | 批次相关的算子选择、分块或量化尺度 |
+| 固定目标请求，改变批次组成 | 批次相关的算子选择、分块或量化尺度（scale，即缩放因子） |
 | 固定序列，比较整段处理与逐步处理 | 缓存、位置处理、不同阶段的计算路径 |
 | 两个引擎按对应层比较 | 差异最早在哪个可比边界出现 |
 
@@ -318,8 +318,15 @@ $$
 - **前向传播：** BF16 权重／激活 → 模拟 FP4 量化 → 反量化为 BF16 近似值 → BF16 矩阵乘法 → 输出 → 计算损失。
 - **反向传播：** 从损失出发 → 逐层计算梯度 → 经过伪量化操作时采用 STE（Straight-Through Estimator，直通估计器）等替代梯度规则 → 得到参数梯度。
 - **参数更新：** 优化器根据梯度更新权重，再进入下一次前向传播。
+- **权重同步：** 为让 Rollout worker 用新版策略采样，Trainer 可发送 BF16 权重供接收端量化，或发送打包好的 FP4 权重和对应的 scale，让 FP4 算子按正确的尺度计算。
 
 这里的量化和反量化都属于**前向**；反向运算的精度另行配置，参数更新也是单独一步。反量化后的 BF16 近似值用于前向矩阵乘法，不是等到反向才使用；实现也可以直接模拟量化—反量化的数值效果，无须实际存出 FP4 数据。STE 的具体作用见 3.4。
+
+训练前向用 BF16 矩阵乘法时，先将 FP4 量化结果反量化为 BF16 再计算，而原生 FP4 算子可以直接接收 FP4 数据和尺度，省去预先反量化为 BF16 的步骤。
+
+[单独打开交互图：FP4 Rollout 与 Trainer 评分 ↗](../assets/rl-infra-numerics/fp4-rollout-trainer.html)
+
+图中采用 **原生 FP4 rollout、BF16 伪量化训练，以及将 rollout logp 复用为 old logp 的 PPO-clip**。Trainer 对已采样 token 重算 current logp，两份 logp 先形成重要性比值，再结合优势与裁剪计算 actor loss。采样时的 logp 固定，策略梯度经过 current logp 回传。训练端如果单独计算 old logp，则用 current 与 old 形成 PPO 比值。见 [veRL Rollout Correction 文档](https://github.com/verl-project/verl/blob/main/docs/algo/rollout_corr.md#6-bypass-mode-with-ppo-clip-bypass_ppo_clip)。
 
 例如，下节的数值 $5.2$ 量化再恢复后变成 $6.0$；伪量化可以仍用浮点张量保存这个 $6.0$，让后续计算看到这份近似值。它的主要用途是改善最终量化模型的准确率，训练本身可能更慢。典型流程是：**浮点模型 → 加入伪量化并训练 → 转换为低位模型 → 交给部署后端执行**。[PyTorch 原文](https://pytorch.org/blog/quantization-aware-training/) 给出了训练与转换代码，以及对应的[流程原图（Figure 2）](https://pytorch.org/wp-content/uploads/2024/11/fg2-2.png)。
 
@@ -339,7 +346,7 @@ $$
 
 ### 3.2 NVFP4 怎样表示一个数
 
-**先读懂两种数值格式，再看缩放。** NVFP4 是 NVIDIA 的 4 位浮点格式方案：元素使用 E2M1，块尺度使用 E4M3。E 指指数（Exponent），M 指尾数（Mantissa）；E2M1 含 1 位符号、2 位指数、1 位尾数，E4M3 则含 1 位符号、4 位指数、3 位尾数。[NVIDIA 格式介绍，2025-06-24](https://developer.nvidia.com/blog/introducing-nvfp4-for-efficient-and-accurate-low-precision-inference/)
+**先读懂两种数值格式，再看缩放。** NVFP4 是 NVIDIA 的 4 位浮点格式方案：元素使用 E2M1，块尺度（block scale）使用 E4M3。E 指指数（Exponent），M 指尾数（Mantissa）；E2M1 含 1 位符号、2 位指数、1 位尾数，E4M3 则含 1 位符号、4 位指数、3 位尾数。[NVIDIA 格式介绍，2025-06-24](https://developer.nvidia.com/blog/introducing-nvfp4-for-efficient-and-accurate-low-precision-inference/)
 
 下面用 $v$ 表示编码对应的数值，$S$ 表示符号位（0 为正、1 为负），$E$、$M$ 分别表示指数位、尾数位读出的非负整数。例如，二进制 `1000` 读作整数 8。**指数字段不是实际指数，要先减去该格式规定的“指数偏置”。** 正规数的有效数有一个不显式存储的首位 1；尾数位存的是它后面的小数部分。
 

@@ -17,6 +17,7 @@
   /* Keep the scale comparison labels readable beside its inline calculations. */
   #section-3-3 ~ .table-scroll:not(#section-3-4 ~ .table-scroll) table { min-width: 760px; }
   #section-3-3 ~ .table-scroll:not(#section-3-4 ~ .table-scroll) :is(th, td):first-child { min-width: 8em; width: 18%; }
+  .fp4-flow-frame { display: block; width: 100%; height: 0; border: 0; }
  </style>
  <script>window.MathJax={startup:{typeset:false},tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg:{fontCache:'none'},options:{enableMenu:false}};</script>
  <script defer src="../assets/vendor/marked.umd.js"></script>
@@ -50,5 +51,44 @@
  </div>
  <button id="back-top" class="back-top" title="返回顶部" aria-label="返回顶部" hidden>↑</button>
  <div id="menu-backdrop" class="menu-backdrop" hidden></div>
+ <script>
+  (() => {
+   const article = document.getElementById('document');
+   const source = '../assets/rl-infra-numerics/fp4-rollout-trainer.html';
+   let sizeObserver;
+   const mountFlow = () => {
+    const link = article.querySelector(`a[href="${source}"]`);
+    if (!link || link.closest('.note-figure')) return;
+
+    sizeObserver?.disconnect();
+    const figure = document.createElement('figure');
+    figure.className = 'note-figure';
+    figure.id = 'fp4-rollout-trainer';
+    const frame = document.createElement('iframe');
+    frame.className = 'fp4-flow-frame';
+    frame.title = 'FP4 Rollout 与 Trainer 评分交互图';
+    frame.src = source;
+    frame.addEventListener('load', () => {
+     const flow = frame.contentDocument?.getElementById('fp4-worker-flow');
+     if (!flow || !frame.isConnected) return;
+     const resize = () => {
+      frame.style.height = (Math.ceil(flow.getBoundingClientRect().height) + 8) + 'px';
+     };
+     resize();
+     sizeObserver = new ResizeObserver(resize);
+     sizeObserver.observe(flow);
+    });
+    const caption = document.createElement('figcaption');
+    link.target = '_blank';
+    link.rel = 'noopener';
+    const paragraph = link.parentElement;
+    caption.append(link);
+    figure.append(frame, caption);
+    if (paragraph.tagName === 'P' && !paragraph.textContent.trim()) paragraph.replaceWith(figure);
+    else paragraph.after(figure);
+   };
+   new MutationObserver(mountFlow).observe(article, { childList: true });
+  })();
+ </script>
  <noscript>请启用 JavaScript，以显示章节导航与标准公式。原文可通过 rl-infra-numerics.md 下载。</noscript>
 </body></html>
