@@ -30,7 +30,7 @@ nav = '<nav class="site-nav" aria-label="全站导航">'
 notice = '<p>本专题由 pyq623 整理，合并至支线客栈时统一了导航与阅读样式，讲义与题目保持原样。旧网址的答题与口述记录不会自动转移，请在旧站导出留存。</p>'
 for page in destination.glob('*.html'):
     content = page.read_text()
-    if page.name.startswith('coding-'):
+    if page.name.startswith('coding-') or page.name == 'wxg-ai-infra.html':
         content = content.replace('href="https://sideinn.ink/', 'href="../')
     if old_brand not in content or nav not in content:
         raise SystemExit('Source navigation changed; review importer: ' + page.name)

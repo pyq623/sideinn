@@ -22,6 +22,19 @@
     "readLabel": "阅读论文专栏"
   },
   {
+    "id": "wxg-ai-infra",
+    "coverLabel": "WXG",
+    "href": "./study/wxg-ai-infra.html",
+    "title": "腾讯 WXG 后台开发 · AI Infra 面试准备",
+    "english": "WXG AI Infrastructure Interview Preparation",
+    "category": "面试与项目表达",
+    "tags": ["WXG", "AI Infra", "推理排障", "集合通信", "分布式训练"],
+    "summary": "从长请求造成的延迟和 KV Cache 容量讲到 NVLink、RDMA 与多卡部署，再练 DDP、FSDP 和 rollout 调度。",
+    "updated": "2026-11-21",
+    "details": "6 道口述题 · 附面经与追问",
+    "readLabel": "开始练习"
+  },
+  {
     "id": "accio-hrg",
     "coverLabel": "HRG",
     "href": "./study/accio-hrg.html",
